@@ -22,6 +22,8 @@ export interface NoiseOptions {
 	stretch?: [number, number];
 	/** Each octave's amplitude over the last's (0.5). */
 	gain?: number;
+	/** Wrap at the field's edges, for a seamless tile: the scale is rounded to whole cells across and the stretch ignored (false). */
+	wrap?: boolean;
 }
 
 /** How a field is lit. */
@@ -40,8 +42,8 @@ export interface ShadeOptions {
 
 /** A field of zeros (at least 2 × 2). */
 export function field(w: number, h: number): Field;
-/** Seeded lattice noise at a point, -1 to 1. */
-export function noise2(x: number, y: number, seed: number): number;
+/** Seeded lattice noise at a point, -1 to 1; with a `period`, it repeats every that many lattice cells. */
+export function noise2(x: number, y: number, seed: number, period?: number): number;
 /** Adds fractal noise. */
 export function fbm(f: Field, o: NoiseOptions): Field;
 /** Adds a soft ridge along a segment (ends and width as fractions), tapering at its ends. */

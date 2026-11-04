@@ -26,3 +26,15 @@ export function trimmed(sc, art, { trim, bleed = 0 }) {
 		return place(x - bx, y - by, w + 2 * bx, h + 2 * by, attrs);
 	};
 }
+
+/**
+ * How art should fill a face: edge to edge when its proportions are close to the face's, otherwise whole and centred (a wide band, a lid's shallow edge), so it's never cropped to a sliver of itself.
+ *
+ * @param {number} art The art's width over its height.
+ * @param {number} face The face's width over its height.
+ * @returns {'cover' | 'contain'} The fit.
+ */
+export function faceFit(art, face) {
+	const r = art / face;
+	return r > 0.7 && r < 1 / 0.7 ? 'cover' : 'contain';
+}

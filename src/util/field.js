@@ -32,9 +32,10 @@ export function field(w, h) {
  * @param {number} x Across, in lattice cells.
  * @param {number} y Down, in lattice cells.
  * @param {number} seed A seed number.
+ * @param {number} [period=0] Repeat every this many lattice cells both ways (0: never), for a seamless tile.
  * @returns {number} The noise.
  */
-export function noise2(x, y, seed) {
+export function noise2(x, y, seed, period = 0) {
 	const x0 = Math.floor(x);
 	const y0 = Math.floor(y);
 	const fx = x - x0;
@@ -42,6 +43,10 @@ export function noise2(x, y, seed) {
 	const sx = fx * fx * (3 - 2 * fx);
 	const sy = fy * fy * (3 - 2 * fy);
 	const at = (i, j) => {
+		if (period > 0) {
+			i = ((i % period) + period) % period;
+			j = ((j % period) + period) % period;
+		}
 		let h = Math.imul(i, 374761393) ^ Math.imul(j, 668265263) ^ seed;
 		h = Math.imul(h ^ (h >>> 13), 1274126177);
 		return ((h ^ (h >>> 16)) >>> 0) / 2147483648 - 1;
@@ -55,11 +60,27 @@ export function noise2(x, y, seed) {
  * Adds fractal noise to a field.
  *
  * @param {import('./field.js').Field} f The field.
- * @param {import('./field.js').NoiseOptions} o The seed, how many lattice cells span the field's width, octaves, amplitude, and a stretch (2 makes features twice as long across).
+ * @param {import('./field.js').NoiseOptions} o The seed, how many lattice cells span the field's width, octaves, amplitude, a stretch (2 makes features twice as long across), and whether it wraps (a square field becomes a seamless tile; the scale is rounded to whole cells, and the stretch is ignored).
  * @returns {import('./field.js').Field} The field.
  */
-export function fbm(f, { seed, scale = 4, octaves = 3, amp = 1, stretch = [1, 1], gain = 0.5 }) {
+export function fbm(f, { seed, scale = 4, octaves = 3, amp = 1, stretch = [1, 1], gain = 0.5, wrap = false }) {
 	const s = hash(seed);
+	if (wrap) {
+		// whole lattice cells across the field at every octave, so its edges meet
+		const cells = Math.max(1, Math.round(scale));
+		for (let y = 0; y < f.h; y++) {
+			for (let x = 0; x < f.w; x++) {
+				let sum = 0;
+				let a = amp;
+				for (let o = 0, p = cells; o < octaves; o++, p *= 2) {
+					sum += a * noise2((x * p) / f.w, (y * p) / f.h, s + o * 1013, p);
+					a *= gain;
+				}
+				f.v[y * f.w + x] += sum;
+			}
+		}
+		return f;
+	}
 	const k = scale / f.w;
 	for (let y = 0; y < f.h; y++) {
 		for (let x = 0; x < f.w; x++) {

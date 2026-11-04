@@ -3,14 +3,50 @@
  *
  * The same API in a browser, plus rasterising through a canvas and loading
  * artwork from a URL or a file as a `data:` URI (an SVG drawn into a canvas
- * can't fetch anything, so its art has to be inline).
+ * can't fetch anything, so its art has to be inline). `loadTextures()`
+ * fetches the photographed board textures; until it's called, kraft board
+ * is drawn with procedural fibre.
  */
 
 import { artHref } from './art.js';
 import { svgImage, canvas2d } from './image.js';
 import { quietCrops, remember, PROBE } from './quiet.js';
+import { KRAFT_COUNT, kraftUrl, setKraftTextures, kraftTextures } from '../materials/textures.js';
 
 export * from '../index.js';
+
+/** @type {Promise<boolean> | null} */
+let texturesLoading = null;
+
+/**
+ * Fetches the photographed board textures for drawing, each kraft variant as a 512 px JPEG `data:` URI. Calling it again does nothing.
+ *
+ * @returns {Promise<boolean>} Whether they're loaded (false when they can't be fetched).
+ */
+export function loadTextures() {
+	texturesLoading ??= (async () => {
+		if (kraftTextures().length) return true;
+		try {
+			const list = await Promise.all(
+				Array.from({ length: KRAFT_COUNT }, async (_, n) => {
+					const r = await fetch(kraftUrl(n));
+					if (!r.ok) throw new Error(String(r.status));
+					const bmp = await createImageBitmap(await r.blob());
+					const [c, g] = canvas2d(512, 512);
+					g.drawImage(bmp, 0, 0, 512, 512);
+					bmp.close();
+					return c.toDataURL('image/jpeg', 0.85);
+				}),
+			);
+			setKraftTextures(list);
+			return true;
+		} catch {
+			texturesLoading = null;
+			return false;
+		}
+	})();
+	return texturesLoading;
+}
 
 /**
  * A mockup drawn into a canvas at its own size.

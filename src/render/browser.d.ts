@@ -2,6 +2,8 @@ import type { Mockup } from '../types.js';
 
 export * from '../index.js';
 
+/** Fetches the photographed board textures; until then kraft board is procedural. False when they can't be fetched. */
+export function loadTextures(): Promise<boolean>;
 /** A mockup drawn into a canvas (a new one, or the one given) at its own size. */
 export function renderCanvas<C extends HTMLCanvasElement | OffscreenCanvas = HTMLCanvasElement>(m: Mockup, canvas?: C): Promise<C>;
 /** A mockup as an image Blob (`'image/png'` by default). */

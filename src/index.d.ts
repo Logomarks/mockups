@@ -35,7 +35,6 @@ export { bag, BAG, BAG_PAPERS } from './objects/bag.js';
 export { box, BOXES, BOARDS } from './objects/box.js';
 export { SURFACES } from './materials/desk.js';
 export { STOCKS } from './materials/paper.js';
-export { SKINS } from './materials/skin.js';
 export { GARMENT_COLORS } from './materials/fabric.js';
 export type { CardOptions, CardLayout } from './objects/card.js';
 export type { LetterheadOptions, LetterheadLayout } from './objects/letterhead.js';
@@ -51,7 +50,6 @@ export type { BagOptions } from './objects/bag.js';
 export type { BoxOptions } from './objects/box.js';
 export type { SurfaceOption, Texture } from './materials/desk.js';
 export type { StockName } from './materials/paper.js';
-export type { SkinName, SkinOption } from './materials/skin.js';
 export type { GarmentColor, GarmentColorName } from './materials/fabric.js';
 
 // screens & signs

@@ -11,6 +11,7 @@ import { cardScene, cardPoses, CARD_SCENE_LAYOUTS } from '../src/three/card.js';
 import { boxScene, lidPose, boxExtent, BOXES, BOX_KINDS } from '../src/three/box.js';
 import { mugScene, printMode, decalBoxes, MUG, MUG_PRINTS } from '../src/three/mug.js';
 import { softboxes } from '../src/three/studioenv.js';
+import { lidPose as sharedLidPose } from '../src/parts/lid.js';
 
 const ART = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="#2f6b4f"/></svg>';
 const canvas = /** @type {any} */ ({ width: 10, height: 10 });
@@ -32,6 +33,9 @@ describe('3d print scenes', () => {
 		await assert.rejects(boxScene(canvas, { art: ART, kind: /** @type {any} */ ('crate') }), /kind/);
 		await assert.rejects(boxScene(canvas, { art: ART, view: /** @type {any} */ ({ tilt: 'high' }) }), /view.tilt/);
 		await assert.rejects(boxScene(canvas, { art: ART, print: /** @type {any} */ ('tile') }), /print/);
+		await assert.rejects(boxScene(canvas, { art: ART, board: /** @type {any} */ ('pink') }), /boxScene: board is 'kraft', 'white', 'black' or a hex colour/);
+		await assert.rejects(boxScene(canvas, { art: ART, lining: 'beige' }), /lining/);
+		await assert.rejects(boxScene(canvas, { art: ART, open: /** @type {any} */ ('wide') }), /open/);
 		await assert.rejects(mugScene(canvas, { art: ART, handle: /** @type {any} */ ('up') }), /handle/);
 		await assert.rejects(mugScene(canvas, { art: ART, color: 'white' }), /color/);
 		await assert.rejects(mugScene(canvas, { art: ART, surface: /** @type {any} */ ('marble') }), /surface/);
@@ -51,7 +55,7 @@ describe('3d print scenes', () => {
 		assert.equal(stack.cards[8].y, 0, 'the back beside it, on the desk');
 	});
 
-	it('opens a mailer about its hinge and lifts a lid', () => {
+	it('opens a mailer about its hinge and lifts a lid, as the 2D box does', () => {
 		assert.deepEqual([...BOX_KINDS], ['mailer', 'lid']);
 		assert.equal(lidPose('mailer', 0).hinge, 0);
 		assert.ok(lidPose('mailer', 1).hinge > 90);
@@ -59,6 +63,7 @@ describe('3d print scenes', () => {
 		assert.ok(lidPose('lid', 1).lift > 100);
 		assert.ok(boxExtent('mailer', 1).height > boxExtent('mailer', 0).height);
 		assert.ok(BOXES.mailer.width === 250 && BOXES.lid.height === 110);
+		assert.equal(lidPose, sharedLidPose, 'one lid pose for 2D and 3D');
 	});
 
 	it('wraps wide art round the mug to the handle, and puts other art on the front', () => {

@@ -2,10 +2,9 @@
  * @module @arraypress/mockups/objects/card
  *
  * Business cards, 85 × 55 mm, seen from above on a desk: one card, the
- * front and back side by side, a stack with a back beside it, a fan, or a
- * card held in a hand. Board thickness shows along the edge nearer the
- * camera, so an edge-painted card shows its colour, and a stack shows its
- * layers. Everything is laid out in millimetres and fitted to the frame.
+ * front and back side by side, a stack with a back beside it, or a fan.
+ * Board thickness shows along the edge nearer the camera, so an
+ * edge-painted card shows its colour, and a stack shows its layers. Everything is laid out in millimetres and fitted to the frame.
  */
 
 import { scene } from '../render/scene.js';
@@ -13,9 +12,7 @@ import { resolveSurface, surfaceLayer } from '../materials/desk.js';
 import { resolveStock } from '../materials/paper.js';
 import { grainLayer } from '../materials/grain.js';
 import { trimmed } from '../parts/print.js';
-import { sheet, flatShadow, outline } from '../parts/sheet.js';
-import { hand } from '../parts/hand.js';
-import { resolveSkin } from '../materials/skin.js';
+import { sheet } from '../parts/sheet.js';
 import { reader, artKey } from '../util/reader.js';
 import { resolveSize } from '../util/size.js';
 import { fitBox, turnedBox, union } from '../util/fit.js';
@@ -25,7 +22,7 @@ import { hash, rng } from '../util/rng.js';
 export const CARD = Object.freeze({ width: 85, height: 55 });
 
 /** The layouts. */
-export const CARD_LAYOUTS = /** @type {const} */ (['flat', 'pair', 'stack', 'fan', 'hand']);
+export const CARD_LAYOUTS = /** @type {const} */ (['flat', 'pair', 'stack', 'fan']);
 
 /**
  * Where each card goes, back to front, in mm.
@@ -64,7 +61,7 @@ export function cardPlacements(layout, twoSided, count, seed) {
 			return { x: px + ox * Math.cos(t) - oy * Math.sin(t), y: py + ox * Math.sin(t) + oy * Math.cos(t), angle: a, side: i === k - 1 || (k - 1 - i) % 2 === 0 ? 'front' : back, lift: 0.15 + 0.08 * i, layer: 0 };
 		});
 	}
-	return [{ x: 0, y: 0, angle: layout === 'hand' ? -9 : -8, side: 'front', lift: layout === 'hand' ? 2.6 : 0.25, layer: 0 }];
+	return [{ x: 0, y: 0, angle: -8, side: 'front', lift: 0.25, layer: 0 }];
 }
 
 /**
@@ -91,12 +88,8 @@ export function card(options) {
 	const surf = resolveSurface(/** @type {import('../materials/desk.js').SurfaceOption} */ (o.raw('surface')), 'concrete');
 	const { width, height } = resolveSize(/** @type {import('../types.js').Size} */ (o.raw('size')));
 
-	const skin = resolveSkin(/** @type {import('../materials/skin.js').SkinOption} */ (o.raw('skin') ?? 'medium'), 'card');
-	const side = o.oneOf('hand', 'right', /** @type {const} */ (['right', 'left']));
 	const cards = cardPlacements(layout, !!back, count, seed);
 	const boxes = cards.map((c) => turnedBox(c.x, c.y - c.layer * thickness, CARD.width, CARD.height, c.angle));
-	// a held card leaves room below it for the hand
-	if (layout === 'hand') boxes.push({ x0: -CARD.width * 0.5, y0: 0, x1: CARD.width * 0.5, y1: CARD.height * 1.05 });
 	const box = union(boxes);
 	const { mm, at } = fitBox(box, { width, height }, fit);
 	const sc = scene({ width, height, key: `card:${layout}:${artKey(art)}:${artKey(back)}:${seed}` });
@@ -105,25 +98,6 @@ export function card(options) {
 		back: back ? trimmed(sc, back, { trim: [CARD.width, CARD.height], bleed }) : null,
 	};
 	sc.add(surfaceLayer(sc, surf, { light, seed, mm }));
-	if (layout === 'hand') {
-		const c = cards[0];
-		const [cx, cy] = at(c.x, c.y);
-		const t = (c.angle * Math.PI) / 180;
-		// the grip: on the card's lower edge, right of centre (left of it for a left hand)
-		const gx = (side === 'left' ? -0.3 : 0.3) * CARD.width * mm;
-		const gy = (CARD.height / 2) * mm;
-		const held = hand(sc, { x: cx + gx * Math.cos(t) - gy * Math.sin(t), y: cy + gx * Math.sin(t) + gy * Math.cos(t), angle: c.angle, mm, side, skin, light, shadow: strength * surf.shadow });
-		const d = outline(CARD.width * mm, CARD.height * mm, radius * mm);
-		sc.add(
-			held.shadow,
-			flatShadow(sc, { d, cx, cy, angle: c.angle, mm, light, lift: 2.6, strength: strength * surf.shadow }),
-			held.under,
-			sheet(sc, { cx, cy, w: CARD.width * mm, h: CARD.height * mm, angle: c.angle, radius: radius * mm, art: sides.front, stock, edge, mm, light, thickness: thickness * mm, shadow: 0, seed: hash(seed) % 997 }),
-			held.over,
-			grainLayer(sc, o.num('grain', 0.5, 0, 1), seed),
-		);
-		return { svg: sc.svg(), width, height, object: 'card' };
-	}
 	cards.forEach((c, i) => {
 		const [cx, cy] = at(c.x, c.y - c.layer * thickness);
 		sc.add(

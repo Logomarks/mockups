@@ -33,7 +33,6 @@ export { bag, BAG, BAG_PAPERS } from './objects/bag.js';
 export { box, BOXES, BOARDS } from './objects/box.js';
 export { SURFACES } from './materials/desk.js';
 export { STOCKS } from './materials/paper.js';
-export { SKINS } from './materials/skin.js';
 export { GARMENT_COLORS } from './materials/fabric.js';
 
 // screens & signs

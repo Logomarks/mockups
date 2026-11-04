@@ -1,26 +1,21 @@
 import type { Art, Mockup, Size } from '../types.js';
 import type { SurfaceOption } from '../materials/desk.js';
 import type { StockName } from '../materials/paper.js';
-import type { SkinOption } from '../materials/skin.js';
 
 /** How the tickets are shown. */
-export type TicketLayout = 'pair' | 'held';
+export type TicketLayout = 'pair';
 
 /** How to show an event ticket. */
 export interface TicketOptions {
 	/** The ticket, 5.5 × 2 in: image bytes, SVG markup, a `data:` URI or a URL. Required. */
 	art: Art;
-	/** `'pair'` (two on a table; the default) or `'held'` (in a hand). */
+	/** `'pair'` (two on a table; the default and, for now, the only layout). */
 	layout?: TicketLayout;
 	/** Tear the second ticket's stub off along the perforation, for `'pair'` (false). */
 	torn?: boolean;
 	/** Where the perforation is, as a fraction of the width from the left, 0.3–0.95 (0.75, as `@arraypress/covers` prints it). */
 	stub?: number;
-	/** The holding hand's skin, for `'held'` (`'medium'`). */
-	skin?: SkinOption;
-	/** Which hand holds it, for `'held'` (`'right'`). */
-	hand?: 'right' | 'left';
-	/** What it lies on (`'oak'`; `'paper'` when held). */
+	/** What it lies on (`'oak'`). */
 	surface?: SurfaceOption;
 	/** The card stock (`'matte'`). */
 	stock?: StockName;
@@ -32,7 +27,7 @@ export interface TicketOptions {
 	light?: number;
 	/** How dark the shadows are, 0–3 (1). */
 	shadow?: number;
-	/** How much of the frame the tickets fill, 0.2–1 (0.84; 0.8 held). */
+	/** How much of the frame the tickets fill, 0.2–1 (0.84). */
 	fit?: number;
 	/** Film grain, 0–1 (0.5). */
 	grain?: number;

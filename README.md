@@ -92,7 +92,7 @@ const blob = await scene.toBlob();
 
 ## Print and brand
 
-Stationery, apparel and packaging from a brand kit, seen as a photo of the real thing. Everything is laid out in millimetres at its true size. Surfaces, paper tooth, fabric folds and skin are procedural, with no stock photos. Print files from `@arraypress/covers` carry bleed; pass `bleed` (mm) and the art is trimmed.
+Stationery, apparel and packaging from a brand kit, seen as a photo of the real thing. Everything is laid out in millimetres at its true size. Surfaces, paper tooth and fabric folds are procedural; kraft board is a photographed texture shipped with the package (see below). Print files from `@arraypress/covers` carry bleed; pass `bleed` (mm) and the art is trimmed.
 
 ```js
 import { card, tee, mug, renderImage, loadArt } from '@arraypress/mockups/node';
@@ -105,9 +105,9 @@ const shirt = tee({ art: await loadArt('mark.svg'), color: 'heather', placement:
 
 | Object | Layouts and kinds | Its own options |
 |---|---|---|
-| `card` | `'flat'`, `'pair'` (with a `back`), `'stack'`, `'fan'`, `'hand'` | `back`, `edge` (painted edge colour), `thickness`, `radius`, `count`, `skin`, `hand` |
+| `card` | `'flat'`, `'pair'` (with a `back`), `'stack'`, `'fan'` | `back`, `edge` (painted edge colour), `thickness`, `radius`, `count` |
 | `letterhead` | `'flat'`, `'envelope'` (DL), `'set'` (with a card) | `logo` (on the envelope), `card`, `back`, `envelope` (its colour) |
-| `ticket` | `'pair'`, `'held'` | `torn`, `stub` (the perforation, a fraction of the width), `skin`, `hand` |
+| `ticket` | `'pair'` | `torn`, `stub` (the perforation, a fraction of the width) |
 | `lanyard` | an A6 pass in a clear sleeve | `name` (printed along the strap), `strap`, `ink`, `angle` |
 | `sticker` | `'laptop'`, `'bottle'`, `'sheet'` | `shape` (`'circle'`, `'rounded'`, `'contour'`), `extra` (more art for a sheet), `border`, `diameter`, `lid`, `color` |
 | `tote` | a canvas tote, flat | `color`, `ink`, `scale` |
@@ -116,7 +116,7 @@ const shirt = tee({ art: await loadArt('mark.svg'), color: 'heather', placement:
 | `cap` | six panels, `view` `'three-quarter'`, `'three-quarter-left'`, `'front'` | `finish` (`'embroidered'`, `'printed'`), `color`, `brim`, `ink`, `scale` |
 | `mug` | `'single'`, `'pair'` | `print` (`'front'`, `'wrap'`), `back`, `color`, `inside`, `handle`, `gloss` |
 | `bag` | a paper bag with rope handles | `paper` (`'kraft'`, `'white'`, `'black'`, hex), `rope`, `printSize`, `turn` |
-| `box` | `kind` `'mailer'` or `'lid'` | `open`, `angle`, `lift`, `side`, `inside`, `board`, `lining`, `turn`, `elevation` |
+| `box` | `kind` `'mailer'` or `'lid'` | `open` (0–1, or `true`), `lift`, `side`, `inside`, `board`, `lining`, `turn`, `elevation` |
 
 They all take `art` (required), `surface`, `size`, `light`, `shadow`, `fit`, `grain` and `seed`; the paper objects also take `stock` and `bleed`.
 
@@ -125,9 +125,12 @@ They all take `art` (required), `surface`, `size`, `light`, `shadow`, `fit`, `gr
 | `surface` | `'concrete'`, `'oak'`, `'linen'`, `'paper'`, `{ texture, color }`, or a plain ground (`'light'`, `'dark'`, hex, `{ color, vignette }`). |
 | `stock` | `'matte'`, `'uncoated'`, `'gloss'`, `'cotton'`, `'kraft'`: the paper's white, tooth and sheen. |
 | `color` (garments) | `'white'`, `'natural'`, `'heather'`, `'sand'`, `'sage'`, `'navy'`, `'black'` or hex. |
-| `skin` | `'porcelain'`, `'light'`, `'medium'`, `'tan'`, `'brown'`, `'deep'` or hex. |
+| `board` (boxes) | `'kraft'` (the default), `'white'` (white-top; a mailer is kraft inside), `'black'` or hex. Ink sits in the board's fibres; cut edges show the flutes. |
+| `open` (boxes) | 0 (closed) to 1, the same in 2D and 3D: a mailer's lid swings up 112°, a lid box's lid lifts. `true` is 1. |
 
-`./3d` adds `cardScene` (`'flat'`, `'pair'`, `'stack'`, `'fan'`), `boxScene` (`kind`, `open` 0–1, `print: 'cover' | 'logo'`) and `mugScene` (`print: 'auto' | 'front' | 'both' | 'wrap'`, `layout`, `spin`). They take the 2D options, plus `view`, `width`, `height`, `pixelRatio` and `exposure`, and return the same handle as `vinylScene`.
+Kraft board (boxes, and the `bag`'s kraft paper) is drawn with photographed textures in `assets/textures/` when they're loaded: `./node` loads them on import (through sharp), `./browser` with `await loadTextures()`, and `boxScene` fetches its own. Until then kraft is procedural fibre. A side print fills its face when its proportions suit it, and otherwise sits whole in the middle.
+
+`./3d` adds `cardScene` (`'flat'`, `'pair'`, `'stack'`, `'fan'`), `boxScene` (`kind`, `open` 0–1, `board`, `lining`, `print: 'cover' | 'logo'`) and `mugScene` (`print: 'auto' | 'front' | 'both' | 'wrap'`, `layout`, `spin`). They take the 2D options, plus `view`, `width`, `height`, `pixelRatio` and `exposure`, and return the same handle as `vinylScene`.
 
 ## Music
 
@@ -199,6 +202,10 @@ They all take `art` (required), `size`, `light`, `fit`, `grain` and `seed`; `pho
 | `finish` | `'graphite'`, `'silver'`, `'white'`, `'black'` or hex (`BODIES`). |
 
 **Art size matters.** librsvg decodes an embedded image each time a warp piece draws it, so a large PNG on an angled screen is slow. A 1 MB PNG costs about 40 ms a piece; a 200 KB JPEG costs about 8 ms. Load opaque art as JPEG at about the size it shows, and icons and avatars at 128–256 px. Browsers don't have this cost.
+
+## Credits
+
+Cardboard textures by David Sherlock & Trirat (ArrayPress Limited), included under the package's MIT licence.
 
 ## Links
 

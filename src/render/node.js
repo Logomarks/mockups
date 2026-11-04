@@ -4,11 +4,14 @@
  * The same API in Node, plus rasterising through sharp (an optional peer,
  * imported on first use) and loading artwork from a path or URL, sized
  * down to what a mockup draws, so the SVG stays small and renders fast.
+ * Importing it loads the photographed board textures (through sharp, when
+ * it's installed), so kraft boxes are drawn with them.
  */
 
 import { readFile } from 'node:fs/promises';
 import { artHref } from './art.js';
 import { quietCrops, remember, PROBE } from './quiet.js';
+import { KRAFT_COUNT, kraftUrl, setKraftTextures, kraftTextures } from '../materials/textures.js';
 
 export * from '../index.js';
 
@@ -31,6 +34,36 @@ async function sharp() {
 	);
 	return sharpModule;
 }
+
+/** @type {Promise<boolean> | null} */
+let texturesLoading = null;
+
+/**
+ * Loads the photographed board textures for drawing: each kraft variant read from the package and re-encoded as a 512 px JPEG (librsvg can't draw WebP). Called on import; calling it again does nothing.
+ *
+ * @returns {Promise<boolean>} Whether they're loaded (false without sharp, or when the files are missing).
+ */
+export function loadTextures() {
+	texturesLoading ??= (async () => {
+		if (kraftTextures().length) return true;
+		try {
+			const s = await sharp();
+			const list = await Promise.all(
+				Array.from({ length: KRAFT_COUNT }, async (_, n) => {
+					const jpeg = await s(await readFile(kraftUrl(n))).resize(512).jpeg({ quality: 85, mozjpeg: true }).toBuffer();
+					return `data:image/jpeg;base64,${jpeg.toString('base64')}`;
+				}),
+			);
+			setKraftTextures(list);
+			return true;
+		} catch {
+			return false;
+		}
+	})();
+	return texturesLoading;
+}
+
+await loadTextures();
 
 /**
  * A mockup (or any SVG) as an image.

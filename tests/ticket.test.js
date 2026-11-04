@@ -1,11 +1,10 @@
 /**
- * @arraypress/mockups — tickets: the pair, the torn stub, the hand, and
- * options.
+ * @arraypress/mockups — tickets: the pair, the torn stub, and options.
  */
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { ticket, ticketPlacements, TICKET } from '../src/objects/ticket.js';
+import { ticket, ticketPlacements, TICKET, TICKET_LAYOUTS } from '../src/objects/ticket.js';
 import { tornPieces, tornEdge } from '../src/parts/perforation.js';
 
 const ART = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 146 57"><rect width="146" height="57" fill="#d9502e"/></svg>';
@@ -24,11 +23,9 @@ describe('ticket', () => {
 		assert.equal(ticketPlacements('pair').length, 2);
 	});
 
-	it('holds one in a hand', () => {
-		const { svg } = ticket({ art: ART, layout: 'held', skin: 'tan' });
-		assert.equal(sheets(svg), 1);
-		assert.match(svg, /-nailsheen\d+/);
-		assert.match(svg, /fill="#a8724c"/);
+	it('has no hand: the held layout is gone', () => {
+		assert.deepEqual([...TICKET_LAYOUTS], ['pair']);
+		assert.throws(() => ticket({ art: ART, layout: /** @type {any} */ ('held') }), /ticket: layout is 'pair'/);
 	});
 
 	it('tears both pieces along the same edge', () => {

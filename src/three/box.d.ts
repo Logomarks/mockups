@@ -1,5 +1,6 @@
 import type { Art } from '../types.js';
 import type { SurfaceOption } from '../materials/desk.js';
+import type { BoardOption } from '../materials/board.js';
 import type { PrintShotOptions } from './printshot.js';
 import type { Shot } from './shot.js';
 
@@ -10,16 +11,16 @@ export type BoxKind = 'mailer' | 'lid';
 export interface BoxSceneOptions extends PrintShotOptions {
 	/** What's printed on the lid (inline: bytes, SVG or a `data:` URI). Required. */
 	art: Art;
-	/** What's printed on the front: a mailer's front wall, a lid box's lid skirt. */
+	/** What's printed on the front: a mailer's front wall, a lid box's lid skirt; it fills the face when its proportions suit it, otherwise it sits whole in the middle. */
 	side?: Art;
 	/** `'mailer'` (250 × 180 × 80 mm, the default) or `'lid'` (320 × 200 × 110 mm). */
 	kind?: BoxKind;
 	/** How open, 0 (closed, the default) to 1: a mailer's lid swung up 112°; a lid box's lid lifted 150 mm and tipped. */
 	open?: number;
-	/** The board's outer colour (`'#f3f1ec'`). */
-	color?: string;
-	/** The inside's colour (kraft `'#c7a274'` in a mailer, the board's colour in a lid box). */
-	inside?: string;
+	/** The board, as in the 2D `box`: `'kraft'` (the default; the photographed kraft), `'white'`, `'black'` or a hex colour. */
+	board?: BoardOption;
+	/** The inside's colour (kraft a shade lighter and warmer; a white mailer kraft; otherwise the board's). */
+	lining?: string;
 	/** `'cover'` fills the panel with the art (the default); `'logo'` sets it in the middle on the board's colour. */
 	print?: 'cover' | 'logo';
 	/** What it stands on (`'light'`: a seamless sweep); a texture lays a desk on the floor. */
@@ -28,7 +29,7 @@ export interface BoxSceneOptions extends PrintShotOptions {
 	light?: number;
 	/** How dark the contact shadow is, 0–3 (1). */
 	shadow?: number;
-	/** Seeds the desk and the board's tooth (`'box'`). */
+	/** Seeds the desk and the board's grain (`'box'`). */
 	seed?: string;
 }
 

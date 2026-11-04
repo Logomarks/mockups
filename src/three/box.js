@@ -6,18 +6,27 @@
  * inside the front wall; its cut edges show the flutes) and a rigid
  * shoebox-style box (a base and a deeper-skirted lid, wrapped, so its edges
  * are the paper's colour), the lid closed or lifted. The art is printed on
- * the lid; a second artwork can go on the front. Sizes are real: a mailer
- * of 250 × 180 × 80 mm and a lid box of 320 × 200 × 110 mm.
+ * the lid; a second artwork can go on the front, fitted to it (whole and
+ * centred on a shallow skirt). Every flat face is board baked at its real
+ * size (the kraft photograph, or the board's colour with its grain; ink in
+ * the fibres; occlusion in the corners; folds), matte with the grain's
+ * relief. Sizes are real: a mailer of 250 × 180 × 80 mm and a lid box of
+ * 320 × 200 × 110 mm. `board`, `lining` and `open` mean what they do in the
+ * 2D `box`.
  */
 
 import { resolveSurface } from '../materials/desk.js';
+import { resolveBoard, liningFor, FIBRE_LOOKS } from '../materials/board.js';
+import { lidPose } from '../parts/lid.js';
+import { faceFit } from '../parts/print.js';
 import { reader } from '../util/reader.js';
-import { clamp } from '../util/num.js';
 import { shoot } from './shot.js';
 import { shotOf } from './printshot.js';
 import { panelCanvas, artAspect } from './printart.js';
 import { deskCanvas, deskMesh, contactMesh, UNIT } from './deskplane.js';
-import { boardMaterial, fluteMap, toothMap, shadeMap } from './board.js';
+import { boardMaterial, fluteMap, boardKit, bakeBoard, bakedMaterial } from './board.js';
+
+export { lidPose };
 
 /** The kinds of box. */
 export const BOX_KINDS = /** @type {const} */ (['mailer', 'lid']);
@@ -30,19 +39,6 @@ export const BOXES = Object.freeze({
 
 /** A flute's pitch along a corrugated edge, in mm (B-flute: about 6.5 mm a flute; the tile has four). */
 const FLUTE_TILE = 26;
-
-/**
- * Where the lid is for an amount of opening.
- *
- * @param {'mailer' | 'lid'} kind The box.
- * @param {number} open How open, 0 (closed) to 1.
- * @returns {{ hinge: number, lift: number, tilt: number, slide: number }} A mailer's lid angle (degrees about its back edge); a lid box's lid raised (mm), tilted towards the camera (degrees) and slid back (mm).
- */
-export function lidPose(kind, open) {
-	const k = clamp(open, 0, 1);
-	if (kind === 'mailer') return { hinge: 112 * k, lift: 0, tilt: 0, slide: 0 };
-	return { hinge: 0, lift: 150 * k, tilt: 14 * k, slide: 30 * k };
-}
 
 /**
  * The extent of the box and its lid, for framing.
@@ -114,8 +110,10 @@ export async function boxScene(canvas, options) {
 	const { art, side } = /** @type {import('./box.js').BoxSceneOptions} */ (options);
 	const kind = o.oneOf('kind', 'mailer', BOX_KINDS);
 	const open = o.num('open', 0, 0, 1);
-	const color = o.color('color', '#f3f1ec');
-	const inside = o.color('inside', kind === 'mailer' ? '#c7a274' : '#f3f1ec');
+	const board = resolveBoard(/** @type {import('../materials/board.js').BoardOption} */ (o.raw('board')), 'boxScene');
+	const lining = o.color('lining', liningFor(board, kind));
+	const liningKraft = lining === liningFor(board, kind) && (board.name === 'kraft' || (board.name === 'white' && kind === 'mailer'));
+	const outKraft = board.name === 'kraft';
 	const print = o.oneOf('print', 'cover', /** @type {const} */ (['cover', 'logo']));
 	const light = o.num('light', 0.35, -1, 1);
 	const strength = o.num('shadow', 1, 0, 3);
@@ -128,41 +126,56 @@ export async function boxScene(canvas, options) {
 	const u = 1 / UNIT;
 	const [W, D, H, t] = [b.width * u, b.depth * u, b.height * u, b.board * u];
 	const lidSize = /** @type {[number, number]} */ (kind === 'mailer' ? [b.width, b.depth] : [b.width + 2 * b.board + 2, b.depth + 2 * b.board + 2]);
+	const frontSize = /** @type {[number, number]} */ (kind === 'mailer' ? [b.width, b.height - b.board] : [lidSize[0], b.skirt]);
 	const aspect = print === 'logo' ? await artAspect(art) : 1;
-	const sideAspect = side && print === 'logo' ? await artAspect(side) : 1;
+	const sideAspect = side ? await artAspect(side) : 1;
+	// a side print fills the front when it suits it, otherwise it sits whole in the middle
+	const sideFit = print === 'logo' ? 'logo' : faceFit(sideAspect, frontSize[0] / frontSize[1]);
+	const topPrint = await panelCanvas(art, { size: lidSize, color: null, fit: print, aspect });
+	const frontPrint = side ? await panelCanvas(side, { size: frontSize, color: null, fit: sideFit, aspect: sideAspect, scale: 0.7 }) : null;
 
 	return shoot(canvas, shot, async (THREE, scene, keep) => {
-		const tex = (c) => {
-			const tx = keep(new THREE.CanvasTexture(c));
-			tx.colorSpace = THREE.SRGBColorSpace;
-			tx.anisotropy = 8;
-			return tx;
-		};
-		const top = tex(await panelCanvas(art, { size: lidSize, color, fit: print, aspect }));
-		const front = side
-			? tex(await panelCanvas(side, { size: kind === 'mailer' ? [b.width, b.height - b.board] : [lidSize[0], b.skirt], color, fit: print, aspect: sideAspect, scale: 0.7 }))
-			: null;
-		// the paper's tooth over every face, a tile every 40 mm
-		const tooth = keep(toothMap(THREE, seed));
-		tooth.repeat.set(b.width / 40, b.depth / 40);
-		const board = (c, map = null) => {
-			const m = keep(boardMaterial(THREE, c, map));
-			m.bumpMap = tooth;
-			m.bumpScale = 0.35;
+		const kit = await boardKit(THREE, outKraft ? FIBRE_LOOKS.kraft : board.look, seed, outKraft ? 2.2 : board.look === FIBRE_LOOKS.white ? 1.1 : 1.6);
+		keep(kit.normal);
+		keep(kit.rough);
+		/** @type {Map<string, import('three').Material>} */
+		const made = new Map();
+		let n = 0;
+		/**
+		 * A face of board, baked at its size (faces alike share one).
+		 *
+		 * @param {'out' | 'in'} side Outside (the board) or inside (the lining).
+		 * @param {[number, number]} size Its size, mm.
+		 * @param {Omit<import('./board.js').BakeOptions, 'size' | 'color' | 'kraft' | 'seed'>} [extra] Its print, occlusion and folds.
+		 * @returns {import('three').Material} The material.
+		 */
+		const face = (side, size, extra = {}) => {
+			const key = `${side}:${size.map(Math.round).join('x')}:${JSON.stringify(extra.ao ?? null)}:${JSON.stringify(extra.folds ?? null)}:${extra.print ? n : ''}`;
+			let m = made.get(key);
+			if (!m) {
+				const color = side === 'in' ? lining : board.color;
+				const baked = bakeBoard(kit, { size, color, kraft: side === 'in' ? liningKraft : outKraft, seed: `${seed}:${n++}`, ...extra });
+				m = keep(bakedMaterial(THREE, kit, baked, size, color));
+				made.set(key, m);
+			}
 			return m;
 		};
-		// the plain faces carry baked occlusion: inside, shadow gathers in the corners and where walls meet the floor; outside, a little at the foot
-		const shaded = (c, ao) => {
-			const m = board(c, keep(ao));
-			m.color.set(c);
-			return m;
-		};
-		const outer = shaded(color, shadeMap(THREE, { bottom: 0.16, sides: 0.05, reach: 0.12 }));
-		const inner = shaded(inside, shadeMap(THREE, { sides: 0.42, bottom: 0.5, top: 0.12, reach: 0.18 }));
-		const lidTop = board(color, top);
-		const frontFace = front ? board(color, front) : outer;
+		const AO_IN = { sides: 0.42, bottom: 0.5, top: 0.12, reach: 0.18 };
+		const AO_FLOOR = { sides: 0.42, bottom: 0.42, top: 0.42, reach: 0.18 };
+		const AO_OUT = { bottom: 0.16, sides: 0.05, reach: 0.12 };
+		const wallH = kind === 'mailer' ? b.height - b.board : b.height;
+		// a mailer's side print is on its front wall; a lid box's is on its lid's skirt
+		const outFront = face('out', [b.width, wallH], { print: kind === 'mailer' ? frontPrint : null, ao: AO_OUT, folds: kind === 'mailer' ? { top: 0.14 } : {} });
+		const outBack = face('out', [b.width, wallH], { ao: AO_OUT });
+		const outSide = face('out', [b.depth, wallH], { ao: AO_OUT });
+		const inWall = face('in', [b.width, wallH], { ao: AO_IN });
+		const inSide = face('in', [b.depth, wallH], { ao: AO_IN });
+		const inFloor = face('in', [b.width, b.depth], { ao: AO_FLOOR });
+		const under = face('out', [b.width, b.depth]);
+		const lidTop = face('out', lidSize, { print: topPrint, folds: kind === 'mailer' ? { top: 0.12, bottom: 0.1 } : {} });
+		const lidIn = face('in', lidSize, { ao: { sides: 0.12, bottom: 0.12, top: 0.12, reach: 0.12 } });
 		// a mailer's cut edges show the flutes; a rigid box is wrapped, so its edges are its paper
-		const edge = kind === 'mailer' ? keep(boardMaterial(THREE, '#ffffff', keep(fluteMap(THREE, color, inside)))) : outer;
+		const edge = kind === 'mailer' ? keep(boardMaterial(THREE, '#ffffff', keep(fluteMap(THREE, board.color, lining)))) : outBack;
 		const ft = FLUTE_TILE * u;
 		const E = edge;
 		const box = new THREE.Group();
@@ -170,42 +183,49 @@ export async function boxScene(canvas, options) {
 
 		if (kind === 'mailer') {
 			const h = H - t;
+			const fh = h - 2 * t - 0.08;
+			const flapOut = face('out', [b.width - 2 * b.board, fh / u]);
+			const flapIn = face('in', [b.width - 2 * b.board, fh / u]);
 			box.add(
-				slab(THREE, [W - 2 * t, t, D - 2 * t], [0, t / 2, 0], [E, E, inner, outer, E, E], { edges: [0, 1, 4, 5], tile: ft }),
-				slab(THREE, [W, h, t], [0, h / 2, D / 2 - t / 2], [E, E, E, E, frontFace, inner], { edges: [0, 1, 2, 3], tile: ft }),
-				slab(THREE, [W, h, t], [0, h / 2, -D / 2 + t / 2], [E, E, E, E, inner, outer], { edges: [0, 1, 2, 3], tile: ft }),
-				slab(THREE, [t, h, D - 2 * t], [-W / 2 + t / 2, h / 2, 0], [inner, outer, E, E, E, E], { edges: [2, 3, 4, 5], tile: ft }),
-				slab(THREE, [t, h, D - 2 * t], [W / 2 - t / 2, h / 2, 0], [outer, inner, E, E, E, E], { edges: [2, 3, 4, 5], tile: ft }),
+				slab(THREE, [W - 2 * t, t, D - 2 * t], [0, t / 2, 0], [E, E, inFloor, under, E, E], { edges: [0, 1, 4, 5], tile: ft }),
+				slab(THREE, [W, h, t], [0, h / 2, D / 2 - t / 2], [E, E, E, E, outFront, inWall], { edges: [0, 1, 2, 3], tile: ft }),
+				slab(THREE, [W, h, t], [0, h / 2, -D / 2 + t / 2], [E, E, E, E, inWall, outBack], { edges: [0, 1, 2, 3], tile: ft }),
+				slab(THREE, [t, h, D - 2 * t], [-W / 2 + t / 2, h / 2, 0], [inSide, outSide, E, E, E, E], { edges: [2, 3, 4, 5], tile: ft }),
+				slab(THREE, [t, h, D - 2 * t], [W / 2 - t / 2, h / 2, 0], [outSide, inSide, E, E, E, E], { edges: [2, 3, 4, 5], tile: ft }),
 			);
 			// the lid turns about the back wall's top edge; its tuck flap drops inside the front wall
 			const lid = new THREE.Group();
 			lid.position.set(0, h, -D / 2);
-			const fh = h - 2 * t - 0.08;
 			lid.add(
-				slab(THREE, [W, t, D], [0, t / 2, D / 2], [E, E, lidTop, inner, E, E], { edges: [0, 1, 4, 5], tile: ft }),
-				slab(THREE, [W - 2 * t - 0.03, fh, t], [0, -fh / 2, D - 1.5 * t - 0.01], [E, E, E, E, outer, inner], { edges: [0, 1, 2, 3], tile: ft }),
+				slab(THREE, [W, t, D], [0, t / 2, D / 2], [E, E, lidTop, lidIn, E, E], { edges: [0, 1, 4, 5], tile: ft }),
+				slab(THREE, [W - 2 * t - 0.03, fh, t], [0, -fh / 2, D - 1.5 * t - 0.01], [E, E, E, E, flapOut, flapIn], { edges: [0, 1, 2, 3], tile: ft }),
 			);
 			lid.rotation.x = (-pose.hinge * Math.PI) / 180;
 			box.add(lid);
 		} else {
 			const s = b.skirt * u;
 			const c = t + 0.01; // the lid's clearance round the base
+			const skirtOut = face('out', [lidSize[0], b.skirt], { print: frontPrint });
+			const skirtPlain = face('out', [lidSize[0], b.skirt]);
+			const skirtSide = face('out', [lidSize[1], b.skirt]);
+			const skirtIn = face('in', [lidSize[0], b.skirt]);
+			const rim = face('in', [b.width, b.board * 4]);
 			box.add(
-				slab(THREE, [W - 2 * t, t, D - 2 * t], [0, t / 2, 0], [E, E, inner, outer, E, E]),
-				slab(THREE, [W, H, t], [0, H / 2, D / 2 - t / 2], [E, E, inner, E, outer, inner]),
-				slab(THREE, [W, H, t], [0, H / 2, -D / 2 + t / 2], [E, E, inner, E, inner, outer]),
-				slab(THREE, [t, H, D - 2 * t], [-W / 2 + t / 2, H / 2, 0], [inner, outer, inner, E, E, E]),
-				slab(THREE, [t, H, D - 2 * t], [W / 2 - t / 2, H / 2, 0], [outer, inner, inner, E, E, E]),
+				slab(THREE, [W - 2 * t, t, D - 2 * t], [0, t / 2, 0], [E, E, inFloor, under, E, E]),
+				slab(THREE, [W, H, t], [0, H / 2, D / 2 - t / 2], [E, E, rim, E, outFront, inWall]),
+				slab(THREE, [W, H, t], [0, H / 2, -D / 2 + t / 2], [E, E, rim, E, inWall, outBack]),
+				slab(THREE, [t, H, D - 2 * t], [-W / 2 + t / 2, H / 2, 0], [inSide, outSide, rim, E, E, E]),
+				slab(THREE, [t, H, D - 2 * t], [W / 2 - t / 2, H / 2, 0], [outSide, inSide, rim, E, E, E]),
 			);
 			const lw = W + 2 * c;
 			const ld = D + 2 * c;
 			const lid = new THREE.Group();
 			lid.add(
-				slab(THREE, [lw, t, ld], [0, s - t / 2, 0], [E, E, lidTop, inner, E, E]),
-				slab(THREE, [lw, s - t, t], [0, (s - t) / 2, ld / 2 - t / 2], [E, E, E, E, frontFace, inner]),
-				slab(THREE, [lw, s - t, t], [0, (s - t) / 2, -ld / 2 + t / 2], [E, E, E, E, inner, outer]),
-				slab(THREE, [t, s - t, ld - 2 * t], [-lw / 2 + t / 2, (s - t) / 2, 0], [inner, outer, E, E, E, E]),
-				slab(THREE, [t, s - t, ld - 2 * t], [lw / 2 - t / 2, (s - t) / 2, 0], [outer, inner, E, E, E, E]),
+				slab(THREE, [lw, t, ld], [0, s - t / 2, 0], [E, E, lidTop, lidIn, E, E]),
+				slab(THREE, [lw, s - t, t], [0, (s - t) / 2, ld / 2 - t / 2], [E, E, E, E, frontPrint ? skirtOut : skirtPlain, skirtIn]),
+				slab(THREE, [lw, s - t, t], [0, (s - t) / 2, -ld / 2 + t / 2], [E, E, E, E, skirtIn, skirtPlain]),
+				slab(THREE, [t, s - t, ld - 2 * t], [-lw / 2 + t / 2, (s - t) / 2, 0], [skirtIn, skirtSide, E, E, E, E]),
+				slab(THREE, [t, s - t, ld - 2 * t], [lw / 2 - t / 2, (s - t) / 2, 0], [skirtSide, skirtIn, E, E, E, E]),
 			);
 			// closed, the lid's top rests on the base's walls; lifted, it rises, slides back and tips towards the camera
 			lid.position.set(0, H + t - s + pose.lift * u, -pose.slide * u);

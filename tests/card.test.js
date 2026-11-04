@@ -5,7 +5,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { card, cardPlacements, CARD } from '../src/objects/card.js';
+import { card, cardPlacements, CARD, CARD_LAYOUTS } from '../src/objects/card.js';
 
 const FRONT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 91 61"><rect width="91" height="61" fill="#2f6b4f"/></svg>';
 const BACK = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 91 61"><rect width="91" height="61" fill="#f4f1ea"/></svg>';
@@ -49,16 +49,9 @@ describe('card', () => {
 		assert.ok(CARD.width === 85 && CARD.height === 55);
 	});
 
-	it('holds a card in a hand, either hand, in any skin', () => {
-		const right = card({ art: FRONT, layout: 'hand' }).svg;
-		assert.match(right, /-nailsheen\d+/, 'a thumbnail');
-		assert.match(right, /fill="#c99570"/, 'medium skin by default');
-		const left = card({ art: FRONT, layout: 'hand', hand: 'left', skin: 'deep' }).svg;
-		assert.match(left, /scale\(-[\d.]+ [\d.]+\)/, 'mirrored');
-		assert.match(left, /fill="#56321e"/);
-		assert.match(card({ art: FRONT, layout: 'hand', skin: '#d2a07a' }).svg, /fill="#d2a07a"/);
-		assert.throws(() => card({ art: FRONT, layout: 'hand', skin: /** @type {any} */ ('green') }), /skin/);
-		assert.throws(() => card({ art: FRONT, layout: 'hand', hand: /** @type {any} */ ('both') }), /hand/);
+	it('has no hand: the layout is gone', () => {
+		assert.deepEqual([...CARD_LAYOUTS], ['flat', 'pair', 'stack', 'fan']);
+		assert.throws(() => card({ art: FRONT, layout: /** @type {any} */ ('hand') }), /card: layout is 'flat', 'pair', 'stack' or 'fan'/);
 	});
 
 	it('paints the edge', () => {

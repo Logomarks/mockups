@@ -1,10 +1,9 @@
 import type { Art, Mockup, Size } from '../types.js';
 import type { SurfaceOption } from '../materials/desk.js';
 import type { StockName } from '../materials/paper.js';
-import type { SkinOption } from '../materials/skin.js';
 
 /** How the cards are laid out. */
-export type CardLayout = 'flat' | 'pair' | 'stack' | 'fan' | 'hand';
+export type CardLayout = 'flat' | 'pair' | 'stack' | 'fan';
 
 /** How to show a business card. */
 export interface CardOptions {
@@ -12,7 +11,7 @@ export interface CardOptions {
 	art: Art;
 	/** The back. */
 	back?: Art;
-	/** `'flat'` (one card; the default without a back), `'pair'` (front and back; the default with one), `'stack'` (a stack and a back beside it), `'fan'`, or `'hand'` (held). */
+	/** `'flat'` (one card; the default without a back), `'pair'` (front and back; the default with one), `'stack'` (a stack and a back beside it) or `'fan'`. */
 	layout?: CardLayout;
 	/** What the cards lie on (`'concrete'`). */
 	surface?: SurfaceOption;
@@ -26,10 +25,6 @@ export interface CardOptions {
 	radius?: number;
 	/** The bleed the art carries round the trim, in mm (0; files from `@arraypress/covers` carry 3). */
 	bleed?: number;
-	/** The holding hand's skin, for `'hand'`: `'porcelain'`, `'light'`, `'medium'` (the default), `'tan'`, `'brown'`, `'deep'` or a hex colour. */
-	skin?: SkinOption;
-	/** Which hand holds it, for `'hand'` (`'right'`). */
-	hand?: 'right' | 'left';
 	/** How many cards a stack or fan has, 2–40 (10; a fan 5). */
 	count?: number;
 	/** The output's size in pixels (a 1600 square). */

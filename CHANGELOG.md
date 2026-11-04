@@ -5,6 +5,31 @@ All notable changes to `@arraypress/mockups` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-11-05
+
+### Removed
+
+- The drawn hand: `card` layout `'hand'`, `ticket` layout `'held'`, the `skin`/`hand` options and `SKINS`. It couldn't pass for a photo. Passing `'hand'` or `'held'` now throws the usual unknown-layout error.
+- `box`'s `angle` option: `open` sets how far a mailer's lid is swung.
+
+### Changed
+
+- **Box options match in 2D and 3D** (breaking). `open` is 0–1 in both (a mailer's lid swung up 112° at 1, a lid box's lid lifted); 2D still takes `true`/`false`. The board is `board` in both (`'kraft'`, the default, `'white'`, `'black'` or hex) and the inside is `lining`; `boxScene`'s `color` and `inside` are gone, and its default board is kraft (it was off-white).
+- **Board reads as board.** Kraft is a photographed texture, with four variants mixed across faces, each turned and offset by the seed so the repeat never lines up. White and black board take its grain over their colour. Print is a little less saturated, with soft edges, and the grain lies over it, so the ink sits in the fibres. Kraft's shadows are a warm brown. Cut edges show the corrugated flute between two liners, including an open mailer's flap end. Folds have a soft rounded bend, and there's a faint crush where the lid tucks in. Inside corners gather soft occlusion. A white mailer is kraft inside.
+- **`boxScene`** bakes each face at its real size, with occlusion and folds, and uses a matte physical material (roughness about 0.9) with normal and roughness maps from the texture, plus a faint grazing sheen.
+- **`bag`** with `paper: 'kraft'` uses the photographed kraft.
+
+### Fixed
+
+- A side print is fitted to its face. Art whose proportions don't suit a face (a ticket on a lid box's shallow band) sits whole in the middle at the band's height, instead of being cropped to a band of itself. Every print stays clipped to its face.
+- A lid box's side print in 3D is on the lid's skirt only, not on the base's front as well.
+- An open box's inside walls are lit by how they face the light, so the left wall is no longer a dark block.
+
+### Added
+
+- `assets/textures/`: four healed kraft textures (WebP, 1024², about 900 KB in all; `tools/heal-textures.mjs` rebuilds them from the sources). `./node` loads them on import, `./browser` with `loadTextures()`, and `boxScene` fetches them. Without them, board falls back to procedural fibre.
+- `fbm` and `noise2` can wrap, for seamless tiles.
+
 ## [0.1.1] — 2026-11-05
 
 ### Fixed

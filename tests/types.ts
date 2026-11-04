@@ -64,15 +64,15 @@ poster({ art: png, mount: 'glue' });
 vinylScene(canvas, { art: png, layout: 'hung' });
 
 // print & brand
-import { card, letterhead, ticket, lanyard, sticker, tote, tee, hoodie, cap, mug, bag, box, SURFACES, STOCKS, SKINS, GARMENT_COLORS, CARD, A4, TICKET, PASS, type SurfaceOption, type CardOptions } from '../src/index.js';
+import { card, letterhead, ticket, lanyard, sticker, tote, tee, hoodie, cap, mug, bag, box, SURFACES, STOCKS, GARMENT_COLORS, CARD, A4, TICKET, PASS, type SurfaceOption, type CardOptions } from '../src/index.js';
 import { cardScene, boxScene, mugScene } from '../src/three/index.js';
 
 const surfaces: SurfaceOption[] = ['concrete', 'oak', 'linen', 'paper', 'dark', '#eeeeee', { texture: 'oak', color: '#8a6a4a' }, { color: '#222222', vignette: 0.2 }];
-const cardOptions: CardOptions = { art: png, back: png, layout: 'stack', surface: surfaces[1], stock: 'cotton', edge: '#e8604c', thickness: 1, radius: 3, bleed: 3, count: 8, skin: 'deep', hand: 'left' };
+const cardOptions: CardOptions = { art: png, back: png, layout: 'stack', surface: surfaces[1], stock: 'cotton', edge: '#e8604c', thickness: 1, radius: 3, bleed: 3, count: 8 };
 const prints: Mockup[] = [
 	card(cardOptions),
 	letterhead({ art: png, layout: 'set', card: png, back: png, logo: '<svg/>', envelope: '#f4f1ea', stock: 'uncoated' }),
-	ticket({ art: png, layout: 'held', torn: true, stub: 0.75, skin: '#c8906a' }),
+	ticket({ art: png, layout: 'pair', torn: true, stub: 0.75 }),
 	lanyard({ art: png, name: 'HOLLOW FERN', strap: '#2f6b4f', ink: '#ffffff', angle: -4 }),
 	sticker({ art: png, layout: 'sheet', shape: 'contour', extra: [png], border: 2.5, lid: 'graphite' }),
 	tote({ art: png, color: 'natural', scale: 0.8 }),
@@ -82,21 +82,30 @@ const prints: Mockup[] = [
 	mug({ art: png, layout: 'pair', print: 'wrap', back: png, handle: 'left', color: '#111111' }),
 	bag({ art: png, paper: 'kraft', rope: '#ffffff', turn: 30 }),
 	box({ art: png, kind: 'mailer', open: true, side: png, board: 'white' }),
+	box({ art: png, open: 0.4, board: '#2f6b4f', lining: '#f4f1ea' }),
 	mockup('tee', { art: png, color: 'black' }),
 ];
-console.log(prints, SURFACES.oak.color, STOCKS.matte.sheen, SKINS, GARMENT_COLORS, CARD.width, A4.height, TICKET, PASS);
+console.log(prints, SURFACES.oak.color, STOCKS.matte.sheen, GARMENT_COLORS, CARD.width, A4.height, TICKET, PASS);
 void (async () => {
 	const c = await cardScene(canvas, { art: png, back: png, layout: 'fan', edge: '#3b5bdb', view: { tilt: 40, turn: -20 } });
-	const b = await boxScene(canvas, { art: png, kind: 'lid', open: 0.5, print: 'logo' });
+	const b = await boxScene(canvas, { art: png, kind: 'lid', open: 0.5, print: 'logo', board: 'white', lining: '#c7a274' });
 	const mg = await mugScene(canvas, { art: png, print: 'both', spin: -70, layout: 'pair' });
 	[c, b, mg].forEach((s) => s.dispose());
 })();
 // @ts-expect-error: not a layout
 card({ art: png, layout: 'pile' });
+// @ts-expect-error: the hand is gone
+card({ art: png, layout: 'hand' });
+// @ts-expect-error: no skin without a hand
+card({ art: png, skin: 'deep' });
+// @ts-expect-error: the held ticket is gone
+ticket({ art: png, layout: 'held' });
 // @ts-expect-error: not a surface
 tee({ art: png, surface: 'marble' });
 // @ts-expect-error: not a kind
 box({ art: png, kind: 'crate' });
+// @ts-expect-error: the 3D box's colour is `board` now
+boxScene(canvas, { art: png, color: '#ffffff' });
 
 // screens & signs
 import { phone, laptop, billboard, shopfront, shelter, PHONE, PHONE_VIEWS, LAPTOP, BILLBOARD, BLADE, SHELTER, BODIES, SKIES, type PhoneOptions, type LaptopOptions, type BillboardOptions, type ShopfrontOptions, type ShelterOptions } from '../src/index.js';

@@ -47,13 +47,13 @@ export function trimCanvas(art, { trim, bleed = 0, px = 20 }) {
 }
 
 /**
- * A printed panel: the board's colour, the art filling it (`'cover'`) or set in its middle (`'logo'`, a share of its smaller side).
+ * A printed panel: the board's colour, the art filling it (`'cover'`), whole and centred inside a margin (`'contain'`), or set in its middle (`'logo'`, a share of its smaller side).
  *
  * @param {import('../types.js').Art} art The art (inline).
  * @param {object} o The panel.
  * @param {[number, number]} o.size The panel's size, in mm.
- * @param {string} o.color The board's colour, under the art.
- * @param {'cover' | 'logo'} [o.fit='cover'] How the art sits.
+ * @param {string | null} o.color The board's colour, under the art (`null` leaves it clear, for the board to be drawn under it).
+ * @param {'cover' | 'contain' | 'logo'} [o.fit='cover'] How the art sits.
  * @param {number} [o.scale=0.5] For `'logo'`: the art's size, as a share of the panel's smaller side.
  * @param {number} [o.aspect=1] The art's own width over height.
  * @param {number} [o.px=8] Pixels per mm.
@@ -63,9 +63,14 @@ export function panelCanvas(art, { size, color, fit = 'cover', scale = 0.5, aspe
 	const w = Math.round(size[0] * px);
 	const h = Math.round(size[1] * px);
 	const sc = scene({ width: w, height: h, key: 'panel' });
-	sc.add(el('rect', { width: w, height: h, fill: color }));
+	if (color) sc.add(el('rect', { width: w, height: h, fill: color }));
 	if (fit === 'cover') sc.add(sc.image(art, w / h)(0, 0, w, h));
-	else {
+	else if (fit === 'contain') {
+		const pad = Math.min(w, h) * 0.1;
+		const [bw, bh] = [w - 2 * pad, h - 2 * pad];
+		const [aw, ah] = aspect >= bw / bh ? [bw, bw / aspect] : [bh * aspect, bh];
+		sc.add(sc.image(art, aspect)((w - aw) / 2, (h - ah) / 2, aw, ah));
+	} else {
 		const s = Math.min(w, h) * scale;
 		const aw = aspect >= 1 ? s : s * aspect;
 		const ah = aspect >= 1 ? s / aspect : s;

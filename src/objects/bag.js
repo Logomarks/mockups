@@ -5,7 +5,8 @@
  * three-quarter view: the printed front, the side gusset with its centre
  * crease and the bottom's triangular folds, the open top showing the dark
  * inside and the back panel's turned-over edge, the paper's tooth and soft
- * puckering, and the shadow it stands in. Sizes are millimetres (a medium
+ * puckering, and the shadow it stands in. Kraft is the photographed kraft
+ * (when it's loaded), mapped onto each panel, its grain over the print. Sizes are millimetres (a medium
  * bag: 250 wide, 320 tall, 110 deep).
  */
 
@@ -13,6 +14,8 @@ import { scene } from '../render/scene.js';
 import { el } from '../render/svg.js';
 import { resolveSurface, speckTile } from '../materials/desk.js';
 import { grainLayer } from '../materials/grain.js';
+import { FIBRE_LOOKS, boardSurface } from '../materials/board.js';
+import { kraftTextures } from '../materials/textures.js';
 import { tabletop } from '../parts/tabletop.js';
 import { axo } from '../parts/axo.js';
 import { rope } from '../parts/rope.js';
@@ -91,18 +94,21 @@ export function bag(options) {
 	 * @param {number} shade How much darker than the lit paper.
 	 * @param {string} [inner] Markup drawn on it before the shading (the print).
 	 * @param {boolean} [textured=true] Whether its tooth shows (the inside is too dark to need it).
+	 * @param {string | null} [frame=null] The panel's own transform (mm to pixels), for the photographed kraft to lie in its plane.
 	 * @returns {string} The markup.
 	 */
-	const face = (d, color, shade, inner = '', textured = true) => {
+	const face = (d, color, shade, inner = '', textured = true, frame = null) => {
 		const c = sc.id('face');
 		sc.def(el('clipPath', { id: c }, el('path', { d })));
+		const photo = textured && frame && paperRaw === 'kraft' && kraftTextures().length ? boardSurface(sc, { color: paper, kraft: true, look: FIBRE_LOOKS.kraft, matrix: frame, seed: `${seed}:${c}`, grain: 0.7 }) : null;
 		return el(
 			'g',
 			{ 'clip-path': `url(#${c})` },
 			el('path', { d, fill: color }),
+			photo?.base ? el('path', { d, fill: photo.base }) : '',
 			inner,
-			textured ? el('path', { d, fill: tooth }) : '',
-			textured && paperRaw === 'kraft' ? el('path', { d, fill: fibres, opacity: 0.5 }) : '',
+			photo ? el('path', { d, fill: photo.grain }) : textured ? el('path', { d, fill: tooth }) : '',
+			!photo && textured && paperRaw === 'kraft' ? el('path', { d, fill: fibres, opacity: 0.5 }) : '',
 			el('path', { d, fill: '#000', opacity: shade }),
 			textured ? el('path', { d, fill: `url(#${fall})` }) : '',
 		);
@@ -141,14 +147,17 @@ export function bag(options) {
 			el('line', { x1: 0, y1: H - D / 2, x2: W, y2: H - D / 2, stroke: '#000', 'stroke-opacity': 0.08, 'stroke-width': 0.8 }),
 			el('line', { x1: 0, y1: H - D / 2 + 0.8, x2: W, y2: H - D / 2 + 0.8, stroke: '#fff', 'stroke-opacity': 0.08, 'stroke-width': 0.6 }),
 		),
+		true,
+		local,
 	);
 
 	// the side gusset: two halves either side of the centre crease, folded in a V at the top and in triangles at the bottom
 	const notch = 9;
 	const sideBase = shadeOf(1, 0, 0);
-	const sideA = face(v.path([[W, H, 0], [W, H - notch, -D / 2], [W, D / 2, -D / 2], [W, 0, 0]]), paper, sideBase * 0.85);
-	const sideB = face(v.path([[W, H - notch, -D / 2], [W, H, -D], [W, 0, -D], [W, D / 2, -D / 2]]), paper, sideBase * 1.2 + 0.04);
-	const sideBottom = face(v.path([[W, D / 2, -D / 2], [W, 0, -D], [W, 0, 0]]), paper, sideBase + 0.07);
+	const gusset = v.matrix([W, H, 0], [0, 0, -1], [0, -1, 0]);
+	const sideA = face(v.path([[W, H, 0], [W, H - notch, -D / 2], [W, D / 2, -D / 2], [W, 0, 0]]), paper, sideBase * 0.85, '', true, gusset);
+	const sideB = face(v.path([[W, H - notch, -D / 2], [W, H, -D], [W, 0, -D], [W, D / 2, -D / 2]]), paper, sideBase * 1.2 + 0.04, '', true, gusset);
+	const sideBottom = face(v.path([[W, D / 2, -D / 2], [W, 0, -D], [W, 0, 0]]), paper, sideBase + 0.07, '', true, gusset);
 	const crease = (a, b, alpha) => el('path', { d: v.path([a, b], false), fill: 'none', stroke: '#000', 'stroke-opacity': alpha, 'stroke-width': 0.5 * mm });
 	const creases =
 		crease([W, H - notch, -D / 2], [W, D / 2, -D / 2], 0.18) +

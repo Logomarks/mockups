@@ -4,7 +4,7 @@ import type { StockName } from '../materials/paper.js';
 import type { PrintShotOptions } from './printshot.js';
 import type { Shot } from './shot.js';
 
-/** How the cards are laid out in 3D (the 2D layouts, less the hand). */
+/** How the cards are laid out in 3D (the 2D layouts). */
 export type CardSceneLayout = 'flat' | 'pair' | 'stack' | 'fan';
 
 /** A 3D card scene's options: the 2D `card` options (art inline: bytes, SVG or a `data:` URI) less `size` and `grain`, and the shot. */

@@ -1,25 +1,24 @@
 import type { Art, Mockup, Size } from '../types.js';
 import type { SurfaceOption } from '../materials/desk.js';
+import type { BoardOption } from '../materials/board.js';
 
 /** How to show a box. */
 export interface BoxOptions {
 	/** The print on the top (the lid): image bytes, SVG markup, a `data:` URI or a URL. Required. */
 	art: Art;
-	/** A print on the front (a mailer's front, a lid box's lid band). */
+	/** A print on the front (a mailer's front, a lid box's lid band): edge to edge when its proportions suit the face, otherwise whole and centred. */
 	side?: Art;
 	/** A print inside an open mailer's lid (the top's art by default). */
 	inside?: Art;
 	/** `'mailer'` (a corrugated mailer; the default) or `'lid'` (a two-piece lid box). */
 	kind?: 'mailer' | 'lid';
-	/** Open: a mailer's lid swung back, a lid box's lid lifted (false). */
-	open?: boolean;
-	/** How far an open mailer's lid is swung, degrees, 60–130 (105). */
-	angle?: number;
-	/** How far an open lid box's lid is lifted, mm, 0–200 (70). */
+	/** How open, 0 (closed, the default) to 1, as in `boxScene`: a mailer's lid swung up 112° at 1; a lid box's lid lifted `lift` mm at 1. `true` is 1, `false` 0. */
+	open?: number | boolean;
+	/** How far a fully open lid box's lid is lifted, mm, 0–200 (70). */
 	lift?: number;
 	/** The board: `'kraft'` (the default), `'white'`, `'black'` or a hex colour. */
-	board?: 'kraft' | 'white' | 'black' | `#${string}`;
-	/** The inside's colour (kraft a shade lighter; otherwise the board's). */
+	board?: BoardOption;
+	/** The inside's colour (kraft a shade lighter and warmer; a white mailer kraft; otherwise the board's). */
 	lining?: string;
 	/** How far the box is turned to show its side, degrees, 10–60 (32). */
 	turn?: number;
@@ -37,7 +36,7 @@ export interface BoxOptions {
 	fit?: number;
 	/** Film grain, 0–1 (0.5). */
 	grain?: number;
-	/** Seeds the surface (`'box'`). */
+	/** Seeds the surface and the board's grain (`'box'`). */
 	seed?: string;
 }
 

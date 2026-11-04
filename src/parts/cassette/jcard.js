@@ -38,7 +38,7 @@ export function jcard(sc, art, title) {
 		art(0, 0, W, W),
 		el('line', { x1: 5, y1: W + 0.01, x2: W - 5, y2: W + 0.01, stroke: '#000', 'stroke-opacity': 0.25, 'stroke-width': 0.2 }),
 		words && el('text', { x: 5, y: W + 13, 'font-family': FONT, 'font-size': fitType(words, W - 10, 5.2), 'font-weight': 700, 'letter-spacing': 0.3, fill: '#fff' }, esc(words)),
-		el('text', { x: 5, y: H - 6, 'font-family': FONT, 'font-size': 2.3, 'font-weight': 500, 'letter-spacing': 0.5, fill: '#fff', 'fill-opacity': 0.75 }, 'STEREO · DOLBY B NR'),
+		el('text', { x: 5, y: H - 6, 'font-family': FONT, 'font-size': 2.3, 'font-weight': 500, 'letter-spacing': 0.5, fill: '#fff', 'fill-opacity': 0.75 }, 'STEREO · SIDE A / B'),
 		el('rect', { x: W - 16, y: H - 9.2, width: 11, height: 4.4, fill: 'none', stroke: '#fff', 'stroke-opacity': 0.6, 'stroke-width': 0.25 }),
 		el('text', { x: W - 10.5, y: H - 6, 'font-family': FONT, 'font-size': 2.3, 'font-weight': 700, fill: '#fff', 'fill-opacity': 0.75, 'text-anchor': 'middle' }, 'TAPE'),
 	);

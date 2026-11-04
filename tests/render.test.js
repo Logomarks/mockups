@@ -52,11 +52,11 @@ describe('renderImage', () => {
 		// the left record's body, between its label and its rim (as the reference photo: ~218 on 230)
 		const [body] = await pixel(png, 150, 500);
 		assert.ok(body >= 212 && body <= 226, `clear vinyl at ${body}`);
-		// the spindle hole of the left record shows the ground
+		// the spindle hole of the left record shows the true ground (its own shadow is cut out of it)
 		const svg = vinyl({ art: ART, size: 1000, grain: 0 }).svg;
 		const cx = Number(/translate\(([\d.]+) 500\)/.exec(svg)?.[1]);
 		const [hole] = await pixel(png, Math.round(cx), 500);
-		assert.ok(hole >= 215, `hole at ${hole}`);
+		assert.ok(hole >= 228, `hole at ${hole}`);
 	});
 });
 

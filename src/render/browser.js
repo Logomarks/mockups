@@ -8,6 +8,7 @@
 
 import { artHref } from './art.js';
 import { svgImage, canvas2d } from './image.js';
+import { quietCrops, remember, PROBE } from './quiet.js';
 
 export * from '../index.js';
 
@@ -66,5 +67,37 @@ export async function loadArt(input, { size = 1600, quality = 0.9 } = {}) {
 	const [c, g] = canvas2d(Math.round(bmp.width * s), Math.round(bmp.height * s));
 	g.drawImage(bmp, 0, 0, c.width, c.height);
 	bmp.close();
-	return c.toDataURL(href.startsWith('data:image/png') ? 'image/png' : 'image/jpeg', quality);
+	const out = c.toDataURL(opaque(g, c.width, c.height) ? 'image/jpeg' : 'image/png', quality);
+	remember(out, quietCrops(probe(c), PROBE, PROBE));
+	return out;
+}
+
+/**
+ * A small grey copy of a canvas's square middle (as the objects place art), for finding where it's quiet.
+ *
+ * @param {HTMLCanvasElement} c The canvas.
+ * @returns {Uint8Array} Luminance, `PROBE` square, row by row.
+ */
+function probe(c) {
+	const m = Math.min(c.width, c.height);
+	const [p, g] = canvas2d(PROBE, PROBE);
+	g.drawImage(c, (c.width - m) / 2, (c.height - m) / 2, m, m, 0, 0, PROBE, PROBE);
+	const d = g.getImageData(0, 0, PROBE, PROBE).data;
+	const grey = new Uint8Array(PROBE * PROBE);
+	for (let i = 0; i < grey.length; i++) grey[i] = 0.2126 * d[i * 4] + 0.7152 * d[i * 4 + 1] + 0.0722 * d[i * 4 + 2];
+	return grey;
+}
+
+/**
+ * Whether a drawn image has no see-through pixel, so it can be kept as a (much smaller) JPEG.
+ *
+ * @param {CanvasRenderingContext2D} g The canvas it's drawn on.
+ * @param {number} w Its width.
+ * @param {number} h Its height.
+ * @returns {boolean}
+ */
+function opaque(g, w, h) {
+	const px = g.getImageData(0, 0, w, h).data;
+	for (let i = 3; i < px.length; i += 4) if (px[i] < 255) return false;
+	return true;
 }

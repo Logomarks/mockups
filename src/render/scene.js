@@ -19,11 +19,11 @@ export const ART = 1000;
 /**
  * A new document.
  *
- * @param {{ width: number, height: number, art: import('../types.js').Art, key?: string }} o Its size in pixels, the artwork, and a key for its ids (they're the key's hash, so the same mockup always gets the same ids).
+ * @param {{ width: number, height: number, art?: import('../types.js').Art, key?: string }} o Its size in pixels, the artwork (left out when every artwork is placed with `image`), and a key for its ids (they're the key's hash, so the same mockup always gets the same ids).
  * @returns {import('./scene.js').Scene} The builder.
  */
 export function scene({ width, height, art, key = '' }) {
-	const href = artHref(art);
+	const href = art === undefined ? '' : artHref(art);
 	const prefix = 'm' + hash(key + href.slice(0, 256) + href.length).toString(36);
 	/** @type {string[]} */
 	const defs = [];
@@ -34,7 +34,9 @@ export function scene({ width, height, art, key = '' }) {
 	let next = 0;
 	const id = (name) => `${prefix}-${name}${next++}`;
 	const artId = `${prefix}-art`;
-	defs.push(el('image', { id: artId, width: ART, height: ART, href, preserveAspectRatio: 'xMidYMid slice' }));
+	if (href) defs.push(el('image', { id: artId, width: ART, height: ART, href, preserveAspectRatio: 'xMidYMid slice' }));
+	/** @type {Map<string, Map<number, string>>} */
+	const images = new Map();
 
 	return {
 		width,
@@ -58,7 +60,20 @@ export function scene({ width, height, art, key = '' }) {
 			return `url(#${f})`;
 		},
 		useArt(x, y, w, h, attrs = {}) {
+			if (!href) throw new TypeError('useArt: this document has no artwork of its own (place it with image())');
 			return el('use', { href: `#${artId}`, transform: `translate(${n(x)} ${n(y)}) scale(${n(w / ART)} ${n(h / ART)})`, ...attrs });
+		},
+		image(art, aspect = 1) {
+			const src = artHref(art);
+			const byAspect = images.get(src) ?? new Map();
+			images.set(src, byAspect);
+			let box = byAspect.get(aspect);
+			if (!box) {
+				box = id('img');
+				byAspect.set(aspect, box);
+				defs.push(el('image', { id: box, width: ART * aspect, height: ART, href: src, preserveAspectRatio: 'xMidYMid slice' }));
+			}
+			return (x, y, w, h, attrs = {}) => el('use', { href: `#${box}`, transform: `translate(${n(x)} ${n(y)}) scale(${n(w / (ART * aspect))} ${n(h / ART)})`, ...attrs });
 		},
 		svg() {
 			return (

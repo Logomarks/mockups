@@ -125,7 +125,8 @@ export function grooveMaps(THREE, seed, size = 1024) {
 	}
 	const maps = ['normal', 'roughness', 'anisotropy', 'shadow'].map(() => canvas2d(size, size));
 	const data = maps.map(([, g]) => g.createImageData(size, size));
-	const period = R / 110;
+	// fine enough to read as grooves, coarse enough that the map's mips don't alias into moiré
+	const period = R / 64;
 	for (let y = 0; y < size; y++)
 		for (let x = 0; x < size; x++) {
 			const dx = x + 0.5 - R;

@@ -28,7 +28,7 @@ export interface VinylOptions {
 	fit?: number;
 	/** How strong the sleeve's paper sheen is (1). */
 	sheen?: number;
-	/** Film grain over the frame, 0–1 (0.5); 0 for none. */
+	/** Film grain over the frame, 0–1 (0.2); 0 for none. */
 	grain?: number;
 	/** Words for the ring of type on the labels. */
 	title?: string;

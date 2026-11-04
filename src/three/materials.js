@@ -1,9 +1,10 @@
 /**
  * @module @arraypress/mockups/three/materials
  *
- * Vinyl as a physical material. Clear and coloured translucent vinyl
- * transmit light (three.js transmission, tinted by the colour, a little
- * rough so the ground behind softens); solid vinyl is glossy with a
+ * Vinyl as a physical material. Clear vinyl is nearly invisible: thin,
+ * smooth, all transmission at glass's index, seen by its reflections.
+ * Coloured translucent vinyl transmits light tinted by the colour, a
+ * little rough so the ground behind softens; solid vinyl is glossy with a
  * clearcoat; splatter and marble take their colours from a texture drawn
  * by the 2D material. Every kind gets the groove maps: fine rings in the
  * normal, glossier gaps, and anisotropy running along the grooves.
@@ -43,19 +44,34 @@ export function vinylMaterial(THREE, m, maps, body = null) {
 			thickness: 0.004,
 		});
 	}
-	if (m.opacity < 0.98) {
-		// a filter: white light through clear vinyl, the colour through tinted
-		const tint = m.kind === 'clear' ? '#e4e9eb' : mix('#ffffff', m.color, Math.min(1, 0.4 + m.opacity));
+	if (m.kind === 'clear') {
+		// nearly invisible: thin, glassy and smooth, so it shows mostly as reflections, the grooves streaking them
 		return new THREE.MeshPhysicalMaterial({
 			...grooves,
-			color: tint,
+			normalScale: new THREE.Vector2(0.9, 0.9),
+			anisotropy: 0.95,
+			color: '#e8ebed',
 			clearcoat: 0,
 			transmission: 1,
-			roughness: m.kind === 'clear' ? 0.1 : 0.16,
+			roughness: 0.07,
+			thickness: 0.0025,
+			ior: 1.5,
+			specularIntensity: 1,
+			envMapIntensity: 2.6,
+		});
+	}
+	if (m.opacity < 0.98) {
+		// a filter: the colour through tinted vinyl
+		return new THREE.MeshPhysicalMaterial({
+			...grooves,
+			color: mix('#ffffff', m.color, Math.min(1, 0.4 + m.opacity)),
+			clearcoat: 0,
+			transmission: 1,
+			roughness: 0.16,
 			thickness: 0.004,
 			ior: 1.5,
-			attenuationColor: new THREE.Color(m.kind === 'clear' ? '#dfe5e8' : m.color),
-			attenuationDistance: m.kind === 'clear' ? 0.08 : 0.01,
+			attenuationColor: new THREE.Color(m.color),
+			attenuationDistance: 0.01,
 			specularIntensity: 0.6,
 			envMapIntensity: 0.45,
 		});

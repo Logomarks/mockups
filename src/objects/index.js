@@ -7,9 +7,29 @@
  */
 
 import { vinyl } from './vinyl.js';
+import { cd } from './cd.js';
+import { cassette } from './cassette.js';
+import { poster } from './poster.js';
+import { card } from './card.js';
+import { letterhead } from './letterhead.js';
+import { ticket } from './ticket.js';
+import { lanyard } from './lanyard.js';
+import { sticker } from './sticker.js';
+import { tote } from './tote.js';
+import { tee } from './tee.js';
+import { hoodie } from './hoodie.js';
+import { cap } from './cap.js';
+import { mug } from './mug.js';
+import { bag } from './bag.js';
+import { box } from './box.js';
+import { phone } from './phone.js';
+import { laptop } from './laptop.js';
+import { billboard } from './billboard.js';
+import { shopfront } from './shopfront.js';
+import { shelter } from './shelter.js';
 
 /** The objects, by name. */
-export const OBJECTS = Object.freeze({ vinyl });
+export const OBJECTS = Object.freeze({ vinyl, cd, cassette, poster, card, letterhead, ticket, lanyard, sticker, tote, tee, hoodie, cap, mug, bag, box, phone, laptop, billboard, shopfront, shelter });
 
 /**
  * A mockup by the object's name.

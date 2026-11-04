@@ -11,6 +11,7 @@ import { el, esc } from '../render/svg.js';
 import { artHref } from '../render/art.js';
 import { ART } from '../render/scene.js';
 import { clamp, n } from '../util/num.js';
+import { recall } from '../render/quiet.js';
 
 /** The type labels are set in. */
 const FONT = "'Helvetica Neue', Helvetica, Arial, sans-serif";
@@ -40,18 +41,20 @@ const SOURCES = /** @type {const} */ (['crop', 'blur', 'plain']);
  *
  * @param {import('./label.js').LabelsOption | undefined} labels `'auto'` (a crop of the cover, the first dark and the second light), `'crop'`, `'blur'`, `'plain'`, or `{ a, b }`, each its own art or a `LabelSpec`.
  * @param {string} title Words for the ring of type.
+ * @param {import('../types.js').Art} [art] The cover: when `loadArt` measured it, crops with no window of their own go where it's quietest.
  * @returns {[Label, Label]} Side A's and side B's.
  * @throws {TypeError} For anything else.
  */
-export function resolveLabels(labels = 'auto', title = '') {
+export function resolveLabels(labels = 'auto', title = '', art) {
+	const quiet = typeof art === 'string' ? recall(art.trim()) : null;
 	const word = labels === 'auto' ? 'crop' : labels;
 	if (typeof word === 'string') {
 		if (!SOURCES.includes(/** @type {'crop'} */ (word))) throw new TypeError(`labels: 'auto', 'crop', 'blur', 'plain' or { a, b } (got ${JSON.stringify(labels)})`);
-		return [resolveLabel({ art: /** @type {'crop'} */ (word) }, 0, title), resolveLabel({ art: /** @type {'crop'} */ (word) }, 1, title)];
+		return [resolveLabel({ art: /** @type {'crop'} */ (word) }, 0, title, quiet), resolveLabel({ art: /** @type {'crop'} */ (word) }, 1, title, quiet)];
 	}
 	if (!labels || typeof labels !== 'object') throw new TypeError('labels: an object of { a, b }');
 	const a = labels.a ?? 'crop';
-	return [resolveLabel(a, 0, title), resolveLabel(labels.b ?? a, 1, title)];
+	return [resolveLabel(a, 0, title, quiet), resolveLabel(labels.b ?? a, 1, title, quiet)];
 }
 
 /**
@@ -60,16 +63,17 @@ export function resolveLabels(labels = 'auto', title = '') {
  * @param {import('./label.js').LabelSpec | import('../types.js').Art} spec Its art, or its spec.
  * @param {number} i The side (0 for A).
  * @param {string} title Words for the ring of type.
+ * @param {import('../types.js').Crop[] | null} [quiet] Where the cover is quiet, quietest first (the default crops otherwise).
  * @returns {Label} The label.
  */
-export function resolveLabel(spec, i, title) {
+export function resolveLabel(spec, i, title, quiet = null) {
 	const o = typeof spec === 'object' && !(spec instanceof Uint8Array) && !(spec instanceof ArrayBuffer) ? spec : { art: spec };
 	const art = o.art ?? 'crop';
 	const keyword = typeof art === 'string' && SOURCES.includes(/** @type {'crop'} */ (art));
 	const tone = o.tone ?? (i ? 'light' : 'dark');
 	if (tone !== 'dark' && tone !== 'light') throw new TypeError(`label tone: 'dark' or 'light' (got ${JSON.stringify(tone)})`);
 	const side = i ? 'B' : 'A';
-	const crop = o.crop ?? CROPS[i % 2];
+	const crop = o.crop ?? quiet?.[i % quiet.length] ?? CROPS[i % 2];
 	const ring = `${title ? title.toUpperCase() + ' · ' : ''}SIDE ${side} · 33⅓ RPM · STEREO · ALL RIGHTS OF THE PRODUCER AND OWNER OF THE RECORDED WORK RESERVED · `;
 	return {
 		source: keyword ? /** @type {'crop' | 'blur' | 'plain'} */ (art) : 'art',

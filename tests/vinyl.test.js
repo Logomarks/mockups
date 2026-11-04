@@ -170,8 +170,48 @@ describe('materials', () => {
 
 describe('objects', () => {
 	it('finds an object by name', () => {
-		assert.deepEqual(Object.keys(OBJECTS), ['vinyl']);
+		for (const name of ['vinyl', 'cd', 'cassette', 'poster']) assert.ok(Object.hasOwn(OBJECTS, name), name);
 		assert.equal(mockup('vinyl', { art: ART, size: 400 }).svg, vinyl({ art: ART, size: 400 }).svg);
-		assert.throws(() => mockup(/** @type {any} */ ('mug'), { art: ART }), /No object "mug"/);
+		assert.throws(() => mockup(/** @type {any} */ ('kettle'), { art: ART }), /No object "kettle"/);
 	});
 });
+
+describe('vinyl fixes', () => {
+	it('cuts tracks as bands: a few gaps, each a crisp glossy ring', () => {
+		const stops = trackStops('x', false);
+		const gaps = stops.filter(([o, c, a], i) => c === '#ffffff' && a > 0.07 && stops[i + 1]?.[1] === '#ffffff' && stops[i + 1][0] - o < 0.01);
+		assert.ok(gaps.length >= 4 && gaps.length <= 10, `${gaps.length} gaps`);
+	});
+
+	it('centres its radial gradients on the record (not the frame)', () => {
+		const { svg } = vinyl({ art: ART });
+		for (const m of svg.matchAll(/<radialGradient [^>]*gradientUnits="userSpaceOnUse"[^>]*>/g)) if (/-(tracks|ringfill|glow)\d/.test(m[0])) assert.match(m[0], /cx="0" cy="0"/);
+	});
+
+	it('marbles in lobes from the centre, not bands', () => {
+		const { svg } = vinyl({ art: ART, vinyl: { marble: ['#f4efe6', '#d94f30', '#2b2d42'] } });
+		assert.doesNotMatch(svg, /<rect x="-[\d.]+" y="-?[\d.]+" width="[\d.]+" height="[\d.]+" fill="#d94f30"/);
+		assert.ok(count(svg, /<path d="M0 0L/g) >= 6, 'lobes start at the centre');
+	});
+
+	it('crops labels where the cover is quiet when it was measured', async () => {
+		const { quietCrops, remember } = await import('../src/render/quiet.js');
+		// a grey image busy on the left half, flat on the right
+		const w = 64;
+		const grey = Uint8Array.from({ length: w * w }, (_, i) => ((i % w) < w / 2 ? ((i * 37) % 255) : 128));
+		const [first, second] = quietCrops(grey, w, w);
+		assert.ok(first.x > 0.5 && second.x > 0.5, 'both on the flat half');
+		assert.ok(Math.hypot(first.x - second.x, first.y - second.y) > 0.1, 'apart');
+		const href = 'data:image/svg+xml;base64,' + Buffer.from(ART).toString('base64');
+		remember(href, [first, second]);
+		const [a, b] = resolveLabels('auto', '', href);
+		assert.deepEqual(a.crop, first);
+		assert.deepEqual(b.crop, second);
+		assert.notDeepEqual(resolveLabels('auto', '', ART)[0].crop, first, 'unmeasured art keeps the fixed crops');
+	});
+
+	it('lowers the grain by default', () => {
+		assert.match(vinyl({ art: ART }).svg, /-grain\d+\)" opacity="0\.008"/);
+	});
+});
+

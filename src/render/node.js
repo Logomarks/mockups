@@ -8,6 +8,7 @@
 
 import { readFile } from 'node:fs/promises';
 import { artHref } from './art.js';
+import { quietCrops, remember, PROBE } from './quiet.js';
 
 export * from '../index.js';
 
@@ -78,10 +79,31 @@ export async function loadArt(input, { size = 1600, quality = 90 } = {}) {
 		} else bytes = await readFile(s);
 	} else bytes = input instanceof ArrayBuffer ? new Uint8Array(input) : input;
 	const href = artHref(bytes);
-	if (href.startsWith('data:image/svg+xml')) return href;
+	if (href.startsWith('data:image/svg+xml')) return measure(href, bytes);
 	const s = await sharp();
 	const img = s(bytes).rotate().resize({ width: size, height: size, fit: 'inside', withoutEnlargement: true });
-	const { hasAlpha } = await s(bytes).metadata();
-	const out = hasAlpha ? await img.png().toBuffer() : await img.jpeg({ quality, mozjpeg: true }).toBuffer();
-	return artHref(out);
+	// JPEG unless a pixel is actually see-through: an alpha channel alone (most PNG renders have one) isn't transparency,
+	// and a JPEG is several times smaller, which every warped piece of a render re-decodes
+	const { isOpaque } = await s(bytes).stats();
+	const out = isOpaque ? await img.jpeg({ quality, mozjpeg: true }).toBuffer() : await img.png().toBuffer();
+	return measure(artHref(out), bytes);
+}
+
+/**
+ * Measures where an artwork is quiet (its square middle, as the objects place it) and remembers it by its URI, for labels cut from it.
+ * Art sharp can't read is left unmeasured.
+ *
+ * @param {string} href The artwork's `data:` URI.
+ * @param {Uint8Array} bytes Its bytes.
+ * @returns {Promise<string>} The URI.
+ */
+async function measure(href, bytes) {
+	try {
+		const s = await sharp();
+		const grey = await s(bytes).rotate().resize(PROBE, PROBE, { fit: 'cover' }).greyscale().raw().toBuffer();
+		remember(href, quietCrops(grey, PROBE, PROBE));
+	} catch {
+		// unmeasured: labels fall back to fixed crops
+	}
+	return href;
 }

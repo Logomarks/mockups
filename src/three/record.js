@@ -4,7 +4,7 @@
  * One record as geometry, lying flat: its two faces (rings round the
  * spindle hole, planar UVs so the groove maps centre on it), its edge, the
  * labels on both sides, and the hole through all of them. A clear record
- * casts a shadow only where it stops light: its rim and its label.
+ * casts a shadow only where it stops light: its edge and its labels.
  */
 
 import { RADII } from '../materials/surface.js';
@@ -49,9 +49,9 @@ export function recordMesh(THREE, { radius, material: m, maps, label, body = nul
 	const clear = m.opacity < 0.98 || (m.base !== null && m.base.opacity < 0.98);
 	g.traverse((o) => {
 		if (!(o instanceof THREE.Mesh)) return;
-		o.castShadow = true;
+		// a clear face lets the light through: only its edge and labels cast (a masked face would alias into rings)
+		o.castShadow = !(clear && o.material === mat && o !== edge);
 		o.receiveShadow = true;
-		if (clear && o.material === mat) o.customDepthMaterial = new THREE.MeshDepthMaterial({ alphaMap: maps.shadow, alphaTest: 0.5 });
 	});
 	return g;
 }

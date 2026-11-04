@@ -5,9 +5,12 @@
  * ground keeps the colour asked for), a room for glossy things to reflect,
  * the seamless ground, and the light: a soft key from above the light's
  * side, so shadows fall away from it as in the 2D mockup, and a dim fill.
+ * Things standing get a paper sweep instead of a floor, lit from the front.
  * `expose` then sets the exposure so the ground comes out the colour it was
  * asked to be, whatever the lights add up to.
  */
+
+import { sweepMesh } from './sweep.js';
 
 /**
  * A renderer on a canvas.
@@ -35,26 +38,32 @@ export function makeRenderer(THREE, canvas, { width, height, pixelRatio, exposur
  * @param {typeof import('three')} THREE three.js.
  * @param {import('three').WebGLRenderer} renderer The renderer (for the environment).
  * @param {typeof import('three/addons/environments/RoomEnvironment.js').RoomEnvironment} Room The room environment.
- * @param {{ ground: string, light: number }} o The ground's colour and where the light is, left (-1) to right (1).
+ * @param {{ ground: string, light: number, layout?: 'flat' | 'upright' }} o The ground's colour, where the light is, left (-1) to right (1), and how things stand: lying on the ground (`'flat'`, the default) or standing on a paper sweep (`'upright'`).
  * @returns {{ scene: import('three').Scene, dispose: () => void }} The scene, and how to free its environment.
  */
-export function makeStage(THREE, renderer, Room, { ground, light }) {
+export function makeStage(THREE, renderer, Room, { ground, light, layout = 'flat' }) {
 	const scene = new THREE.Scene();
 	scene.background = new THREE.Color(ground);
 	const pmrem = new THREE.PMREMGenerator(renderer);
 	const env = pmrem.fromScene(new Room(), 0.04).texture;
 	scene.environment = env;
 	scene.environmentIntensity = 0.32;
+	const upright = layout === 'upright';
 
-	// matte paper: no sheen at grazing angles, so a dark ground stays dark across the frame
-	const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshLambertMaterial({ color: ground }));
-	floor.rotation.x = -Math.PI / 2;
-	floor.receiveShadow = true;
-	scene.add(floor);
+	if (upright) scene.add(sweepMesh(THREE, { color: ground, back: 2.4, cove: 0.8 }));
+	else {
+		// matte paper: no sheen at grazing angles, so a dark ground stays dark across the frame
+		const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshLambertMaterial({ color: ground }));
+		floor.rotation.x = -Math.PI / 2;
+		floor.receiveShadow = true;
+		scene.add(floor);
+	}
 
-	// the key: high, a little to the light's side and beyond the top of the frame
-	const key = new THREE.DirectionalLight('#ffffff', 1);
-	key.position.set(light * 2.2, 6, -1.6);
+	// the key: over a flat lay, high, to the light's side and beyond the top of the frame; for things standing, in front and
+	// halfway up, so floor and wall take the same light and shadows fall back and down
+	const key = new THREE.DirectionalLight('#ffffff', upright ? 0.7 : 1);
+	if (upright) key.position.set(light * 3.2, 4.4, 4.4);
+	else key.position.set(light * 2.2, 6, -1.6);
 	key.castShadow = true;
 	key.shadow.mapSize.set(2048, 2048);
 	key.shadow.camera.left = key.shadow.camera.bottom = -2.2;
@@ -64,8 +73,15 @@ export function makeStage(THREE, renderer, Room, { ground, light }) {
 	key.shadow.radius = 9;
 	key.shadow.blurSamples = 24;
 	key.shadow.bias = -0.0004;
+	if (upright) {
+		// the sweep's cove curves through the light's depth, where VSM bands and bleeds: filtered PCF (soft by its radius), pushed off the surface
+		renderer.shadowMap.type = THREE.PCFShadowMap;
+		key.shadow.mapSize.set(1024, 1024);
+		key.shadow.normalBias = 0.01;
+	}
 	scene.add(key, key.target);
-	scene.add(new THREE.HemisphereLight('#ffffff', '#d8d8d8', 0.22));
+	// the fill: from above over a flat lay; all round in the sweep (the paper bounces it), so shadows stay soft
+	scene.add(upright ? new THREE.HemisphereLight('#ffffff', '#f2f2f2', 0.9) : new THREE.HemisphereLight('#ffffff', '#d8d8d8', 0.22));
 	return {
 		scene,
 		dispose() {

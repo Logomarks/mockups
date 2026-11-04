@@ -61,3 +61,29 @@ export function silhouette(x, y, r, opacity, fill) {
 		el('path', { d: circlePath(x, y, RADII.label * r) + hole, fill, 'fill-rule': 'evenodd' })
 	);
 }
+
+/**
+ * Markup with a record's spindle hole cut out of it, so its own shadow doesn't darken the ground seen through the hole.
+ *
+ * @param {import('../render/scene.js').Scene} sc The document.
+ * @param {number} x The record's centre, x.
+ * @param {number} y The record's centre, y.
+ * @param {number} r The record's radius.
+ * @param {string} markup What to cut the hole out of.
+ * @param {number} [hole] The hole's radius (a record's spindle hole, a little wider).
+ * @returns {string} The markup, masked.
+ */
+export function punch(sc, x, y, r, markup, hole = RADII.hole * r * 1.15) {
+	if (!markup) return '';
+	const m = sc.id('punch');
+	const pad = r * 1.5;
+	sc.def(
+		el(
+			'mask',
+			{ id: m, maskUnits: 'userSpaceOnUse', x: x - 2 * pad, y: y - 2 * pad, width: 4 * pad, height: 4 * pad },
+			el('rect', { x: x - 2 * pad, y: y - 2 * pad, width: 4 * pad, height: 4 * pad, fill: '#fff' }),
+			el('circle', { cx: x, cy: y, r: hole, fill: '#000' }),
+		),
+	);
+	return el('g', { mask: `url(#${m})` }, markup);
+}

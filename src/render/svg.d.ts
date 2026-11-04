@@ -7,3 +7,5 @@ export function esc(s: unknown): string;
 export function el(tag: string, attrs?: Record<string, AttrValue>, ...children: (string | false | null | undefined)[]): string;
 /** A circle's outline as path data (two arcs), to combine with others under even-odd. */
 export function circlePath(cx: number, cy: number, r: number): string;
+/** A wedge from the origin (radius `r`, pointing `deg` degrees clockwise from +x, `half` degrees either side) as path data. */
+export function wedgePath(r: number, deg: number, half: number): string;

@@ -37,10 +37,10 @@ export interface Label {
 	crop: Crop;
 }
 
-/** Side A's and side B's labels from the option. Throws a TypeError for anything else. */
-export function resolveLabels(labels?: LabelsOption, title?: string): [Label, Label];
-/** One side's label (`i`: 0 for A). */
-export function resolveLabel(spec: LabelSpec | Art, i: number, title: string): Label;
+/** Side A's and side B's labels from the option; crops with no window of their own go where `art` is quietest, when `loadArt` measured it. Throws a TypeError for anything else. */
+export function resolveLabels(labels?: LabelsOption, title?: string, art?: Art): [Label, Label];
+/** One side's label (`i`: 0 for A); `quiet` is where the cover is quiet, quietest first. */
+export function resolveLabel(spec: LabelSpec | Art, i: number, title: string, quiet?: Crop[] | null): Label;
 /** A label's face centred on the origin; `shift` moves its type sideways. */
 export function label(sc: Scene, lb: Label, rl: number, shift?: number): string;
 /** A ring of small type round a circle, one glyph at a time. */

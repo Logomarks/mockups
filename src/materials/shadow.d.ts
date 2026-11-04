@@ -14,6 +14,8 @@ export interface Light {
 export interface Caster {
 	shape: (fill: string) => string;
 	foot: { x: number; bottom: number; width: number } | null;
+	/** How far it stands off what's behind it, relative to a record on the ground (1): smaller is a tighter, fainter shadow. */
+	lift?: number;
 }
 
 /** A tight contact shadow, a wide ambient one, and a pool on the floor (when it stands), to draw just before the object. */

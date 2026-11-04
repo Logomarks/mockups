@@ -7,14 +7,15 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import * as THREE from 'three';
-import { place, FRONT } from '../src/three/view.js';
+import { place, placeUpright, FRONT, LEVEL } from '../src/three/view.js';
+import { cdScene } from '../src/three/cd.js';
 import { vinylScene } from '../src/three/index.js';
 
 const group = { width: 2, depth: 1, aspect: 1, fit: 0.89 };
 
 describe('3d', () => {
 	it('imports three.js only when a scene is made', async () => {
-		for (const f of ['index', 'textures', 'materials', 'record', 'sleeve', 'stage', 'view']) {
+		for (const f of ['index', 'textures', 'materials', 'record', 'sleeve', 'stage', 'view', 'shot', 'sweep', 'foot', 'vinyl', 'cd']) {
 			const src = await readFile(new URL(`../src/three/${f}.js`, import.meta.url), 'utf8');
 			assert.doesNotMatch(src, /^import .* from 'three/m, `${f}.js imports three statically`);
 		}
@@ -43,5 +44,25 @@ describe('3d', () => {
 		assert.ok(Math.abs(cam.position.length() - 2 * d) < 1e-9);
 		assert.ok(cam.position.y > 0, 'tilt stops short of the ground');
 		assert.ok(cam.position.x > cam.position.z, 'turned to the side');
+	});
+
+	it('looks at things standing level and straight on by default, and raises and walks round them', () => {
+		const cam = new THREE.PerspectiveCamera();
+		const g = { width: 2.2, height: 1, aspect: 1, fit: 0.89, center: /** @type {[number, number, number]} */ ([0, 0.5, 0]) };
+		placeUpright(cam, {}, g);
+		assert.equal(cam.fov, LEVEL.fov);
+		assert.ok(Math.abs(cam.position.y - 0.5) < 1e-9 && Math.abs(cam.position.x) < 1e-9 && cam.position.z > 0, 'level, in front');
+		const d = cam.position.z;
+		const half = Math.tan(((LEVEL.fov / 2) * Math.PI) / 180);
+		assert.ok(Math.abs(d - 1.1 / half / 0.89) < 1e-9, 'fits the width');
+		placeUpright(cam, { tilt: 20, turn: 30 }, g);
+		assert.ok(cam.position.y > 0.5 && cam.position.x > 0, 'raised and turned');
+		assert.ok(Math.abs(cam.position.distanceTo(new THREE.Vector3(0, 0.5, 0)) - d) < 1e-9);
+	});
+
+	it('refuses a bad layout or packaging before loading three.js', async () => {
+		await assert.rejects(cdScene(/** @type {any} */ ({ width: 10, height: 10 }), /** @type {any} */ ({})), /art is required/);
+		await assert.rejects(cdScene(/** @type {any} */ ({ width: 10, height: 10 }), { art: '<svg/>', packaging: /** @type {any} */ ('slim') }), /packaging/);
+		await assert.rejects(cdScene(/** @type {any} */ ({ width: 10, height: 10 }), { art: '<svg/>', layout: /** @type {any} */ ('hung') }), /layout/);
 	});
 });

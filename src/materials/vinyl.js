@@ -119,7 +119,7 @@ export function body(sc, m, r, seed, ground) {
 	sc.def(
 		el(
 			'radialGradient',
-			{ id: g, gradientUnits: 'userSpaceOnUse', r },
+			{ id: g, gradientUnits: 'userSpaceOnUse', cx: 0, cy: 0, r },
 			el('stop', { offset: 0.3, 'stop-color': mix(m.color, '#ffffff', 0.4), 'stop-opacity': 0.22 }),
 			el('stop', { offset: 0.8, 'stop-color': color, 'stop-opacity': 0 }),
 			el('stop', { offset: 1, 'stop-color': mix(color, '#000000', 0.35), 'stop-opacity': 0.35 }),

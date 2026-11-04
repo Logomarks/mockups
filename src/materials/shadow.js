@@ -28,15 +28,17 @@ import { n } from '../util/num.js';
  * @param {object} o The object.
  * @param {(fill: string) => string} o.shape Its silhouette, filled with the colour given.
  * @param {{ x: number, bottom: number, width: number } | null} o.foot Where it stands on the floor: its centre, bottom edge and width; `null` when it lies flat (no pool).
+ * @param {number} [o.lift=1] How far it stands off what's behind it, relative to a record on the ground: smaller is a tighter, fainter shadow (a sleeve lying on its records is about 0.3).
  * @returns {string} The shadow layers, to draw just before the object.
  */
-export function castShadow(sc, light, { shape, foot }) {
+export function castShadow(sc, light, { shape, foot, lift = 1 }) {
 	const u = light.unit;
-	const k = light.strength;
+	const k = light.strength * Math.min(1, lift) ** 0.75;
 	if (k <= 0) return '';
 	const away = -light.x;
+	const t = Math.max(0.05, lift);
 	const layer = (dx, dy, sigma, alpha) =>
-		el('g', { filter: sc.blur(sigma * u), opacity: Math.min(1, alpha * k) }, el('g', { transform: `translate(${n(dx * u)} ${n(dy * u)})` }, shape('#000')));
+		el('g', { filter: sc.blur(sigma * u * t), opacity: Math.min(1, alpha * k) }, el('g', { transform: `translate(${n(dx * u * t)} ${n(dy * u * t)})` }, shape('#000')));
 	const contact = layer(away * 0.02, 0.025, 0.03, 0.075) + layer(away * 0.005, 0.006, 0.007, 0.13);
 	if (!foot) return contact;
 	// the pool on the floor: under the bottom edge, stretched away from the light

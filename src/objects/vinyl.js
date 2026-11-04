@@ -17,13 +17,16 @@ import { grainLayer } from '../materials/grain.js';
 import { resolveVinyl } from '../materials/vinyl.js';
 import { RADII } from '../materials/surface.js';
 import { resolveLabels } from '../parts/label.js';
-import { record, silhouette } from '../parts/record.js';
+import { record, silhouette, punch } from '../parts/record.js';
 import { sleeve } from '../parts/sleeve.js';
 import { resolveSize } from '../util/size.js';
 import { clamp } from '../util/num.js';
 
 /** A 12" record's diameter, as a fraction of its sleeve's side (302 of 314 mm). */
 export const RECORD = 0.965;
+
+/** How far the sleeve stands off its records, for its shadow: it lies on them, so the shadow is tight and faint. */
+const SLEEVE_LIFT = 0.3;
 
 /** How much further the back record of a fanned pair peeks, as a fraction of its diameter. */
 const FAN = 0.17;
@@ -66,7 +69,7 @@ export function vinyl(options) {
 	const g = resolveGround(ground);
 	const specs = Array.isArray(spec) ? spec : [spec, spec];
 	const materials = [resolveVinyl(specs[0]), resolveVinyl(specs[1] ?? specs[0])];
-	const sides = resolveLabels(labels, title);
+	const sides = resolveLabels(labels, title, art);
 	const recs = placements(format, side, peek);
 
 	// lay out in sleeve units, then fit the group into the frame
@@ -84,7 +87,7 @@ export function vinyl(options) {
 		const x = cx + p.dir * (0.5 * k + p.peek * 2 * R - R);
 		const m = materials[p.label];
 		sc.add(
-			castShadow(sc, shine, { shape: (fill) => silhouette(x, cy, R, m.opacity, fill), foot: { x, bottom: cy + R, width: 2 * R } }),
+			punch(sc, x, cy, R, castShadow(sc, shine, { shape: (fill) => silhouette(x, cy, R, m.opacity, fill), foot: { x, bottom: cy + R, width: 2 * R } })),
 			record(sc, {
 				cx: x,
 				cy,
@@ -99,9 +102,9 @@ export function vinyl(options) {
 		);
 	});
 	sc.add(
-		castShadow(sc, shine, { shape: (fill) => el('rect', { x: cx - k / 2, y: cy - k / 2, width: k, height: k, fill }), foot: { x: cx, bottom: cy + k / 2, width: k } }),
+		castShadow(sc, shine, { shape: (fill) => el('rect', { x: cx - k / 2, y: cy - k / 2, width: k, height: k, fill }), foot: { x: cx, bottom: cy + k / 2, width: k }, lift: SLEEVE_LIFT }),
 		sleeve(sc, { x: cx - k / 2, y: cy - k / 2, size: k, light, sheen: num(options.sheen, 1, 'sheen') }),
-		grainLayer(sc, clamp(num(options.grain, 0.5, 'grain'), 0, 1), seed),
+		grainLayer(sc, clamp(num(options.grain, 0.2, 'grain'), 0, 1), seed),
 	);
 	return { svg: sc.svg(), width, height, object: 'vinyl' };
 }

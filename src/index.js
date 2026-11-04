@@ -43,3 +43,6 @@ export { shopfront, BLADE, SHOPFRONT_VIEWS } from './objects/shopfront.js';
 export { shelter, SHELTER, SHELTER_VIEWS } from './objects/shelter.js';
 export { BODIES } from './materials/body.js';
 export { SKIES } from './materials/sky.js';
+
+// photo plates
+export { plate, PLATE_KINDS, KIND_LOOKS, checkPlate, quadMap } from './plates/index.js';

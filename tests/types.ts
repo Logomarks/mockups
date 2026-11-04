@@ -133,3 +133,20 @@ laptop({ art: png });
 shelter({ art: png, time: 'dusk' });
 // @ts-expect-error: a shopfront needs a name
 shopfront({ art: png });
+
+// photo plates
+import { plate, PLATE_KINDS, KIND_LOOKS, checkPlate, quadMap, type Plate, type PlateKind, type PlateOptions } from '../src/index.js';
+import { loadPlate, makePlate, savePlate, type MakePlateOptions } from '../src/render/node.js';
+import { loadPlate as fetchPlate } from '../src/render/browser.js';
+
+void (async () => {
+	const kind: PlateKind = PLATE_KINDS[0];
+	const made = await makePlate('photo.jpg', { name: 'billboard-dusk', screens: [{ kind, near: [400, 300], aspect: 3, glow: 0 }], source: { licence: 'CC0-1.0', url: 'https://example.com' } } satisfies MakePlateOptions);
+	const dir: string = await savePlate('plates/billboard-dusk', made);
+	const p: Plate = checkPlate(await loadPlate(dir));
+	const q: Plate = await fetchPlate(new URL('https://example.com/plates/billboard-dusk/'));
+	const o: PlateOptions = { art: [png, '<svg/>'], fit: 'top', background: '#000000', grain: 1.5, glow: 0.3, seed: 's' };
+	const m: Mockup = plate(p, o);
+	const at: [number, number] = quadMap(p.screens[0].corners, 3, 1)(1.5, 0.5);
+	console.log(m.svg, q.screens[0].shading, KIND_LOOKS.backlit.glow, at, made.files.size);
+})();

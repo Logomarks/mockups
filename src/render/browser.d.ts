@@ -1,6 +1,7 @@
 import type { Mockup } from '../types.js';
 
 export * from '../index.js';
+export { loadPlate } from '../plates/browser.js';
 
 /** Fetches the photographed board textures; until then kraft board is procedural. False when they can't be fetched. */
 export function loadTextures(): Promise<boolean>;

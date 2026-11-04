@@ -5,6 +5,12 @@ All notable changes to `@arraypress/mockups` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- **Photo plates.** `plate(loadedPlate, { art })` composites art into a real photo's blank signs, as a photo mockup does. It warps the art into the sign's corners, lifts its blacks to ink's density, and multiplies it by the blank sign's own shading. It matches the photo's grain and softness, feathers the edge, restores occluders from the photo, screens glass reflections and floodlight glare back over the art, and adds a glow round lightboxes. The kinds are `'print'`, `'paint'`, `'backlit'` and `'glass'`. `loadPlate` (`./node`, `./browser`) inlines a plate's files. `makePlate` and `savePlate` (`./node`) make one from a photo: they find the sign, recover its proportions from the perspective, and cut its shading, occluder mask, reflections and grain. A hand-painted occluder `mask` is added to what's found. SVG art is inlined rather than drawn as an `<image>`, so the warp's pieces don't misregister. The plates themselves ship separately in `@arraypress/mockups-plates`.
+
 ## [0.2.0] — 2026-11-05
 
 ### Removed

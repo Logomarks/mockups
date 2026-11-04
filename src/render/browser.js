@@ -14,6 +14,7 @@ import { quietCrops, remember, PROBE } from './quiet.js';
 import { KRAFT_COUNT, kraftUrl, setKraftTextures, kraftTextures } from '../materials/textures.js';
 
 export * from '../index.js';
+export { loadPlate } from '../plates/browser.js';
 
 /** @type {Promise<boolean> | null} */
 let texturesLoading = null;

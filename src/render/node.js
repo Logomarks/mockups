@@ -5,7 +5,8 @@
  * imported on first use) and loading artwork from a path or URL, sized
  * down to what a mockup draws, so the SVG stays small and renders fast.
  * Importing it loads the photographed board textures (through sharp, when
- * it's installed), so kraft boxes are drawn with them.
+ * it's installed), so kraft boxes are drawn with them. Photo plates load
+ * (and are made) here too.
  */
 
 import { readFile } from 'node:fs/promises';
@@ -14,6 +15,8 @@ import { quietCrops, remember, PROBE } from './quiet.js';
 import { KRAFT_COUNT, kraftUrl, setKraftTextures, kraftTextures } from '../materials/textures.js';
 
 export * from '../index.js';
+export { loadPlate } from '../plates/node.js';
+export { makePlate, savePlate } from '../plates/extract.js';
 
 /** @type {Promise<typeof import('sharp').default> | null} */
 let sharpModule = null;

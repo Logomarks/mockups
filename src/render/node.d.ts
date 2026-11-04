@@ -2,6 +2,8 @@
 import type { Mockup } from '../types.js';
 
 export * from '../index.js';
+export { loadPlate } from '../plates/node.js';
+export { makePlate, savePlate, type MakePlateOptions, type MakeScreenOptions } from '../plates/extract.js';
 
 /** How to encode a rendered mockup. */
 export interface ImageOutput {

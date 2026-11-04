@@ -1,0 +1,76 @@
+/**
+ * @arraypress/mockups — rasterising with sharp: sizes, formats, and that
+ * the picture is what was asked for (the ground's colour, clear vinyl a
+ * shade under it, the ground through the spindle hole).
+ */
+
+import { describe, it, before } from 'node:test';
+import assert from 'node:assert/strict';
+import { vinyl, renderImage, loadArt } from '../src/render/node.js';
+
+/** @type {typeof import('sharp') | null} */
+let sharp = null;
+before(async () => {
+	sharp = await import('sharp').then((m) => m.default, () => null);
+});
+
+const ART = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="#20304a"/></svg>';
+
+/**
+ * One pixel of an image.
+ *
+ * @param {Buffer} png The image.
+ * @param {number} x Across.
+ * @param {number} y Down.
+ * @returns {Promise<number[]>} Its channels.
+ */
+async function pixel(png, x, y) {
+	const { data, info } = await /** @type {typeof import('sharp')} */ (sharp)(png).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+	const i = (y * info.width + x) * info.channels;
+	return [...data.subarray(i, i + 3)];
+}
+
+describe('renderImage', () => {
+	it('rasterises a mockup at its size, as PNG, WebP or JPEG', async (t) => {
+		if (!sharp) return t.skip('sharp is not installed');
+		const m = vinyl({ art: ART, size: 400, grain: 0 });
+		const png = await renderImage(m);
+		assert.deepEqual([...png.subarray(1, 4)].map((c) => String.fromCharCode(c)).join(''), 'PNG');
+		const meta = await sharp(png).metadata();
+		assert.equal(meta.width, 400);
+		assert.equal(meta.height, 400);
+		const webp = await renderImage(m.svg, { format: 'webp', width: 200 });
+		assert.equal((await sharp(webp).metadata()).width, 200);
+		assert.equal((await sharp(await renderImage(m, { format: 'jpeg' })).metadata()).format, 'jpeg');
+		await assert.rejects(renderImage(m, { format: /** @type {any} */ ('bmp') }), /format/);
+	});
+
+	it('draws the ground, clear vinyl a shade under it, and the ground through the hole', async (t) => {
+		if (!sharp) return t.skip('sharp is not installed');
+		const png = await renderImage(vinyl({ art: ART, size: 1000, grain: 0 }));
+		assert.deepEqual(await pixel(png, 10, 10), [230, 230, 230]);
+		// the left record's body, between its label and its rim (as the reference photo: ~218 on 230)
+		const [body] = await pixel(png, 150, 500);
+		assert.ok(body >= 212 && body <= 226, `clear vinyl at ${body}`);
+		// the spindle hole of the left record shows the ground
+		const svg = vinyl({ art: ART, size: 1000, grain: 0 }).svg;
+		const cx = Number(/translate\(([\d.]+) 500\)/.exec(svg)?.[1]);
+		const [hole] = await pixel(png, Math.round(cx), 500);
+		assert.ok(hole >= 215, `hole at ${hole}`);
+	});
+});
+
+describe('loadArt', () => {
+	it('scales raster art down and keeps SVG as SVG', async (t) => {
+		if (!sharp) return t.skip('sharp is not installed');
+		const big = await sharp({ create: { width: 900, height: 600, channels: 3, background: '#f00' } }).png().toBuffer();
+		const uri = await loadArt(big, { size: 300 });
+		assert.match(uri, /^data:image\/jpeg;base64,/);
+		const meta = await sharp(Buffer.from(uri.split(',')[1], 'base64')).metadata();
+		assert.equal(meta.width, 300);
+		assert.equal(meta.height, 200);
+		assert.match(await loadArt(ART), /^data:image\/svg\+xml;base64,/);
+		const alpha = await sharp({ create: { width: 10, height: 10, channels: 4, background: '#f000' } }).png().toBuffer();
+		assert.match(await loadArt(alpha), /^data:image\/png;base64,/);
+	});
+});

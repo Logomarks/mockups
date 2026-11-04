@@ -1,0 +1,10 @@
+export type { Art, Size, Ground, GroundName, GroundOptions, Mockup, Crop } from './types.js';
+export type { VinylOptions } from './objects/vinyl.js';
+export type { VinylSpec, Finish, TintSpec, SplatterSpec, MarbleSpec } from './materials/vinyl.js';
+export type { LabelSpec, LabelsOption, LabelSource } from './parts/label.js';
+export type { ObjectName, ObjectOptions } from './objects/index.js';
+export { vinyl, RECORD } from './objects/vinyl.js';
+export { OBJECTS, mockup } from './objects/index.js';
+export { GROUNDS } from './materials/ground.js';
+export { FINISHES } from './materials/vinyl.js';
+export { artHref } from './render/art.js';

@@ -1,0 +1,88 @@
+{
+  "name": "@arraypress/mockups",
+  "version": "0.1.0",
+  "description": "Product mockups from finished artwork: a design shown on the object it's printed on. First object: vinyl (single or double LP, clear, black, coloured, splatter or marble records peeking from the sleeve, labels from the cover). Dependency-free layered SVG, PNG/WebP via sharp in Node or a canvas in the browser, and a real three.js scene for angled shots.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "default": "./src/index.js"
+    },
+    "./node": {
+      "types": "./src/render/node.d.ts",
+      "import": "./src/render/node.js",
+      "default": "./src/render/node.js"
+    },
+    "./browser": {
+      "types": "./src/render/browser.d.ts",
+      "import": "./src/render/browser.js",
+      "default": "./src/render/browser.js"
+    },
+    "./3d": {
+      "types": "./src/three/index.d.ts",
+      "import": "./src/three/index.js",
+      "default": "./src/three/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "mockup",
+    "vinyl",
+    "lp",
+    "record",
+    "sleeve",
+    "album-art",
+    "cover-art",
+    "product-mockup",
+    "svg",
+    "sharp",
+    "three",
+    "webgl"
+  ],
+  "author": "David Sherlock",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arraypress/mockups.git"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "sharp": ">=0.33.0",
+    "three": ">=0.160.0"
+  },
+  "peerDependenciesMeta": {
+    "sharp": {
+      "optional": true
+    },
+    "three": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/three": "^0.187.0",
+    "sharp": "^0.35.5",
+    "three": "^0.187.0",
+    "typescript": "^6.0.3"
+  }
+}

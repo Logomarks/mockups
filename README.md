@@ -17,7 +17,7 @@ import { vinyl, renderImage, loadArt } from '@logomarks/mockups/node';
 
 const art = await loadArt('cover.png');                  // inlined, scaled to 1600 px
 const { svg } = vinyl({ art, vinyl: 'clear' });           // a double LP on light grey
-const png = await renderImage(vinyl({ art, format: 'single', vinyl: 'black', ground: 'dark' }), { format: 'webp' });
+const webp = await renderImage(vinyl({ art, format: 'single', vinyl: 'black', ground: 'dark' }), { format: 'webp' });
 ```
 
 ## What's in it
@@ -35,6 +35,7 @@ const png = await renderImage(vinyl({ art, format: 'single', vinyl: 'black', gro
 - [Docs](https://github.com/Logomarks/mockups/tree/main/docs)
 - [Changelog](https://github.com/Logomarks/mockups/blob/main/CHANGELOG.md)
 - [Licence](https://github.com/Logomarks/mockups/blob/main/LICENSE)
+- [GitHub](https://github.com/Logomarks/mockups)
 - [`@arraypress/covers`](https://github.com/arraypress/covers), which makes the art
 - [`@logomarks/mockups-plates`](https://github.com/Logomarks/mockups-plates), the photo plates
 - [Issues](https://github.com/Logomarks/mockups/issues)

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/node
+ * @module @logomarks/mockups/node
  *
  * The same API in Node, plus rasterising through sharp (an optional peer,
  * imported on first use) and loading artwork from a path or URL, sized
@@ -34,7 +34,7 @@ async function sharp() {
 		(m) => m.default,
 		() => {
 			sharpModule = null;
-			throw new Error('@arraypress/mockups/node: rasterising needs sharp (npm install sharp)');
+			throw new Error('@logomarks/mockups/node: rasterising needs sharp (npm install sharp)');
 		},
 	);
 	return sharpModule;

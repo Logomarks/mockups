@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/cassette
+ * @module @logomarks/mockups/objects/cassette
  *
  * A cassette, front on: its case standing with the J-card showing the
  * cover, and the tape itself lying in front of it to one side, its label

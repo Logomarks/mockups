@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/poster
+ * @module @logomarks/mockups/objects/poster
  *
  * A poster up on a wall, front on: taped at its corners on plaster or
  * brick, wheatpasted (creased, torn, taking the wall's texture), flyposted

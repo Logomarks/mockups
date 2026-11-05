@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/garment
+ * @module @logomarks/mockups/parts/garment
  *
  * A piece of cloth lying flat, built up the way a photo of one reads: its
  * soft shadow on the surface, the dyed cloth, the print warped by the folds

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/sticker
+ * @module @logomarks/mockups/objects/sticker
  *
  * Die-cut vinyl stickers with a white border: one stuck on a closed laptop
  * lid (a generic aluminium or graphite lid, bead-blasted, with a polished

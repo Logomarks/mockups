@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/inline
+ * @module @logomarks/mockups/plates/inline
  *
  * SVG art drawn as markup rather than as an `<image>`. The warp draws the
  * art once per piece, and librsvg rasterises an SVG `<image>` afresh for

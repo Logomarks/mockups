@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/image
+ * @module @logomarks/mockups/render/image
  *
  * SVG markup as a decoded browser image, the step both the canvas
  * rasteriser and the 3D textures take. Browser only.

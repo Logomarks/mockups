@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/node
+ * @module @logomarks/mockups/plates/node
  *
  * Plates in Node: loaded from a directory, a `plate.json`, a `file:` or
  * http(s) URL, or a plate object from a plates module.

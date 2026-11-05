@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/maps
+ * @module @logomarks/mockups/plates/maps
  *
  * The maps a screen is composited with, cut from the photo of its blank
  * sign over the screen's box:

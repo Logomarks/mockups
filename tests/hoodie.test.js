@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — hoodies: placements, the hood and drawcords, and
+ * @logomarks/mockups — hoodies: placements, the hood and drawcords, and
  * what the SVG holds.
  */
 

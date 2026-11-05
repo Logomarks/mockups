@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/surface
+ * @module @logomarks/mockups/materials/surface
  *
  * The light on a record's face, over its body: the tracks (even bands of
  * groove, each a shade lighter or darker than the next, parted by crisp

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/format
+ * @module @logomarks/mockups/plates/format
  *
  * The plate format: a real photo with one or more screens in it (a
  * billboard's poster, a shop's fascia, a shelter's lightbox, a laptop's

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/warp
+ * @module @logomarks/mockups/render/warp
  *
  * A flat drawing laid onto a surface seen in perspective. SVG only has
  * affine transforms, so the drawing is cut into a grid of triangles, each

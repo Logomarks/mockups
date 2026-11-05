@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/dims
+ * @module @logomarks/mockups/render/dims
  *
  * An image's size, read from its `data:` URI without decoding it: PNG,
  * GIF and WebP headers, JPEG's frame marker, and an SVG's `viewBox` (or

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/face
+ * @module @logomarks/mockups/parts/face
  *
  * Art printed on a flat face seen in perspective: a poster in a frame, a
  * sign's panel, a lightbox. The art is fitted into a drawing the face's

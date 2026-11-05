@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/load
+ * @module @logomarks/mockups/plates/load
  *
  * Loading a plate: its description (an object, or a `plate.json` by path or
  * URL) and its files (the photo and each screen's maps, named relative to

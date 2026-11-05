@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/ink
+ * @module @logomarks/mockups/materials/ink
  *
  * A one-ink print: art (a photo, a mark, words) printed in a single ink on
  * coloured stock, as a screen-printed sleeve or a risograph insert is. The

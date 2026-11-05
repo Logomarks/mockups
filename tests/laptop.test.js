@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — laptop: the browser, the domain, views, options, and that it draws.
+ * @logomarks/mockups — laptop: the browser, the domain, views, options, and that it draws.
  */
 
 import { describe, it } from 'node:test';

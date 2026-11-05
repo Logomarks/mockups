@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/board
+ * @module @logomarks/mockups/parts/board
  *
  * Faces of printed board for a box seen axonometrically: each face is a
  * polygon in the picture, filled with the board (its colour, or the kraft

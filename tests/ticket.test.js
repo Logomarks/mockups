@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — tickets: the pair, the torn stub, and options.
+ * @logomarks/mockups — tickets: the pair, the torn stub, and options.
  */
 
 import { describe, it } from 'node:test';

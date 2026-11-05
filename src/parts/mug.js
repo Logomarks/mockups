@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/mug
+ * @module @logomarks/mockups/parts/mug
  *
  * One ceramic mug, upright, seen from a little above: a glazed cylinder
  * with its print wrapped round it, the light across it and the window

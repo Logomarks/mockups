@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/envelope
+ * @module @logomarks/mockups/parts/envelope
  *
  * An envelope's front, as an overlay for a sheet: the layers of paper
  * folded behind it show through faintly (the back flap's point, the side

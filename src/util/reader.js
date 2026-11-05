@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/reader
+ * @module @logomarks/mockups/util/reader
  *
  * Reading a print object's options: each read checks its kind, fills in
  * the default and holds numbers in range, and a bad value throws a

@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — phone: screens, views, options, and that it draws.
+ * @logomarks/mockups — phone: screens, views, options, and that it draws.
  */
 
 import { describe, it } from 'node:test';

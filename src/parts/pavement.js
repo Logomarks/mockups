@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/pavement
+ * @module @logomarks/mockups/parts/pavement
  *
  * Level ground in perspective: a pavement of square slabs (the joints
  * projected line by line, fading with distance), a kerb, and the road

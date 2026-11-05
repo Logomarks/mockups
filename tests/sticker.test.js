@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — stickers: cuts, layouts, the peeled corner, and
+ * @logomarks/mockups — stickers: cuts, layouts, the peeled corner, and
  * bad options.
  */
 

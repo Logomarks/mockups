@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/skyline
+ * @module @logomarks/mockups/parts/skyline
  *
  * The far side of a street, out of focus: a row of seeded building blocks
  * along the horizon in pale, hazy tones, with rows of windows (lit at

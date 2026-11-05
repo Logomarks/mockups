@@ -3,7 +3,7 @@
 Stationery, apparel and packaging from a brand kit, seen as a photo of the real thing. Everything is laid out in millimetres at its true size. Surfaces, paper tooth and fabric folds are procedural; kraft board is a photographed texture shipped with the package (see below). Print files from `@arraypress/covers` carry bleed; pass `bleed` (mm) and the art is trimmed.
 
 ```js
-import { card, tee, mug, renderImage, loadArt } from '@arraypress/mockups/node';
+import { card, tee, mug, renderImage, loadArt } from '@logomarks/mockups/node';
 
 const front = await loadArt('business-card-front.png');
 const back = await loadArt('business-card-back.png');

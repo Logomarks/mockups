@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — wristbands: fabric loops and Tyvek strips, on their own and beside a lanyard pass.
+ * @logomarks/mockups — wristbands: fabric loops and Tyvek strips, on their own and beside a lanyard pass.
  */
 
 import { describe, it } from 'node:test';

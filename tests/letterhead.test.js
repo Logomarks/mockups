@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — letterhead: layouts, the envelope, the set, bleed
+ * @logomarks/mockups — letterhead: layouts, the envelope, the set, bleed
  * and options.
  */
 

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/field
+ * @module @logomarks/mockups/util/field
  *
  * Scalar fields: a small grid of heights, drawn procedurally (seeded value
  * noise, soft ridges for folds and creases, blurs), then turned into a PNG

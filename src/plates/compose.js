@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/compose
+ * @module @logomarks/mockups/plates/compose
  *
  * A plate with art in it: the photo, and over it each screen composited so
  * the art reads as printed (or lit, or glazed) in the scene rather than

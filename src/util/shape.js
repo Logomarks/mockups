@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/shape
+ * @module @logomarks/mockups/util/shape
  *
  * Flat geometry for the objects drawn in perspective: a rounded rectangle
  * as points (so it can be projected point by point), points as path data,

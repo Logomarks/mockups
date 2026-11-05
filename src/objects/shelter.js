@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/shelter
+ * @module @logomarks/mockups/objects/shelter
  *
  * A bus shelter: a glass shelter (a steel roof, a glazed back and end, a
  * bench) on the pavement, with a backlit poster in a lightbox at its end,

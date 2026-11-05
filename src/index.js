@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups
+ * @module @logomarks/mockups
  *
  * Product mockups from finished artwork: the design shown on the object
  * it's printed on. Each object returns a layered SVG with the artwork

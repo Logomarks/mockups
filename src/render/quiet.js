@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/quiet
+ * @module @logomarks/mockups/render/quiet
  *
  * Where a cover is quiet: the windows with the fewest edges (no type, no
  * logo, no busy detail), found from a small grey copy of it. `loadArt`

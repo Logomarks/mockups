@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/sheet
+ * @module @logomarks/mockups/parts/sheet
  *
  * A flat printed sheet lying on a surface, seen from above: a card, a
  * letter, an envelope, a ticket, a pass. Its outline (a rectangle with

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/poster/creases
+ * @module @logomarks/mockups/parts/poster/creases
  *
  * What paste does to paper: creases where it was smoothed down unevenly
  * (a dark fold with a lit ridge beside it), short wrinkles near the edges,

@@ -3,7 +3,7 @@
 ## Usage
 
 ```js
-import { vinyl, renderImage, loadArt } from '@arraypress/mockups/node';
+import { vinyl, renderImage, loadArt } from '@logomarks/mockups/node';
 
 const art = await loadArt('cover.png');                  // inlined, scaled to 1600 px
 const { svg } = vinyl({ art, vinyl: 'clear' });           // a double LP on light grey
@@ -11,7 +11,7 @@ const png = await renderImage(vinyl({ art, format: 'single', vinyl: 'black', gro
 ```
 
 ```js
-import { vinylScene } from '@arraypress/mockups/3d';
+import { vinylScene } from '@logomarks/mockups/3d';
 
 const scene = await vinylScene(canvas, { art, vinyl: { splatter: ['#111', '#ff4f9a'] }, view: { turn: -22, tilt: 8 } });
 scene.setView({ tilt: 20 });  // or layout: 'flat' for the flat lay

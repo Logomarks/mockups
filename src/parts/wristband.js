@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/wristband
+ * @module @logomarks/mockups/parts/wristband
  *
  * Event wristbands lying on a table, in millimetres round each band's
  * centre. A fabric band is a woven loop (a little out of round, as one

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/printart
+ * @module @logomarks/mockups/three/printart
  *
  * Print artwork as canvases for the 3D print scenes, drawn by the 2D
  * modules so the two versions match: a print file trimmed of its bleed, art

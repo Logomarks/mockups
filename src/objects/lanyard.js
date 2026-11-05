@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/lanyard
+ * @module @logomarks/mockups/objects/lanyard
  *
  * A lanyard pass, lying on a surface: the pass (A6, 105 × 148 mm, 4 mm
  * corners) in a clear PVC pocket, clipped through the pocket's slot to a

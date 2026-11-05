@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/box
+ * @module @logomarks/mockups/objects/box
  *
  * Packaging, axonometric, on a table: a corrugated mailer (closed, or its
  * lid swung up to show the print inside it and the fluted cut edges), or a

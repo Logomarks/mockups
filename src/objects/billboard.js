@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/billboard
+ * @module @logomarks/mockups/objects/billboard
  *
  * A billboard: a roadside board on a mast against a soft drawn sky (a
  * field and distant trees below it, a catwalk and lamps under the panel),

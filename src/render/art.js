@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/art
+ * @module @logomarks/mockups/render/art
  *
  * The finished artwork a mockup shows, as something an SVG `<image>` can
  * point at. Bytes are sniffed (PNG, JPEG, WebP, GIF, AVIF, SVG) and inlined

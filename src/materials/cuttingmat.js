@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/cuttingmat
+ * @module @logomarks/mockups/materials/cuttingmat
  *
  * A self-healing cutting mat: matte PVC with a fine speckle, a printed
  * grid (a line every centimetre, a bolder one every five), the

@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — shelter: day and night, views, options, and that it draws.
+ * @logomarks/mockups — shelter: day and night, views, options, and that it draws.
  */
 
 import { describe, it } from 'node:test';

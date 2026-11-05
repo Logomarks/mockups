@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/vec
+ * @module @logomarks/mockups/util/vec
  *
  * Three-vectors as plain arrays, for the objects drawn in perspective:
  * adding, scaling, dot and cross products, length and direction. World

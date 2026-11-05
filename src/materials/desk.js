@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/desk
+ * @module @logomarks/mockups/materials/desk
  *
  * What printed things lie on: concrete, oak boards, linen, a paper
  * backdrop, riven slate, a cutting mat and a knit blanket, or any of the

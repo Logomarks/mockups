@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/knit
+ * @module @logomarks/mockups/materials/knit
  *
  * A chunky knit blanket: columns of stitches, each a "V" of two plump
  * loops lit from the light's side with dark hollows between them, a soft

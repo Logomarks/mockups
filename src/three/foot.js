@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/foot
+ * @module @logomarks/mockups/three/foot
  *
  * The dark, soft line where something standing meets the floor: light
  * can't get under it, so a photo shows a narrow shadow hugging its foot

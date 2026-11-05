@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — the perspective machinery the screens and signs
+ * @logomarks/mockups — the perspective machinery the screens and signs
  * share: the camera, the projective warp, art sizes and fits, inking.
  */
 

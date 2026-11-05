@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/slate
+ * @module @logomarks/mockups/materials/slate
  *
  * Riven slate: a dark stone split along its grain, so its face is shelves
  * of layers with low steps between them, lit from the light's side; its

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/materials
+ * @module @logomarks/mockups/three/materials
  *
  * Vinyl as a physical material. Clear vinyl is nearly invisible: thin,
  * smooth, all transmission at glass's index, seen by its reflections.

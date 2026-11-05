@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/folds
+ * @module @logomarks/mockups/materials/folds
  *
  * How cloth lies: a height field over a garment, in millimetres. It starts
  * as a soft pillow (cloth rises from its edges, where it rolls down to the

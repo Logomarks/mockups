@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/brick
+ * @module @logomarks/mockups/parts/brick
  *
  * A brick wall drawn flat (it's warped onto the wall's plane afterwards):
  * stretcher bond with seeded tones brick by brick, recessed mortar, broad

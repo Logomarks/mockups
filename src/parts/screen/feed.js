@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/screen/feed
+ * @module @logomarks/mockups/parts/screen/feed
  *
  * A post in a social feed, deliberately no one app's: a header with a
  * placeholder wordmark, the brand's avatar and name over its post, the

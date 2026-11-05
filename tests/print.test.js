@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — one-ink prints, the ticket trio with prints of its own, and the printed sticker sheet.
+ * @logomarks/mockups — one-ink prints, the ticket trio with prints of its own, and the printed sticker sheet.
  */
 
 import { describe, it } from 'node:test';

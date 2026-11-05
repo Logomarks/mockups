@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/bag
+ * @module @logomarks/mockups/objects/bag
  *
  * A paper shopping bag with twisted rope handles, standing on a table in a
  * three-quarter view: the printed front, the side gusset with its centre

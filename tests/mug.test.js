@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — mugs: layouts, prints, the wrap round the curve,
+ * @logomarks/mockups — mugs: layouts, prints, the wrap round the curve,
  * and bad options.
  */
 

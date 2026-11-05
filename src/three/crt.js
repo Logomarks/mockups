@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/crt
+ * @module @logomarks/mockups/three/crt
  *
  * A cathode-ray tube's face as a shader over a live picture: the tube's
  * curve (the picture bowed out, its corners dark), scanlines, the

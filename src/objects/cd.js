@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/cd
+ * @module @logomarks/mockups/objects/cd
  *
  * A CD, front on: a jewel case (the booklet under its clear lid) or a
  * digipak, with the disc slid half out from behind it, printed from the

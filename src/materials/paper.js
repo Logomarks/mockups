@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/paper
+ * @module @logomarks/mockups/materials/paper
  *
  * Paper and board stocks, and what they do to a print: the tooth of the
  * sheet (fine light and dark specks), the paper's own white (ink never

@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — the 3D entry without a GPU: three.js is only
+ * @logomarks/mockups — the 3D entry without a GPU: three.js is only
  * imported when a scene is made, and the camera's placement for a view.
  */
 

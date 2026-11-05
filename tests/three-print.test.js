@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — the 3D print scenes without a GPU: three.js is only
+ * @logomarks/mockups — the 3D print scenes without a GPU: three.js is only
  * imported when a scene is made, options are checked before anything is
  * drawn, and the layout maths (cards, box lids, mug prints, studio lights).
  */

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/pole
+ * @module @logomarks/mockups/parts/pole
  *
  * A round post in perspective (a billboard's mast, a shelter's legs): the
  * strip between its silhouette lines, shaded across like a cylinder (dark

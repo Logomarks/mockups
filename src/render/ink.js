@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/ink
+ * @module @logomarks/mockups/render/ink
  *
  * A mark drawn in `currentColor` (as icon and logo sets ship them) given a
  * colour, so it can be printed on a sign or an app icon in the brand's

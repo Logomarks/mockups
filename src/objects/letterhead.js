@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/letterhead
+ * @module @logomarks/mockups/objects/letterhead
  *
  * Letterhead, A4 (210 × 297 mm), seen from above on a desk: the sheet
  * alone, with a DL envelope (220 × 110 mm, its folded layers showing

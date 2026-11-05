@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/svg
+ * @module @logomarks/mockups/render/svg
  *
  * Writing SVG as strings: an element helper that drops empty attributes and
  * formats numbers, and XML escaping. Everything the 2D compositor draws goes

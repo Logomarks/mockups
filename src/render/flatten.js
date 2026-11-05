@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/flatten
+ * @module @logomarks/mockups/render/flatten
  *
  * SVG art inside a mockup, rasterised before librsvg draws the mockup. An
  * SVG `<image>` drawn under a rotation comes out stretched in librsvg (2.63:

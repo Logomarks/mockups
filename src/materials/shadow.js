@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/shadow
+ * @module @logomarks/mockups/materials/shadow
  *
  * Soft shadows, as a photo has them: each object casts a tight contact
  * shadow and a wide ambient one (its own silhouette, offset away from the

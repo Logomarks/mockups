@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — billboard: settings, times, views, options, and that it draws.
+ * @logomarks/mockups — billboard: settings, times, views, options, and that it draws.
  */
 
 import { describe, it } from 'node:test';

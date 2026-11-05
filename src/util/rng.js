@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/rng
+ * @module @logomarks/mockups/util/rng
  *
  * Seeded randomness, so the same options always draw the same mockup: the
  * tracks cut into a record, where a splatter lands, how marble swirls.

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/record
+ * @module @logomarks/mockups/three/record
  *
  * One record as geometry, lying flat: its two faces (rings round the
  * spindle hole, planar UVs so the groove maps centre on it), its edge, the

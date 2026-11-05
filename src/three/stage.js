@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/stage
+ * @module @logomarks/mockups/three/stage
  *
  * The studio: a renderer with soft shadows and neutral tone mapping (the
  * ground keeps the colour asked for), a room for glossy things to reflect,

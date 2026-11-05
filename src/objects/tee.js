@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/tee
+ * @module @logomarks/mockups/objects/tee
  *
  * A T-shirt laid flat, seen from above: a men's L in cotton jersey (chest
  * 560 mm pit to pit, 740 mm from the shoulder at the neck to the hem,

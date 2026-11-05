@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/tv
+ * @module @logomarks/mockups/three/tv
  *
  * A television in a dark room, its screen live: whatever the page draws on
  * a canvas (a shader, an effect, a feed), a video, or a picture. A CRT is

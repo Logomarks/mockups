@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/color
+ * @module @logomarks/mockups/util/color
  *
  * The little colour maths the materials need: hex in and out, mixing two
  * colours, and how light a colour is (to pick a label's ink, or how a

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/lid
+ * @module @logomarks/mockups/parts/lid
  *
  * How open a box is, shared by the 2D and 3D boxes so `open` means the same
  * in both: a mailer's lid swings up about its back edge, 112° when fully

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/slab
+ * @module @logomarks/mockups/parts/slab
  *
  * A rounded slab in perspective: the shape of a phone, a laptop's lid and
  * base, a sign's box. Its outline is a rounded rectangle on a face,

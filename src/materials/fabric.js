@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/fabric
+ * @module @logomarks/mockups/materials/fabric
  *
  * Cloth: the garment colours, the four fabrics (cotton jersey for a tee,
  * brushed fleece for a hoodie, canvas for a tote, twill for a cap) and the

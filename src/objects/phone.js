@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/phone
+ * @module @logomarks/mockups/objects/phone
  *
  * A phone: a generic modern handset (a rounded slab with a metal band, thin
  * even bezels and a small punch-hole camera; no maker's shapes, cameras or

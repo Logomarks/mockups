@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — packaging board: the boards, procedural fibre that
+ * @logomarks/mockups — packaging board: the boards, procedural fibre that
  * tiles without a seam, the photographed kraft loaded by the Node entry,
  * and the shipped textures themselves.
  */

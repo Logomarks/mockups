@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/bottle
+ * @module @logomarks/mockups/parts/bottle
  *
  * An insulated steel water bottle standing on a table, seen from a little
  * above: a powder-coated body (a soft matte glaze, so its reflections are

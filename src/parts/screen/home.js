@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/screen/home
+ * @module @logomarks/mockups/parts/screen/home
  *
  * A phone's home screen with the brand as an app: its mark on a rounded
  * square, its name beneath, among placeholder apps (plain rounded squares

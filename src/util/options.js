@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/options
+ * @module @logomarks/mockups/util/options
  *
  * Checking the options the perspective objects share: a number, one of a
  * few names, and a view (a named angle, or a tilt and a turn), each with

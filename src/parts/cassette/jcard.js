@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/cassette/jcard
+ * @module @logomarks/mockups/parts/cassette/jcard
  *
  * A J-card's front panel (65 × 101.6 mm, portrait), made from a square
  * cover: the cover across the top, and below it a band of the cover's own

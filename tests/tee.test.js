@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — T-shirts: placements, colours, ink, the print kept
+ * @logomarks/mockups — T-shirts: placements, colours, ink, the print kept
  * at its own aspect, and what the SVG holds.
  */
 

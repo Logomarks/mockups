@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/screen
+ * @module @logomarks/mockups/three/screen
  *
  * What a 3D screen shows, as a live texture: a canvas (redrawn by the page,
  * a shader's output), a video, or an image or artwork. A canvas is read

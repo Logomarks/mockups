@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/studioenv
+ * @module @logomarks/mockups/three/studioenv
  *
  * A photo studio for glossy things to reflect, painted as an
  * equirectangular image: a dim room, a large soft key box in front on the

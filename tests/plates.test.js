@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — photo plates: the quad map, finding a blank sign and
+ * @logomarks/mockups — photo plates: the quad map, finding a blank sign and
  * its proportions, the maps cut from it, the format, the compositor, and a
  * plate made, saved, loaded and rendered.
  */

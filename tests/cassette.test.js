@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — the cassette: options, layout, determinism, the
+ * @logomarks/mockups — the cassette: options, layout, determinism, the
  * shells, and the picture (a black shell is dark, the J-card shows the art).
  */
 

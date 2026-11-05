@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/board
+ * @module @logomarks/mockups/three/board
  *
  * Paper and board as physical materials: a stock's print surface (matte
  * paper is rough with a faint sheen, gloss has a clearcoat), the tooth of

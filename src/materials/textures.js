@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/textures
+ * @module @logomarks/mockups/materials/textures
  *
  * Photographed textures shipped with the package (`assets/textures/`): four
  * kraft board surfaces, healed of their seams and pulled to one kraft

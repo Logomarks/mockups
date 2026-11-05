@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/wristband
+ * @module @logomarks/mockups/objects/wristband
  *
  * Event wristbands lying on a table: woven fabric bands closed into loops
  * with the name round them and the mark on their sliders, and Tyvek

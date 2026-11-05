@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/cd/digipak
+ * @module @logomarks/mockups/parts/cd/digipak
  *
  * A digipak, front on: a board sleeve 139.7 × 124.5 mm printed edge to edge
  * (the square cover filled across it), its board edge showing below, the

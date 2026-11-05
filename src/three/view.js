@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/view
+ * @module @logomarks/mockups/three/view
  *
  * Where the camera is. A view is a tilt (0 looks straight down onto the
  * flat lay, the 2D mockup's front-on view; 60 looks across it), a turn

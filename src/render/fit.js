@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/fit
+ * @module @logomarks/mockups/render/fit
  *
  * Art placed in a box the way a screen or a sign shows it: `cover` fills
  * the box and crops the overflow evenly, `top` fills its width and crops

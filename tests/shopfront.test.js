@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — shopfront: the fascia, the blade sign, inking, options, and that it draws.
+ * @logomarks/mockups — shopfront: the fascia, the blade sign, inking, options, and that it draws.
  */
 
 import { describe, it } from 'node:test';

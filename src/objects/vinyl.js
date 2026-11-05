@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/vinyl
+ * @module @logomarks/mockups/objects/vinyl
  *
  * Vinyl, front on: a square sleeve carrying the artwork with one or two
  * records peeking out from behind it, on a seamless ground. A double LP

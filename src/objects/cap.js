@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/cap
+ * @module @logomarks/mockups/objects/cap
  *
  * A six-panel baseball cap, structured mid-profile, sitting on a surface,
  * seen three-quarters from the front (from either side) or straight on.

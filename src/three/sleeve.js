@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/sleeve
+ * @module @logomarks/mockups/three/sleeve
  *
  * The sleeve as a thin box lying flat, the cover printed on its top face.
  * A double LP's gatefold is thicker than a single's.

@@ -3,7 +3,7 @@
 A television in a dark room, its screen live. Whatever the page draws on a canvas (a shader, an effect) plays on it: the canvas is read every frame, a video as it plays, a picture once. The screen lights the floor and the set in its own colour, sampled from what it shows.
 
 ```js
-import { tvScene } from '@arraypress/mockups/3d';
+import { tvScene } from '@logomarks/mockups/3d';
 
 const tv = await tvScene(canvas, { screen: effectCanvas, kind: 'crt', cabinet: 'wood' });
 await tv.setScreen(video);

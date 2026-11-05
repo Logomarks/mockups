@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/screen/browser
+ * @module @logomarks/mockups/parts/screen/browser
  *
  * A browser window, maximised, no one browser's: a tab strip with one tab
  * (the brand's icon and name), plain window controls, a toolbar with

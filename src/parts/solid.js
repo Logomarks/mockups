@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/solid
+ * @module @logomarks/mockups/parts/solid
  *
  * Drawing a curved object (a cap's crown, a visor) in 2D from its 3D
  * shape: a parametric surface, seen by an orthographic camera turned and

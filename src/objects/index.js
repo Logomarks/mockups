@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects
+ * @module @logomarks/mockups/objects
  *
  * Every 2D object by name, so a mockup can be chosen at run time (a CMS
  * field, a query string). Each takes `{ art, ground, size, … }` and returns

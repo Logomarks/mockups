@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/cd
+ * @module @logomarks/mockups/three/cd
  *
  * A CD in 3D: a jewel case (clear polystyrene lid and hinge, a black or
  * clear tray, the booklet under the lid) or a board digipak, with the disc

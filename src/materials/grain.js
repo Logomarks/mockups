@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/grain
+ * @module @logomarks/mockups/materials/grain
  *
  * Film grain over the whole frame: a small tile of seeded noise (light and
  * dark specks, a triangular distribution like film's) repeated as a

@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — the surfaces things lie on: slate, a cutting mat and a knit, beside the first four, and the shelter's skyline kept in view.
+ * @logomarks/mockups — the surfaces things lie on: slate, a cutting mat and a knit, beside the first four, and the shelter's skyline kept in view.
  */
 
 import { describe, it } from 'node:test';

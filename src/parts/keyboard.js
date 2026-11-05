@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/keyboard
+ * @module @logomarks/mockups/parts/keyboard
  *
  * A laptop's deck, drawn on its top face through the face's map: a
  * keyboard of plain keys (a half-height function row, the usual staggered

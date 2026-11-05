@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/cassette/shell
+ * @module @logomarks/mockups/parts/cassette/shell
  *
  * A compact cassette, front on: the 100.4 × 63.8 mm shell in black, white,
  * clear, smoke or any colour; its label (the cover across it, with the

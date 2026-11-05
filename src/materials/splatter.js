@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/splatter
+ * @module @logomarks/mockups/materials/splatter
  *
  * Splatter vinyl: blobs of colour dropped into the pressing, each a wobbly
  * round splash with droplets thrown out around it, edges a touch soft where

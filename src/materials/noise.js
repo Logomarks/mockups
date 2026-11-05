@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/noise
+ * @module @logomarks/mockups/materials/noise
  *
  * The two noises every textured surface is built from: broad mottling
  * (low-frequency noise drawn small in JS and stretched over the frame, so

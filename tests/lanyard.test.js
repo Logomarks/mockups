@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — lanyard: the pass in its pocket, the printed strap,
+ * @logomarks/mockups — lanyard: the pass in its pocket, the printed strap,
  * the clasp, and options.
  */
 

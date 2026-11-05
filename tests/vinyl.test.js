@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — vinyl: options, layout, materials, labels, and what
+ * @logomarks/mockups — vinyl: options, layout, materials, labels, and what
  * the SVG holds.
  */
 

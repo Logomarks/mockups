@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/num
+ * @module @logomarks/mockups/util/num
  *
  * Number helpers shared by every part: clamping, mixing, and writing
  * numbers into SVG compactly (three decimals, no trailing zeros).

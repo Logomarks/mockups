@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/laptop
+ * @module @logomarks/mockups/objects/laptop
  *
  * A laptop: a generic clamshell (a thin aluminium base with a plain
  * keyboard and a trackpad, a lid with even black bezels and a small camera

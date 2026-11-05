@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/vinyl
+ * @module @logomarks/mockups/materials/vinyl
  *
  * What a record is pressed in. A spec (a finish's name, a hex colour,
  * `{ color, opacity }`, `{ splatter }` or `{ marble }`) resolves to a

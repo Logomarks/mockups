@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/tabletop
+ * @module @logomarks/mockups/parts/tabletop
  *
  * The surface a standing object (a mug, a bag, a box) stands on, seen from
  * a little above: the desk's texture foreshortened (squashed up the frame,

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/board
+ * @module @logomarks/mockups/materials/board
  *
  * Packaging board: kraft, white-top, black, or a colour, and the fibre
  * that makes it read as board rather than plastic. Kraft is a warm

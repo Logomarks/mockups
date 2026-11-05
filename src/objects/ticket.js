@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/ticket
+ * @module @logomarks/mockups/objects/ticket
  *
  * Event tickets, 5.5 × 2 in (139.7 × 50.8 mm) with 3 mm round corners:
  * two on a table, one turned (the second's stub torn off along the

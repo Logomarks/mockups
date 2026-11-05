@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/label
+ * @module @logomarks/mockups/parts/label
  *
  * A record's centre label. Its art is taken from the cover (a crop of it,
  * or all of it blurred) and toned dark or light, or supplied, or a plain

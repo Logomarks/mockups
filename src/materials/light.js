@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/light
+ * @module @logomarks/mockups/materials/light
  *
  * Light on the faces of things drawn in perspective: where the key light
  * is (from the `light` option every object takes), and the colour a face

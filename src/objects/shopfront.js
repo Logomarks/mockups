@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/shopfront
+ * @module @logomarks/mockups/objects/shopfront
  *
  * A shopfront: the brand's mark and name on a painted fascia above a shop
  * window and a glazed door, in a brick building, with a projecting blade

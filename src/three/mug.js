@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/mug
+ * @module @logomarks/mockups/three/mug
  *
  * A ceramic 11 oz mug in 3D: 82 mm across and 95 mm tall, turned on a
  * lathe (a footed base, a straight wall, a rounded rim, an inner wall and

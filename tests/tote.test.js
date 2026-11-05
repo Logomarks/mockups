@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — tote bags: the bag, its handles, the print, and
+ * @logomarks/mockups — tote bags: the bag, its handles, the print, and
  * what the SVG holds.
  */
 

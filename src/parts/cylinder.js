@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/cylinder
+ * @module @logomarks/mockups/parts/cylinder
  *
  * A print wrapped round an upright cylinder (a mug, a bottle) seen from a
  * little above. The print is drawn flat, unrolled, once; the visible half

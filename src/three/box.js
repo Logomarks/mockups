@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/box
+ * @module @logomarks/mockups/three/box
  *
  * Packaging boxes in 3D, built from slabs of board: a corrugated mailer
  * (a tray with a lid hinged along its back edge and a tuck flap that drops

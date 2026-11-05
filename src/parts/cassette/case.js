@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/cassette/case
+ * @module @logomarks/mockups/parts/cassette/case
  *
  * A cassette's case (a Norelco box), standing front on: 70 × 109 mm of
  * clear plastic, the J-card's front under the lid and its spine folded

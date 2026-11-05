@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/marble
+ * @module @logomarks/mockups/materials/marble
  *
  * Marbled vinyl, the way a press makes it: pellets of each colour sit in
  * the puck at the centre and are squeezed outwards and round as the press

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/axo
+ * @module @logomarks/mockups/parts/axo
  *
  * An axonometric view for boxy things (a bag, a carton): the object turned
  * about the vertical and seen from a little above, with no perspective, so

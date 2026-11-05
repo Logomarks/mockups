@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/artsize
+ * @module @logomarks/mockups/parts/artsize
  *
  * An artwork's proportions, read from its header without decoding it: a
  * PNG's IHDR, a JPEG's frame header, a GIF's screen, a WebP's VP8 header,

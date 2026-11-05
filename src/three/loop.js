@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/loop
+ * @module @logomarks/mockups/three/loop
  *
  * Frames for a scene that moves (a camera drifting, a live screen): drawn
  * at a steady rate, only while the canvas is on screen and the page is

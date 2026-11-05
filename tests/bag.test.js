@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — paper bags: papers, the print on the front, and
+ * @logomarks/mockups — paper bags: papers, the print on the front, and
  * bad options.
  */
 

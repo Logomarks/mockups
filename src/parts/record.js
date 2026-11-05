@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/record
+ * @module @logomarks/mockups/parts/record
  *
  * One record, front on: its body, the light on its face, its label, and the
  * spindle hole punched through all of them (the ground shows through).

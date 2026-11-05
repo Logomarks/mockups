@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/poster/torn
+ * @module @logomarks/mockups/parts/poster/torn
  *
  * The outline of paper that's been up a while: a rectangle whose edges
  * wander a fraction of a millimetre, with bites torn out of it (most often

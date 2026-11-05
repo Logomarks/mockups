@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/curve
+ * @module @logomarks/mockups/parts/curve
  *
  * Smooth outlines from a few points: a closed curve through them
  * (Catmull-Rom, written as cubic Béziers), and a tube round a spine with a

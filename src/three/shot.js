@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/shot
+ * @module @logomarks/mockups/three/shot
  *
  * What every 3D scene shares: three.js loaded on first use, the renderer
  * and studio, the camera for a flat lay or for things standing, the

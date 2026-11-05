@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/deskplane
+ * @module @logomarks/mockups/three/deskplane
  *
  * The desk under the 3D print scenes, and the soft contact shadows on it,
  * both drawn by the 2D modules: the surface (concrete, oak, linen, paper)

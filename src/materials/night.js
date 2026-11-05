@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/night
+ * @module @logomarks/mockups/materials/night
  *
  * Night, done the way a photo grades it: everything lit by daylight is
  * pulled down to a deep blue (a veil over the frame), and what makes its

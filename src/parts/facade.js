@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/facade
+ * @module @logomarks/mockups/parts/facade
  *
  * A shopfront drawn flat (it's warped onto the building's face
  * afterwards): painted pilasters with consoles, the fascia carrying the

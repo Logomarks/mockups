@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/body
+ * @module @logomarks/mockups/materials/body
  *
  * What a device's shell is made of: anodised graphite, bead-blasted
  * silver, a soft white, or any colour (taken as painted metal). Each is a

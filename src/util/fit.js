@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/fit
+ * @module @logomarks/mockups/util/fit
  *
  * Fitting a layout drawn in millimetres into a frame drawn in pixels: the
  * scale that fills a share of the frame, and the offset that centres it.

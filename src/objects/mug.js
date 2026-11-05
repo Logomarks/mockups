@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/mug
+ * @module @logomarks/mockups/objects/mug
  *
  * A ceramic mug (11 oz: 82 mm across, 95 mm tall) on a table, seen from a
  * little above, its print wrapped round the curve: one piece centred on

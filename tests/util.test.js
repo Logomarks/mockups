@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — the shared pieces: numbers, colour, seeded
+ * @logomarks/mockups — the shared pieces: numbers, colour, seeded
  * randomness, SVG markup, art input, the PNG encoder and the grain.
  */
 

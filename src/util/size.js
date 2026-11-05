@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/size
+ * @module @logomarks/mockups/util/size
  *
  * The output size every object takes: one number for a square, or
  * `{ width, height }`, whole pixels from 16 to 8192.

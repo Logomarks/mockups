@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/extract
+ * @module @logomarks/mockups/plates/extract
  *
  * Making a plate from a photo, in Node (through sharp): the photo scaled
  * to size and re-encoded as JPEG (or WebP, which is smaller; the Node

@@ -1,11 +1,11 @@
-# @arraypress/mockups
+# @logomarks/mockups
 
 Product mockups from finished artwork: vinyl, CDs, cassettes, posters, stationery, apparel, packaging, screens and signs, drawn as a layered SVG (sharp or a canvas to rasterise) or as a three.js scene.
 
 ## Install
 
 ```bash
-npm install @arraypress/mockups
+npm install @logomarks/mockups
 npm install sharp   # PNG/WebP/JPEG/AVIF in Node
 npm install three   # the 3D scene
 ```
@@ -13,7 +13,7 @@ npm install three   # the 3D scene
 ## Quick start
 
 ```js
-import { vinyl, renderImage, loadArt } from '@arraypress/mockups/node';
+import { vinyl, renderImage, loadArt } from '@logomarks/mockups/node';
 
 const art = await loadArt('cover.png');                  // inlined, scaled to 1600 px
 const { svg } = vinyl({ art, vinyl: 'clear' });           // a double LP on light grey
@@ -36,7 +36,7 @@ const png = await renderImage(vinyl({ art, format: 'single', vinyl: 'black', gro
 - [Changelog](https://github.com/Logomarks/mockups/blob/main/CHANGELOG.md)
 - [Licence](https://github.com/Logomarks/mockups/blob/main/LICENSE)
 - [`@arraypress/covers`](https://github.com/arraypress/covers), which makes the art
-- [`@arraypress/mockups-plates`](https://github.com/arraypress/mockups-plates), the photo plates
+- [`@logomarks/mockups-plates`](https://github.com/Logomarks/mockups-plates), the photo plates
 - [Issues](https://github.com/Logomarks/mockups/issues)
 
 ## Licence

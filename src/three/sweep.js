@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/sweep
+ * @module @logomarks/mockups/three/sweep
  *
  * A seamless paper sweep, as a product studio hangs one: a floor running
  * towards the camera that curves up through a cove into a wall behind, so

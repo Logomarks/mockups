@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — the cloth materials: garment colours, an artwork's
+ * @logomarks/mockups — the cloth materials: garment colours, an artwork's
  * aspect, outlines and folds, and the 3D helpers the cap is drawn with.
  */
 

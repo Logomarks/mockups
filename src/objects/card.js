@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/card
+ * @module @logomarks/mockups/objects/card
  *
  * Business cards, 85 × 55 mm, seen from above on a desk: one card, the
  * front and back side by side, a stack with a back beside it, or a fan.

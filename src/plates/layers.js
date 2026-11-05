@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/layers
+ * @module @logomarks/mockups/plates/layers
  *
  * One screen of a plate, composited the way a retoucher would: the art
  * warped into the sign's corners and softened to the photo's sharpness; its

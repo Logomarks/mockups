@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/cd/jewel
+ * @module @logomarks/mockups/parts/cd/jewel
  *
  * A jewel case, front on: 142 × 125 mm of clear polystyrene over a black
  * (or clear) tray, the 120 mm booklet held under the lid by its tabs, the

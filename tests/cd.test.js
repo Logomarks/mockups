@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — the CD: options, layout, determinism, and the
+ * @logomarks/mockups — the CD: options, layout, determinism, and the
  * picture (the booklet under the lid, the ground through the disc's hole).
  */
 

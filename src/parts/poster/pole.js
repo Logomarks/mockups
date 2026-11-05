@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/poster/pole
+ * @module @logomarks/mockups/parts/poster/pole
  *
  * Flyers stapled round a wooden street pole: the pole a weathered cylinder
  * (grain running up it, darker towards its edges, a soft highlight on the

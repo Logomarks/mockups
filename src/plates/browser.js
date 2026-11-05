@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/browser
+ * @module @logomarks/mockups/plates/browser
  *
  * Plates in a browser: fetched from a URL (relative to the page), or from a
  * plate object from a plates module, and inlined so the composited SVG can

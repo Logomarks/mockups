@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/util/camera
+ * @module @logomarks/mockups/util/camera
  *
  * A pinhole camera for the objects drawn in perspective. It orbits a
  * target (turned about the vertical, raised above the horizon, at a

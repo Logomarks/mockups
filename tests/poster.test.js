@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — the poster: options, sizes, the mounts, and the
+ * @logomarks/mockups — the poster: options, sizes, the mounts, and the
  * picture (the wall round it, the print in its frame).
  */
 

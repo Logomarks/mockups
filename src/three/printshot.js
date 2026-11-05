@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/printshot
+ * @module @logomarks/mockups/three/printshot
  *
  * The options every 3D print scene shares, read and checked: the drawing's
  * size and pixel ratio, the exposure, how much of the frame the group

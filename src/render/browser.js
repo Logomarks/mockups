@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/browser
+ * @module @logomarks/mockups/browser
  *
  * The same API in a browser, plus rasterising through a canvas and loading
  * artwork from a URL or a file as a `data:` URI (an SVG drawn into a canvas

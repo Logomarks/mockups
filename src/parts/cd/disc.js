@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/cd/disc
+ * @module @logomarks/mockups/parts/cd/disc
  *
  * A compact disc, face up: 120 mm across with a 15 mm hole, a clear hub
  * with its stacking ring, a mirror band, and the programme area to 58 mm,

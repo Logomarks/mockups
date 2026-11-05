@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/rope
+ * @module @logomarks/mockups/parts/rope
  *
  * A twisted rope (a bag's handle) along a path: the rope's body, darker at
  * its sides so it reads round, the lay of its strands as short bands across

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/vinyl
+ * @module @logomarks/mockups/three/vinyl
  *
  * Vinyl in 3D: the sleeve a thin printed box, the records discs of
  * physical vinyl (clear and tinted transmit light), 12" or 7". By default

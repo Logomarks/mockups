@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/strap
+ * @module @logomarks/mockups/parts/strap
  *
  * A woven strap lying in a curve (a lanyard's): a band along a smooth
  * spine, its weave, darker hemmed edges, the name printed along it again

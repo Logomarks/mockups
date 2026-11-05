@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/sky
+ * @module @logomarks/mockups/materials/sky
  *
  * A soft sky for the outdoor objects, drawn rather than photographed: a
  * gradient from the zenith down to a paler horizon, a glow where the sun

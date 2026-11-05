@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/sticker
+ * @module @logomarks/mockups/parts/sticker
  *
  * A die-cut vinyl sticker: the art, a white border cut round it (a circle,
  * a rounded square, or the art's own contour, grown from its alpha and

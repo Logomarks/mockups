@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/poster/frame
+ * @module @logomarks/mockups/parts/poster/frame
  *
  * A framed print: a thin moulding (black, white or oak) mitred at the
  * corners, each side shaded by which way it faces the light; a white mat

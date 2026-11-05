@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/3d
+ * @module @logomarks/mockups/3d
  *
  * The objects in 3D with three.js (a peer dependency, imported only when
  * a scene is made). Each scene is drawn once and then on demand:

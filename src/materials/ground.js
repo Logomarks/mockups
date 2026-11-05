@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/ground
+ * @module @logomarks/mockups/materials/ground
  *
  * The seamless paper the objects stand on: a flat colour, a faint vignette
  * towards the corners, and how strong shadows read on it (a dark ground

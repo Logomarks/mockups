@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/tote
+ * @module @logomarks/mockups/objects/tote
  *
  * A canvas tote bag laid flat, seen from above: the standard 380 × 420 mm
  * bag in 10 oz cotton canvas, a 30 mm hem stitched round its mouth, two

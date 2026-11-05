@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/detect
+ * @module @logomarks/mockups/plates/detect
  *
  * Finding a blank sign in a photo: the bright, even region whose outline is
  * most nearly a quadrilateral, its four corners fitted to its edges with

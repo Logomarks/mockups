@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/textures
+ * @module @logomarks/mockups/three/textures
  *
  * The 3D scene's textures, drawn the same way as the 2D mockup so the two
  * match: the cover, each label (the 2D label part, rendered from SVG), a

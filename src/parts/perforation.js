@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/perforation
+ * @module @logomarks/mockups/parts/perforation
  *
  * A ticket's perforation: the outlines of the ticket and its stub, each
  * with the same torn edge where they parted (small paper teeth where the

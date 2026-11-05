@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — business cards: layouts, sides, bleed, edges, and
+ * @logomarks/mockups — business cards: layouts, sides, bleed, edges, and
  * what the SVG holds.
  */
 

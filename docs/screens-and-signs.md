@@ -4,7 +4,7 @@ The brand on a phone, a laptop, a billboard, a shopfront and a bus shelter. They
 
 ```js
 import { readFile } from 'node:fs/promises';
-import { phone, laptop, billboard, shopfront, shelter, renderImage, loadArt } from '@arraypress/mockups/node';
+import { phone, laptop, billboard, shopfront, shelter, renderImage, loadArt } from '@logomarks/mockups/node';
 
 const post = await loadArt('cover.png', { size: 1200 });
 const avatar = await loadArt('avatar.png', { size: 256 });   // small art small: see below

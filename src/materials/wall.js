@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/wall
+ * @module @logomarks/mockups/materials/wall
  *
  * The wall a poster goes up on: painted plaster (any colour) or brick. The
  * wall fills the frame; its relief (the plaster's bumps, the bricks' faces

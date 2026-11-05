@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/pocket
+ * @module @logomarks/mockups/parts/pocket
  *
  * A clear PVC badge pocket, lying flat, centred on the origin and drawn in
  * millimetres: a faint haze of plastic (heavier over the empty lip at the

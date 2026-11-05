@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — rasterising with sharp: sizes, formats, and that
+ * @logomarks/mockups — rasterising with sharp: sizes, formats, and that
  * the picture is what was asked for (the ground's colour, clear vinyl a
  * shade under it, the ground through the spindle hole).
  */

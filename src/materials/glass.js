@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/glass
+ * @module @logomarks/mockups/materials/glass
  *
  * Glass over a screen or a poster: what a photo of one always shows, faint.
  * A broad sheen falling from the light's corner, a soft diagonal band (a

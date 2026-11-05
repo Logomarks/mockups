@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — caps: the model, the views, the finishes, and what
+ * @logomarks/mockups — caps: the model, the views, the finishes, and what
  * the SVG holds.
  */
 

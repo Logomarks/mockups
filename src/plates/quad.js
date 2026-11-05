@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates/quad
+ * @module @logomarks/mockups/plates/quad
  *
  * A sign in a photo is a quadrilateral: its four corners where the camera
  * saw them. These carry a flat rectangle onto it (the projective map that

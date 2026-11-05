@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/poster/tape
+ * @module @logomarks/mockups/parts/poster/tape
  *
  * A strip of masking tape across a poster's corner: cream crêpe paper a
  * little translucent, its ends torn ragged, the crêpe's faint ribs, a

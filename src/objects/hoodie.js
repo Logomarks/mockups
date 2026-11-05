@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/objects/hoodie
+ * @module @logomarks/mockups/objects/hoodie
  *
  * A pullover hoodie laid flat, seen from above: a men's L in brushed
  * fleece (chest 600 mm pit to pit, 715 mm from the shoulder to the hem),

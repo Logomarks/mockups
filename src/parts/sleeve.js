@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/sleeve
+ * @module @logomarks/mockups/parts/sleeve
  *
  * A printed sleeve, front on: the artwork, a faint paper sheen (a broad
  * diagonal glow, slightly darker away from the light), and its edges: a

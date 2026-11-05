@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/scene
+ * @module @logomarks/mockups/render/scene
  *
  * The document every 2D mockup is drawn into: a fixed-size SVG with one set
  * of `<defs>`, ids scoped by a prefix (so several mockups can sit inline on

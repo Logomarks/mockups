@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/png
+ * @module @logomarks/mockups/render/png
  *
  * A minimal PNG encoder for small generated tiles (the film grain): 8-bit
  * grey with alpha, stored uncompressed (deflate's stored blocks), so it

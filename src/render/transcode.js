@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/render/transcode
+ * @module @logomarks/mockups/render/transcode
  *
  * WebP and AVIF images inside a mockup, re-encoded before librsvg draws the
  * mockup. librsvg (2.63, the renderer inside sharp) draws PNG, JPEG and GIF

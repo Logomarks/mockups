@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/three/card
+ * @module @logomarks/mockups/three/card
  *
  * Business cards in 3D: each card a thin slab of board 85 × 55 mm with
  * (optionally) rounded corners, the front printed on one face and the back

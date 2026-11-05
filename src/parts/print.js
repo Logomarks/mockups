@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/print
+ * @module @logomarks/mockups/parts/print
  *
  * Print artwork trimmed to its object. Files made for print carry bleed
  * (the art runs a few millimetres past the cut on every side), so the art

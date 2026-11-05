@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/land
+ * @module @logomarks/mockups/parts/land
  *
  * Open country under the sky, for a roadside board: a field running from
  * a hazy horizon to darker grass in front, and two rows of distant trees

@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/materials/plaster
+ * @module @logomarks/mockups/materials/plaster
  *
  * A painted plaster wall: the paint's colour, the trowelled surface's fine
  * bumps lit from the light's side (fractal noise as a height field, under

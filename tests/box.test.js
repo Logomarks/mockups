@@ -1,5 +1,5 @@
 /**
- * @arraypress/mockups — boxes: mailers and lid boxes, open and closed (and
+ * @logomarks/mockups — boxes: mailers and lid boxes, open and closed (and
  * part open), boards, prints on each face (and kept inside it), and bad
  * options.
  */

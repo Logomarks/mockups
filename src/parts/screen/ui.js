@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/screen/ui
+ * @module @logomarks/mockups/parts/screen/ui
  *
  * The small pieces every screen is built from, drawn on a 1080-unit-wide
  * screen: the type, the light and dark themes, a status bar (time, signal,

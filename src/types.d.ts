@@ -1,4 +1,4 @@
-// Shared types for @arraypress/mockups.
+// Shared types for @logomarks/mockups.
 
 /** Finished artwork: image bytes (PNG, JPEG, WebP, GIF, AVIF or SVG), SVG markup, a `data:` URI or a URL. */
 export type Art = string | Uint8Array | ArrayBuffer;

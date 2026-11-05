@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/parts/clasp
+ * @module @logomarks/mockups/parts/clasp
  *
  * A lanyard's hardware, in millimetres: the metal crimp the strap's two
  * ends are sewn into, a swivel ring, and a lobster clasp hooked through a

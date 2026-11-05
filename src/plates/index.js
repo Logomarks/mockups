@@ -1,5 +1,5 @@
 /**
- * @module @arraypress/mockups/plates
+ * @module @logomarks/mockups/plates
  *
  * Photo plates: real photos with screens in them, and the compositor that
  * puts art into those screens as if it had been printed there. Loading a

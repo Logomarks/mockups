@@ -1,6 +1,6 @@
 # Photo plates
 
-A plate is a real photo with blank signs in it (a billboard, a fascia, a lightbox, a framed poster, a display) and, for each sign, its four corners, its kind and maps cut from the photo. `plate` warps the art into each sign and multiplies it by the blank sign's own light, so the scene's light, colour cast, seams and grime fall across the art. It matches the photo's grain and softness, feathers the edge, puts back whatever stands in front, screens glass reflections and glare back over the art, and bleeds a lightbox's light round it. The plates themselves are in [`@arraypress/mockups-plates`](https://github.com/arraypress/mockups-plates).
+A plate is a real photo with blank signs in it (a billboard, a fascia, a lightbox, a framed poster, a display) and, for each sign, its four corners, its kind and maps cut from the photo. `plate` warps the art into each sign and multiplies it by the blank sign's own light, so the scene's light, colour cast, seams and grime fall across the art. It matches the photo's grain and softness, feathers the edge, puts back whatever stands in front, screens glass reflections and glare back over the art, and bleeds a lightbox's light round it. The plates themselves are in [`@arraypress/mockups-plates`](https://github.com/Logomarks/mockups-plates).
 
 ```js
 import { plate, loadPlate, loadArt, renderImage } from '@arraypress/mockups/node';

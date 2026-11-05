@@ -12,7 +12,7 @@ export interface MakeScreenOptions {
 	aspect?: number;
 	/** Whether to look for things in front of it (true). */
 	occluders?: boolean;
-	/** A hand-painted occluder mask at the photo's proportions (white where something stands in front), as a path or bytes; added to what's found. */
+	/** A hand-painted (or matted) occluder mask at the photo's proportions (white where something stands in front), as a path or bytes: left out when the sign's light is measured, and added to what's found. */
 	mask?: string | Uint8Array;
 	/** How much darker than the sign a pixel is to count as in front of it (0.55). */
 	dark?: number;
@@ -38,8 +38,10 @@ export interface MakePlateOptions {
 	blank?: string | Uint8Array;
 	/** The longest side to keep (2400; never enlarged). */
 	size?: number;
-	/** The photo's JPEG quality (86). */
+	/** The photo's quality (86). */
 	quality?: number;
+	/** How the files are encoded: `'jpeg'` (JPEG, masks PNG; the default) or `'webp'` (WebP, masks lossless; about half the size, re-encoded by the Node renderer for librsvg). */
+	format?: 'jpeg' | 'webp';
 	/** Where the photo came from. */
 	source?: PlateSource;
 }

@@ -2,8 +2,8 @@
  * @module @arraypress/mockups/plates/extract
  *
  * Making a plate from a photo, in Node (through sharp): the photo scaled
- * to size and re-encoded as JPEG (which every SVG renderer draws; librsvg
- * doesn't draw WebP), each screen's corners found (or given) and its
+ * to size and re-encoded as JPEG (or WebP, which is smaller; the Node
+ * renderer re-encodes it for librsvg), each screen's corners found (or given) and its
  * true proportions recovered, and its maps cut from a version of the photo
  * with the sign blank (the photo itself, when its sign is blank already).
  * `savePlate` writes the lot as a plate directory.
@@ -67,13 +67,28 @@ async function handMask(input, { width, height }, [bx, by, w, h]) {
 }
 
 /**
- * Two grey masks combined, each pixel the larger (either may be missing).
+ * How each kind of file is encoded, per format: its extension and sharp's encoder.
  *
- * @param {Uint8Array | null} a One.
- * @param {Uint8Array | null} b The other.
- * @returns {Uint8Array | null} Both.
+ * @param {'jpeg' | 'webp'} format The format.
+ * @param {number} quality The photo's quality.
+ * @returns {{ ext: string, photo: (i: import('sharp').Sharp) => import('sharp').Sharp, map: (i: import('sharp').Sharp, q: number) => import('sharp').Sharp, mask: { ext: string, encode: (i: import('sharp').Sharp) => import('sharp').Sharp } }} The encoders.
  */
-const union = (a, b) => (a && b ? a.map((v, i) => Math.max(v, b[i])) : (a ?? b));
+function encoders(format, quality) {
+	if (format === 'webp') {
+		return {
+			ext: 'webp',
+			photo: (i) => i.webp({ quality, effort: 6 }),
+			map: (i, q) => i.webp({ quality: q, effort: 6 }),
+			mask: { ext: 'webp', encode: (i) => i.webp({ lossless: true, effort: 6 }) },
+		};
+	}
+	return {
+		ext: 'jpg',
+		photo: (i) => i.jpeg({ quality, mozjpeg: true }),
+		map: (i, q) => i.jpeg({ quality: q, mozjpeg: true }),
+		mask: { ext: 'png', encode: (i) => i.png({ compressionLevel: 9, palette: false }) },
+	};
+}
 
 /**
  * A plate made from a photo.
@@ -84,14 +99,16 @@ const union = (a, b) => (a && b ? a.map((v, i) => Math.max(v, b[i])) : (a ?? b))
  * @throws {Error} When a screen can't be found.
  */
 export async function makePlate(photo, options) {
-	const { name, size = 2400, quality = 86, blank, source } = options;
+	const { name, size = 2400, quality = 86, format = 'jpeg', blank, source } = options;
+	if (format !== 'jpeg' && format !== 'webp') throw new TypeError(`makePlate '${name}': format is 'jpeg' or 'webp' (got ${JSON.stringify(format)})`);
+	const enc = encoders(format, quality);
 	const screens = options.screens ?? [{ kind: options.kind ?? 'print' }];
 	const shown = await pixels(photo, size);
 	const plain = blank ? await pixels(blank, { width: shown.width, height: shown.height }) : shown;
 	/** @type {Map<string, Uint8Array>} */
 	const files = new Map();
 	const s = await sharp();
-	files.set('photo.jpg', await shown.image.jpeg({ quality, mozjpeg: true }).toBuffer());
+	files.set(`photo.${enc.ext}`, await enc.photo(shown.image).toBuffer());
 
 	// the photo's own grain, for a sign whose grain was clipped away with its whites
 	let grain = -1;
@@ -109,29 +126,29 @@ export async function makePlate(photo, options) {
 		const round = (v) => Math.round(v * 100) / 100;
 		corners = corners.map((p) => [round(p[0]), round(p[1])]);
 		const box = quadBox(corners, shown.width, shown.height, 3);
-		const maps = signMaps(plain, corners, box, kind, { occluders: o.occluders ?? true, dark: o.dark });
-		if (o.mask) maps.mask = union(o.occluders ?? true ? maps.mask : null, await handMask(o.mask, shown, box));
+		const given = o.mask ? await handMask(o.mask, shown, box) : null;
+		const maps = signMaps(plain, corners, box, kind, { occluders: o.occluders ?? true, dark: o.dark, given });
 		if (maps.noise < 0.5) {
 			if (grain < 0) grain = photoNoise(plain);
 			maps.noise = Math.max(maps.noise, grain);
 		}
 		const prefix = screens.length > 1 ? `screen-${k + 1}-` : '';
 		const raw = (data, channels) => s(Buffer.from(data), { raw: { width: box[2], height: box[3], channels } });
-		files.set(`${prefix}shading.jpg`, await raw(maps.shading, 3).jpeg({ quality: 90, mozjpeg: true }).toBuffer());
+		files.set(`${prefix}shading.${enc.ext}`, await enc.map(raw(maps.shading, 3), 90).toBuffer());
 		/** @type {import('./format.js').PlateScreen} */
-		const screen = { kind, corners, aspect: round(o.aspect ?? quadAspect(corners, shown.width, shown.height)), box, shading: `${prefix}shading.jpg`, noise: maps.noise };
+		const screen = { kind, corners, aspect: round(o.aspect ?? quadAspect(corners, shown.width, shown.height)), box, shading: `${prefix}shading.${enc.ext}`, noise: maps.noise };
 		if (maps.mask) {
-			files.set(`${prefix}mask.png`, await raw(maps.mask, 1).png({ compressionLevel: 9, palette: false }).toBuffer());
-			screen.mask = `${prefix}mask.png`;
+			files.set(`${prefix}mask.${enc.mask.ext}`, await enc.mask.encode(raw(maps.mask, 1)).toBuffer());
+			screen.mask = `${prefix}mask.${enc.mask.ext}`;
 		}
 		if (maps.reflection) {
-			files.set(`${prefix}reflection.jpg`, await raw(maps.reflection, 3).jpeg({ quality: 88, mozjpeg: true }).toBuffer());
-			screen.reflection = `${prefix}reflection.jpg`;
+			files.set(`${prefix}reflection.${enc.ext}`, await enc.map(raw(maps.reflection, 3), 88).toBuffer());
+			screen.reflection = `${prefix}reflection.${enc.ext}`;
 		}
 		for (const f of /** @type {const} */ (['soften', 'black', 'glow', 'sheen'])) if (o[f] !== undefined && o[f] !== KIND_LOOKS[kind][f]) screen[f] = o[f];
 		made.push(screen);
 	}
-	const plate = checkPlate({ name, width: shown.width, height: shown.height, photo: 'photo.jpg', screens: made, ...(source ? { source } : {}) });
+	const plate = checkPlate({ name, width: shown.width, height: shown.height, photo: `photo.${enc.ext}`, screens: made, ...(source ? { source } : {}) });
 	// keep the description lean: only what was set, not every default checkPlate filled in
 	return { plate: { ...plate, screens: made }, files };
 }

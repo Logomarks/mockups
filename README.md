@@ -38,7 +38,7 @@ const blob = await scene.toBlob();
 | `mockup(name, options)`, `OBJECTS` | An object by name. |
 | `GROUNDS`, `FINISHES`, `RECORD` | The named grounds and finishes; a record's diameter in sleeve widths. |
 | `artHref(art)` | Art as an `<image>` href. |
-| `./node`: `renderImage(mockup, { format, quality, width })` | A `Buffer` from sharp: `'png'` (default), `'webp'`, `'jpeg'` or `'avif'`. SVG art inside is drawn as a raster first (librsvg stretches turned SVG images). |
+| `./node`: `renderImage(mockup, { format, quality, width })` | A `Buffer` from sharp: `'png'` (default), `'webp'`, `'jpeg'` or `'avif'`. SVG art inside is drawn as a raster first (librsvg stretches turned SVG images), and WebP and AVIF images are re-encoded (librsvg draws neither). |
 | `./node`: `loadArt(pathOrUrlOrBytes, { size })` | A `data:` URI, scaled down to `size` (1600). |
 | `./browser`: `renderBlob`, `renderCanvas`, `loadArt` | The same, through a canvas. |
 | `./3d`: `vinylScene(canvas, options)` | `{ render, setView, toBlob, dispose }`. three.js is imported on first use. |
@@ -270,7 +270,7 @@ const jpeg = await renderImage(plate(p, { art: await loadArt('flyer.png') }), { 
 |---|---|
 | `plate(plate, options)` | A `Mockup` at the photo's size. `art` (one, or one per screen), `fit` (`'cover'`, `'contain'`, `'top'`), `background`, `grain` (× the photo's, 1), `glow`, `seed`. |
 | `./node`, `./browser`: `loadPlate(source)` | The plate with its photo and maps inlined. |
-| `./node`: `makePlate(photo, { name, kind or screens, blank, source })`, `savePlate(dir, made)` | A plate from a photo: each sign's corners found (the brightest even quadrilateral, or `near` a point, or given), its proportions recovered from the perspective, its maps cut from the photo (or from `blank`, the same photo with the sign blank). |
+| `./node`: `makePlate(photo, { name, kind or screens, blank, format, source })`, `savePlate(dir, made)` | A plate from a photo: each sign's corners found (the brightest even quadrilateral, or `near` a point, or given), its proportions recovered from the perspective, its maps cut from the photo (or from `blank`, the same photo with the sign blank). A screen's `mask` (hand-painted, or matted, such as fingers over a held card) is left out of the measuring and added to what's found. `format: 'webp'` writes WebP (masks lossless), about half the size of the JPEG default. |
 | `PLATE_KINDS`, `KIND_LOOKS`, `checkPlate`, `quadMap` | The kinds (`'print'`, `'paint'`, `'backlit'`, `'glass'`), their default looks, the format check, and the projective map. |
 
 ## Credits

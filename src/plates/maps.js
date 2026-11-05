@@ -165,9 +165,10 @@ export function photoNoise(px) {
  * @param {object} [o] Tuning.
  * @param {boolean} [o.occluders=true] Whether to look for things in front of the sign.
  * @param {number} [o.dark=0.55] How much darker than the sign round it a pixel is to count as in front of it.
+ * @param {Uint8Array | null} [o.given] A grey occluder mask already known (hand-painted, or cut by a matting model), the box's size: left out when the sign is measured, and added to what's found.
  * @returns {{ shading: Uint8Array, reflection: Uint8Array | null, mask: Uint8Array | null, noise: number }} RGB shading and reflections and a grey occluder mask (each the box's size, row by row), and the grain.
  */
-export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55 } = {}) {
+export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55, given = null } = {}) {
 	const [bx, by, w, h] = box;
 	const n = w * h;
 	const rgb = new Float32Array(n * 3);
@@ -188,13 +189,13 @@ export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55
 	// occluders: much darker than the sign's smooth light round them (twice, so the first pass's finds don't drag the light down)
 	let mask = null;
 	if (occluders) {
-		const keep = Float32Array.from(sign);
+		const keep = Float32Array.from(sign, (v, i) => (given && given[i] >= 16 ? 0 : v));
 		let hit = new Uint8Array(n);
 		for (let pass = 0; pass < 2; pass++) {
 			const light = smooth(L, keep, w, h, diag * 0.02);
 			hit = new Uint8Array(n);
 			for (let i = 0; i < n; i++) if (sign[i] && L[i] < light[i] * dark) hit[i] = 1;
-			for (let i = 0; i < n; i++) keep[i] = sign[i] && !hit[i] ? 1 : 0;
+			for (let i = 0; i < n; i++) keep[i] = sign[i] && !hit[i] && !(given && given[i] >= 16) ? 1 : 0;
 		}
 		hit = close(hit, w, h, 3);
 		for (let i = 0; i < n; i++) hit[i] &= sign[i];
@@ -205,6 +206,7 @@ export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55
 			for (let i = 0; i < n; i++) mask[i] = Math.min(255, Math.round(Math.max(hit[i] * 255, soft[i] * 1.6)));
 		}
 	}
+	if (given) mask = mask ? mask.map((v, i) => Math.max(v, given[i])) : Uint8Array.from(given);
 	const clear = (i) => sign[i] && (!mask || mask[i] < 16);
 
 	// the reference white: the sign's brightest (a high quantile, so a stray hot pixel doesn't set it), per channel for paint
@@ -242,6 +244,9 @@ export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55
 		}
 		if (count > n * 0.0002) reflection = glare;
 	}
+	// under an occluder the sign's light is unseen: carry the light round it in, so the occluder's soft edge, where
+	// the art shows through, isn't tinted by the occluder's own colour
+	if (mask) fillUnder(base, mask, clear, w, h, diag * 0.01);
 	const shading = new Uint8Array(n * 3);
 	for (let i = 0; i < n * 3; i++) shading[i] = Math.min(255, Math.round((base[i] / white[i % 3]) * 255));
 
@@ -258,4 +263,32 @@ export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55
 	}
 	const noise = resid.length ? (quantile(resid, 0.5) * 1.4826) / Math.sqrt(8 / 9) : 0;
 	return { shading, reflection, mask, noise: Math.round(noise * 100) / 100 };
+}
+
+/**
+ * Fills RGB values under a mask with the values round it, blurred in from the clear pixels and blended by the mask's
+ * own softness. Wide gaps (a whole hand) fill from a wider blur where a narrow one reaches nothing.
+ *
+ * @param {Float32Array} rgb The values, three per pixel, changed in place.
+ * @param {Uint8Array} mask Grey, white where the values are hidden.
+ * @param {(i: number) => boolean} clear Whether a pixel's own value can be trusted.
+ * @param {number} w The grid's width.
+ * @param {number} h Its height.
+ * @param {number} r The narrowest blur's radius, in pixels.
+ */
+function fillUnder(rgb, mask, clear, w, h, r) {
+	const n = w * h;
+	const weight = Float32Array.from({ length: n }, (_, i) => (clear(i) ? 1 : 0));
+	for (let c = 0; c < 3; c++) {
+		const ch = Float32Array.from({ length: n }, (_, i) => rgb[i * 3 + c]);
+		const near = smooth(ch, weight, w, h, r);
+		const far = smooth(ch, weight, w, h, r * 6);
+		for (let i = 0; i < n; i++) {
+			if (mask[i] < 16) continue;
+			const fill = near[i] > 0 ? near[i] : far[i];
+			if (!(fill > 0)) continue;
+			const a = mask[i] / 255;
+			rgb[i * 3 + c] = rgb[i * 3 + c] * (1 - a) + fill * a;
+		}
+	}
 }

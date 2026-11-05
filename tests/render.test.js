@@ -95,3 +95,23 @@ describe('render: SVG art under a rotation', () => {
 		assert.ok(data[at + 2] > 200 && data[at] < 80, `blue at the band (${[...data.subarray(at, at + 3)]})`);
 	});
 });
+
+describe('render: WebP and AVIF images', () => {
+	it('draws a WebP image (librsvg alone leaves it blank), re-encoded as JPEG or PNG', async (t) => {
+		const sharp = await import('sharp').then((m) => m.default, () => null);
+		if (!sharp) return t.skip('sharp is not installed');
+		const { renderImage } = await import('../src/render/node.js');
+		const { transcodeImages } = await import('../src/render/transcode.js');
+		const red = await sharp({ create: { width: 40, height: 40, channels: 3, background: '#ff0000' } }).webp({ quality: 90 }).toBuffer();
+		const clear = await sharp({ create: { width: 40, height: 40, channels: 4, background: { r: 0, g: 255, b: 0, alpha: 0.5 } } }).webp({ lossless: true }).toBuffer();
+		const img = (b, x) => `<image x="${x}" width="40" height="40" href="data:image/webp;base64,${b.toString('base64')}"/>`;
+		const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="40"><rect width="80" height="40" fill="#0000ff"/>${img(red, 0)}${img(clear, 40)}</svg>`;
+		const out = await transcodeImages(svg, sharp);
+		assert.doesNotMatch(out, /data:image\/webp/);
+		assert.match(out, /data:image\/jpeg;base64,[^"]+"\/><image x="40"[^>]*data:image\/png;base64,/);
+		const { data, info } = await sharp(await renderImage(svg)).raw().toBuffer({ resolveWithObject: true });
+		const px = (x) => [...data.subarray((20 * 80 + x) * info.channels, (20 * 80 + x) * info.channels + 3)];
+		assert.ok(px(20)[0] > 230 && px(20)[2] < 30, `the WebP is drawn (${px(20)})`);
+		assert.ok(px(60)[1] > 100 && px(60)[2] > 100, `its transparency is kept (${px(60)})`);
+	});
+});

@@ -5,6 +5,18 @@ All notable changes to `@arraypress/mockups` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] — 2026-11-05
+
+### Added
+
+- **WebP plates.** `makePlate(photo, { format: 'webp' })` writes the photo, shading and reflections as WebP and the occluder mask as lossless WebP, about half the size of the JPEG default (`'jpeg'`, unchanged).
+- **WebP and AVIF in `./node`.** `renderImage` re-encodes WebP and AVIF images inside a mockup (JPEG when opaque, PNG when not) before librsvg draws it: librsvg 2.63 draws neither, and left them blank. So WebP plates, and any WebP art inlined without `loadArt`, render in Node. Browsers were never affected.
+
+### Fixed
+
+- **Hand-painted occluder masks on held signs.** A screen's `mask` (white where something stands in front, such as the thumb and fingers over a held card) is now left out when the sign is measured: its reference white, its glare and its grain come from the sign round it, not through the fingers, so skin next to the paper no longer reads as glare. It used to be added only afterwards.
+- **The light under occluders.** The shading under every occluder (found or given) is filled with the sign's light round it, blended by the mask's own softness, so the art showing through an occluder's soft edge is no longer tinted by the occluder's colour (a skin-toned or dark fringe round fingers and brackets).
+
 ## [0.4.1] — 2026-11-05
 
 ### Fixed

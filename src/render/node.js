@@ -12,6 +12,7 @@
 import { readFile } from 'node:fs/promises';
 import { artHref } from './art.js';
 import { flattenSvgImages } from './flatten.js';
+import { transcodeImages } from './transcode.js';
 import { quietCrops, remember, PROBE } from './quiet.js';
 import { KRAFT_COUNT, kraftUrl, setKraftTextures, kraftTextures } from '../materials/textures.js';
 
@@ -79,8 +80,9 @@ await loadTextures();
 export async function renderImage(input, output = {}) {
 	const { format = 'png', quality = 90, width } = output;
 	const s = await sharp();
-	// SVG art drawn as rasters first: librsvg stretches a nested SVG drawn under a rotation
-	const svg = await flattenSvgImages(typeof input === 'string' ? input : input.svg, s);
+	// SVG art drawn as rasters first (librsvg stretches a nested SVG drawn under a rotation), and WebP and AVIF
+	// re-encoded (librsvg draws neither)
+	const svg = await transcodeImages(await flattenSvgImages(typeof input === 'string' ? input : input.svg, s), s);
 	let img = s(Buffer.from(svg), { limitInputPixels: false });
 	if (width) img = img.resize({ width: Math.round(width) });
 	if (format === 'png') return img.png({ compressionLevel: 6 }).toBuffer();

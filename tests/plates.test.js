@@ -112,6 +112,23 @@ describe('plates: the maps', () => {
 		assert.equal(reflection, null);
 		assert.ok(signMaps(px, SIGN, box, 'glass').reflection);
 	});
+
+	it('leaves a given mask out of the measuring, adds it, and fills the light in under every occluder', () => {
+		const px = photo();
+		const box = quadBox(SIGN, px.width, px.height, 3);
+		const at = (x, y) => (y - box[1]) * box[2] + (x - box[0]);
+		// a skin-toned thumb on the sign, given as a mask
+		for (let y = 180; y < 230; y++) for (let x = 200; x < 230; x++) px.data.set([200, 140, 110], (y * px.width + x) * 3);
+		const given = new Uint8Array(box[2] * box[3]);
+		for (let y = 180; y < 230; y++) for (let x = 200; x < 230; x++) given[at(x, y)] = 255;
+		const { shading, mask, reflection } = signMaps(px, SIGN, box, 'print', { given });
+		assert.ok(mask && mask[at(215, 205)] === 255 && mask[at(305, 250)] > 200, 'the thumb and the post');
+		const thumb = shading.subarray(at(215, 205) * 3, at(215, 205) * 3 + 3);
+		const round = shading.subarray(at(260, 205) * 3, at(260, 205) * 3 + 3);
+		assert.ok(thumb.every((v, c) => Math.abs(v - round[c]) < 12), `the light carried under the thumb (${[...thumb]} by ${[...round]})`);
+		assert.ok(shading[at(305, 250) * 3] > 200, 'and under the post');
+		assert.equal(reflection, null, 'no glare found beside the thumb');
+	});
 });
 
 describe('plates: the format', () => {
@@ -157,6 +174,29 @@ describe('plates: compositing', () => {
 		assert.ok(at(410, 160) > 200, 'the painted square');
 		assert.ok(at(305, 250) > 200, 'the post it found');
 		assert.ok(at(200, 200) < 30, 'clear elsewhere');
+	});
+
+	it('makes a WebP plate (masks lossless) that loads and renders the same', async () => {
+		const px = photo();
+		const jpeg = await sharp(Buffer.from(px.data), { raw: { width: px.width, height: px.height, channels: 3 } }).jpeg({ quality: 95 }).toBuffer();
+		const made = await makePlate(jpeg, { name: 'webp', kind: 'print', format: 'webp' });
+		assert.deepEqual([...made.files.keys()].sort(), ['mask.webp', 'photo.webp', 'shading.webp']);
+		assert.equal(made.plate.photo, 'photo.webp');
+		assert.equal((await sharp(made.files.get('mask.webp')).metadata()).format, 'webp');
+		const dir = await mkdtemp(join(tmpdir(), 'plates-'));
+		try {
+			await savePlate(dir, made);
+			const loaded = await loadPlate(dir);
+			assert.match(loaded.photo, /^data:image\/webp;base64,/);
+			const { data } = await sharp(await renderImage(plate(loaded, { art: ART }))).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+			const rgb = (x, y) => [...data.subarray((y * 640 + x) * 3, (y * 640 + x) * 3 + 3)];
+			assert.ok(rgb(200, 200)[0] > 150 && rgb(200, 200)[1] < 90, `the art is on the sign: ${rgb(200, 200)}`);
+			assert.ok(rgb(305, 250).every((v) => v < 80), `the post stays in front: ${rgb(305, 250)}`);
+			assert.ok(Math.abs(rgb(40, 40)[0] - 92) < 12, `the photo is drawn round it: ${rgb(40, 40)}`);
+		} finally {
+			await rm(dir, { recursive: true, force: true });
+		}
+		await assert.rejects(makePlate(jpeg, { name: 'x', format: /** @type {any} */ ('png') }), /format is 'jpeg' or 'webp'/);
 	});
 
 	it('makes, saves, loads and renders a plate', async () => {

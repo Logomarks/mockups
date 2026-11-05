@@ -74,3 +74,24 @@ describe('loadArt', () => {
 		assert.match(await loadArt(alpha), /^data:image\/png;base64,/);
 	});
 });
+
+describe('render: SVG art under a rotation', () => {
+	it('draws turned SVG art in its box (librsvg alone stretches it), as a raster', async (t) => {
+		const sharp = await import('sharp').then((m) => m.default, () => null);
+		if (!sharp) return t.skip('sharp is not installed');
+		const { renderImage } = await import('../src/render/node.js');
+		const { flattenSvgImages } = await import('../src/render/flatten.js');
+		// white, a blue band along its top tenth
+		const art = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3 1"><rect width="3" height="1" fill="#fff"/><rect width="3" height="0.1" fill="#00f"/></svg>';
+		const href = `data:image/svg+xml;base64,${Buffer.from(art).toString('base64')}`;
+		const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><g transform="translate(200 200) rotate(8)"><image x="-150" y="-50" width="300" height="100" preserveAspectRatio="xMidYMid slice" href="${href}"/></g></svg>`;
+		const flat = await flattenSvgImages(svg, sharp);
+		assert.doesNotMatch(flat, /data:image\/svg\+xml/);
+		assert.match(flat, /data:image\/jpeg;base64,/);
+		// the band, 45 units above the middle along the turned box
+		const { data, info } = await sharp(await renderImage(svg)).raw().toBuffer({ resolveWithObject: true });
+		const [x, y] = [Math.round(200 + 45 * Math.sin(Math.PI / 22.5)), Math.round(200 - 45 * Math.cos(Math.PI / 22.5))];
+		const at = (y * 400 + x) * info.channels;
+		assert.ok(data[at + 2] > 200 && data[at] < 80, `blue at the band (${[...data.subarray(at, at + 3)]})`);
+	});
+});

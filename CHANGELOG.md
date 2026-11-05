@@ -5,6 +5,12 @@ All notable changes to `@arraypress/mockups` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.1] — 2026-11-05
+
+### Fixed
+
+- **Turned SVG art in `./node`.** librsvg (2.63) lays an SVG `<image>` drawn under a rotation out in the turned box's bounds, so a turned ticket, card or sheet with an SVG print lost its top and bottom. `renderImage` now draws each SVG image as a raster at the size it's defined at first (JPEG when opaque, capped at 2048 px), so it turns correctly. Browsers were never affected.
+
 ## [0.4.0] — 2026-11-05
 
 0.3.0 was tagged but never published, so this release carries its photo plates too.

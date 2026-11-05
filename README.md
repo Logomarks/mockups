@@ -38,7 +38,7 @@ const blob = await scene.toBlob();
 | `mockup(name, options)`, `OBJECTS` | An object by name. |
 | `GROUNDS`, `FINISHES`, `RECORD` | The named grounds and finishes; a record's diameter in sleeve widths. |
 | `artHref(art)` | Art as an `<image>` href. |
-| `./node`: `renderImage(mockup, { format, quality, width })` | A `Buffer` from sharp: `'png'` (default), `'webp'`, `'jpeg'` or `'avif'`. |
+| `./node`: `renderImage(mockup, { format, quality, width })` | A `Buffer` from sharp: `'png'` (default), `'webp'`, `'jpeg'` or `'avif'`. SVG art inside is drawn as a raster first (librsvg stretches turned SVG images). |
 | `./node`: `loadArt(pathOrUrlOrBytes, { size })` | A `data:` URI, scaled down to `size` (1600). |
 | `./browser`: `renderBlob`, `renderCanvas`, `loadArt` | The same, through a canvas. |
 | `./3d`: `vinylScene(canvas, options)` | `{ render, setView, toBlob, dispose }`. three.js is imported on first use. |

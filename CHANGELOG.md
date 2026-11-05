@@ -5,6 +5,24 @@ All notable changes to `@logomarks/mockups` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] — 2026-11-06
+
+### Added
+
+- **Scenes shot through a lens** (`./3d`). Each builds its own set and is drawn as the average of many frames, the camera moved over the lens's aperture with the plane of focus held still, so what's in focus is sharp, the rest blurs as a real lens blurs it, and edges are smooth. `blur` (0–1) and `samples` set it; `LENS_SAMPLES` is the default.
+- **`sunglassesScene`**: sunglasses resting on a ledge, the art reflected in their curved dark lenses from a poster in a painted street behind the camera, painted mirrored so it reads the right way round. The rims are a rounded profile swept round each lens and bent to its curve. `time` (`'day'`, `'golden'`, `'dusk'`), `lens` (`'smoke'`, `'mirror'`), `frame` (`'black'`, `'smoke'`, `'havana'`, hex). No face or person.
+- **Screens.** `phoneScene`: `layout: 'corner'`, a macro of a phone's corner with the brand's app first on its home screen beside generic apps (abstract glyphs, no platform's icons), focused on the icon; `'pair'`, two phones floating before glazed tiles, showing a composed brand page and its open menu, or `art` and `back` as screenshots. `laptopScene`: a laptop on a dark shelf, its screen a soft field of the brand's colour with the lockup, lighting the room. `keynoteScene`: a big screen over a stage seen past the audience's heads, brand-coloured washes on the wall, a truss of lights.
+- **Signs.** `lightboxScene`: a backlit poster on a station's wall of enamel panels, or a type poster composed from the mark with its grid showing. `neonScene`: the mark bent in glass tube along its outlines on brick, its light raking the bricks. `windowScene`: the mark and name in white or gilt vinyl on a shop window, the street opposite in the glass. `billboardScene`: a billboard over a clipped hedge of about 58,000 self-shadowing leaves.
+- **Print in the studio.** `binderScene` (binders in a row, the name down each spine), `bookScene` (a clothbound book with the mark debossed, beside a tinted acrylic slipcase), `stationeryScene` (letterhead, envelope and a card's front and back in a grid; composed, or from print files).
+- **Restaurant.** `menuScene` (a card menu, or a tri-fold standing open), `receiptScene` (a curled thermal receipt with a torn edge and barcode), `cupScene` (a paper cup, sip lid and printed kraft sleeve), `takeawayScene` (a kraft bag folded over, a seal across the fold), `pizzaScene` (a closed pizza box printed in one ink), `chopsticksScene` (chopsticks in a printed sleeve), `napkinScene` (a stack of printed napkins). See `docs/restaurant.md`.
+- `boxScene` takes `kind: 'pizza'` (340 × 340 × 45 mm, built as a mailer), and `blur` or `samples` to draw it through the lens.
+- Shared pieces: a brand lockup (`parts/lockup.js`), a brand reader (`name`, `color`, `ink` that reads on it, `paper`), composed prints (type poster, covers, letterhead and cards, menus, receipts), an SVG path flattener for the neon's tubes, and lighting `'none'` for scenes that set their own stage.
+
+### Changed
+
+- **`boxScene` on a textured surface** stands on a sweep printed with it, instead of a desk plane meeting a grey wall: there's no horizon line any more.
+- The 3D static-import test covers every module in `src/three/`.
+
 ## [0.4.3] — 2026-11-06
 
 ### Changed

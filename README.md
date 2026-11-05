@@ -24,9 +24,10 @@ const webp = await renderImage(vinyl({ art, format: 'single', vinyl: 'black', gr
 
 - [Usage and API](https://github.com/Logomarks/mockups/blob/main/docs/api.md): the 2D and 3D entry points, every export
 - [Vinyl](https://github.com/Logomarks/mockups/blob/main/docs/vinyl.md): sleeves and records, in 2D and 3D
-- [Print and brand](https://github.com/Logomarks/mockups/blob/main/docs/print-and-brand.md): cards, tickets, lanyards, stickers, apparel, mugs, boxes
+- [Print and brand](https://github.com/Logomarks/mockups/blob/main/docs/print-and-brand.md): cards, tickets, lanyards, stickers, apparel, mugs, boxes; binders, a book and slipcase, stationery
 - [Music](https://github.com/Logomarks/mockups/blob/main/docs/music.md): CDs, cassettes, posters
-- [Screens and signs](https://github.com/Logomarks/mockups/blob/main/docs/screens-and-signs.md): phone, laptop, billboard, shopfront, bus shelter
+- [Screens and signs](https://github.com/Logomarks/mockups/blob/main/docs/screens-and-signs.md): phone, laptop, billboard, shopfront, bus shelter; in 3D, sunglasses, a phone's corner, a keynote stage, a station lightbox, neon, a window decal, a billboard over a hedge
+- [Restaurant](https://github.com/Logomarks/mockups/blob/main/docs/restaurant.md): menus, a receipt, a takeaway cup and bag, a pizza box, chopsticks, napkins
 - [TV](https://github.com/Logomarks/mockups/blob/main/docs/tv.md): a television with a live screen
 - [Photo plates](https://github.com/Logomarks/mockups/blob/main/docs/photo-plates.md): art composited into real photos
 

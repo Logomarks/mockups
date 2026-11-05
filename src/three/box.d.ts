@@ -3,17 +3,18 @@ import type { SurfaceOption } from '../materials/desk.js';
 import type { BoardOption } from '../materials/board.js';
 import type { PrintShotOptions } from './printshot.js';
 import type { Shot } from './shot.js';
+import type { LensOptions } from './lens.js';
 
-/** A corrugated mailer with a hinged lid, or a rigid box with a lift-off lid. */
-export type BoxKind = 'mailer' | 'lid';
+/** A corrugated mailer with a hinged lid, a rigid box with a lift-off lid, or a pizza box (a flat corrugated mailer). */
+export type BoxKind = 'mailer' | 'lid' | 'pizza';
 
-/** A 3D box scene's options. */
-export interface BoxSceneOptions extends PrintShotOptions {
+/** A 3D box scene's options (`blur` or `samples` draws it through a lens). */
+export interface BoxSceneOptions extends PrintShotOptions, LensOptions {
 	/** What's printed on the lid (inline: bytes, SVG or a `data:` URI). Required. */
 	art: Art;
 	/** What's printed on the front: a mailer's front wall, a lid box's lid skirt; it fills the face when its proportions suit it, otherwise it sits whole in the middle. */
 	side?: Art;
-	/** `'mailer'` (250 × 180 × 80 mm, the default) or `'lid'` (320 × 200 × 110 mm). */
+	/** `'mailer'` (250 × 180 × 80 mm, the default), `'lid'` (320 × 200 × 110 mm) or `'pizza'` (340 × 340 × 45 mm, hinged as a mailer). */
 	kind?: BoxKind;
 	/** How open, 0 (closed, the default) to 1: a mailer's lid swung up 112°; a lid box's lid lifted 150 mm and tipped. */
 	open?: number;

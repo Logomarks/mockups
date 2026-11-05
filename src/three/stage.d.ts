@@ -2,8 +2,8 @@ import type { Three } from './textures.js';
 
 /** A renderer on a canvas: soft (VSM) shadows, neutral tone mapping, sRGB output, the drawing kept for `toBlob`. */
 export function makeRenderer(THREE: Three, canvas: HTMLCanvasElement | OffscreenCanvas, o: { width: number; height: number; pixelRatio: number; exposure: number }): import('three').WebGLRenderer;
-/** How a scene is lit: the studio (a soft key on the light's side and a fill), a phone's flash beside the lens, or a dark room. */
-export type Lighting = 'studio' | 'flash' | 'dark';
+/** How a scene is lit: the studio (a soft key on the light's side and a fill), a phone's flash beside the lens, a dark room, or nothing (the scene builds its own set). */
+export type Lighting = 'studio' | 'flash' | 'dark' | 'none';
 
 /** How the stage is set. */
 export interface StageOptions {
@@ -13,7 +13,7 @@ export interface StageOptions {
 	light: number;
 	/** Lying on the ground (`'flat'`, the default) or standing on a paper sweep (`'upright'`). */
 	layout?: 'flat' | 'upright';
-	/** `'studio'` (the default), `'flash'` or `'dark'`. */
+	/** `'studio'` (the default), `'flash'`, `'dark'` or `'none'`. */
 	lighting?: Lighting;
 	/** A drawn surface the sweep is printed with (`span`: how many scene units the canvas covers), mirrored round to cover it. */
 	backdrop?: { canvas: HTMLCanvasElement; span: number } | null;

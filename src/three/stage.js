@@ -11,7 +11,8 @@
  * flash (a hard light beside the lens, following the camera, crisp
  * shadows, a low window light raking across from the side, the room for
  * gloss to reflect) and a dark room (a floor fading into the dark, almost
- * no light of its own: the objects light it).
+ * no light of its own: the objects light it). Or none at all: a scene
+ * that brings its own set (a street, a stage) builds it.
  */
 
 import { sweepMesh } from './sweep.js';
@@ -52,6 +53,8 @@ const FLASH = 2.8;
 export function makeStage(THREE, renderer, Room, { ground, light, layout = 'flat', lighting = 'studio', backdrop = null }) {
 	const scene = new THREE.Scene();
 	scene.background = new THREE.Color(ground);
+	// a set the scene builds itself: its own environment, ground and lights
+	if (lighting === 'none') return { scene, follow() {}, dispose() {} };
 	const pmrem = new THREE.PMREMGenerator(renderer);
 	const env = pmrem.fromScene(new Room(), 0.04).texture;
 	scene.environment = env;

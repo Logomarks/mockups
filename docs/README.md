@@ -8,8 +8,9 @@ The library takes finished art (image bytes, SVG markup, a `data:` URI or a URL)
 
 - [Usage and API](api.md): the 2D and 3D entry points, every export
 - [Vinyl](vinyl.md): `vinyl` and `vinylScene` options, finishes, labels
-- [Print and brand](print-and-brand.md): cards, letterheads, tickets, lanyards, stickers, apparel, mugs, bags and boxes
+- [Print and brand](print-and-brand.md): cards, letterheads, tickets, lanyards, stickers, apparel, mugs, bags and boxes; in the studio, binders, a book and slipcase, stationery
 - [Music](music.md): `cd`, `cassette` and `poster`
-- [Screens and signs](screens-and-signs.md): phone, laptop, billboard, shopfront, bus shelter
+- [Screens and signs](screens-and-signs.md): phone, laptop, billboard, shopfront, bus shelter; in 3D, sunglasses, a phone's corner, a keynote, a station lightbox, neon, a window decal, a billboard over a hedge
+- [Restaurant](restaurant.md): menus, a receipt, a takeaway cup and bag, a pizza box, chopsticks, napkins
 - [TV](tv.md): a television with a live screen
 - [Photo plates](photo-plates.md): art composited into real photos

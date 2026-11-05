@@ -14,6 +14,7 @@ import { clamp } from '../util/num.js';
 import { makeRenderer, makeStage, expose } from './stage.js';
 import { place, placeUpright, FRONT, LEVEL } from './view.js';
 import { loop, drifted } from './loop.js';
+import { makeLens } from './lens.js';
 
 /**
  * A scene on a canvas, drawn once.
@@ -43,12 +44,16 @@ export async function shoot(canvas, o, build) {
 	let view = { ...home, ...o.view };
 	let shown = view;
 	const look = /** @type {[number, number, number]} */ (upright ? group.center : [0, 0, 0]);
+	// a lens: frames averaged for depth of field and smooth edges (a still shot; a moving one draws plainly)
+	const lens = o.lens ? makeLens(THREE, renderer, { samples: o.lens.samples }) : null;
+	let still = true;
 	const render = () => {
 		if (upright) placeUpright(camera, shown, { ...group, ...frame });
 		else place(camera, shown, { width: group.width, depth: group.height, ...frame });
 		camera.updateMatrixWorld();
 		stage.follow(camera, look);
-		renderer.render(scene, camera);
+		if (lens && still) lens.draw(scene, camera, { aperture: (o.lens?.aperture ?? 0) * camera.position.distanceTo(new THREE.Vector3(...(group.focus ?? look))), focus: group.focus ?? look });
+		else renderer.render(scene, camera);
 	};
 	// the ground the colour asked for: measured in the front-on view, on bare paper near the top corner
 	if (o.exposure === undefined && lighting === 'studio') {
@@ -61,6 +66,7 @@ export async function shoot(canvas, o, build) {
 	// the camera drifting, or the builder's own changes: frame by frame
 	const drift = Math.max(0, o.drift ?? 0);
 	const moving = drift > 0 || group.tick ? loop(canvas, (t) => {
+		still = false;
 		shown = drift > 0 ? drifted(view, t, drift) : view;
 		group.tick?.(t);
 		render();
@@ -86,6 +92,7 @@ export async function shoot(canvas, o, build) {
 				}
 			});
 			owned.forEach((t) => t.dispose());
+			lens?.dispose();
 			stage.dispose();
 			renderer.dispose();
 		},

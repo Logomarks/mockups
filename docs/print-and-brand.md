@@ -50,3 +50,23 @@ mockup('lanyard', { art: pass, bleed: 3, name: 'Ferro Fest', mark, surface: 'oak
 ] });
 mockup('sticker', { layout: 'sheet', sheet: { art: stickerSheet, bleed: 3 }, art: badge, surface: 'cutting-mat' });
 ```
+
+## In the studio
+
+Print composed from the brand and shot in 3D through a lens: `art` is the mark, and `name`, `color`, `ink` and `paper` set the prints. Print files stand in where noted.
+
+```js
+import { binderScene, bookScene, stationeryScene } from '@logomarks/mockups/3d';
+
+await binderScene(canvas, { art: mark, name: 'Gecko', color: '#e2552c', title: 'Brand book' });
+await bookScene(canvas, { art: mark, name: 'Covehaus', color: '#1f5c4c', tint: '#5fc9b2' });
+await stationeryScene(canvas, { art: mark, name: 'Railkin', color: '#4a3bd2', card: front, back, bleed: 3 });
+```
+
+| Scene | What it is | Its own options |
+|---|---|---|
+| `binderScene` | Binders standing in a row on a sweep, one hard shadow: the name down each spine, the front cover with the mark, a dot grid and the name set large | `count` (1–6, 4), `title`, `ground` (the sweep), `light` |
+| `bookScene` | A clothbound book, the mark debossed tone on tone, beside a tinted acrylic slipcase with a thumb notch and the lockup printed in white | `cloth`, `tint`, `ground`, `scale` (the deboss, 0.5), `light` |
+| `stationeryScene` | A letterhead, a DL envelope and a card's front and back in a grid on a solid colour | `letter`, `card`, `back` (print files), `bleed`, `ground`, `stock` (`'uncoated'`), `light` |
+
+They also take `seed`, the shot (`width`, `height`, `pixelRatio`, `view`, `exposure`, `fit`) and the lens (`blur`, `samples`). Names, addresses and titles on composed prints are placeholders. Café print (menus, receipts) is in [Restaurant](restaurant.md).

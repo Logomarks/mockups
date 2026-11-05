@@ -10,9 +10,9 @@
  * centred on a shallow skirt). Every flat face is board baked at its real
  * size (the kraft photograph, or the board's colour with its grain; ink in
  * the fibres; occlusion in the corners; folds), matte with the grain's
- * relief. Sizes are real: a mailer of 250 × 180 × 80 mm and a lid box of
- * 320 × 200 × 110 mm. `board`, `lining` and `open` mean what they do in the
- * 2D `box`.
+ * relief. Sizes are real: a mailer of 250 × 180 × 80 mm, a lid box of
+ * 320 × 200 × 110 mm, and a pizza box (a flat mailer) of 340 × 340 × 45 mm.
+ * `board`, `lining` and `open` mean what they do in the 2D `box`.
  */
 
 import { resolveSurface } from '../materials/desk.js';
@@ -22,19 +22,22 @@ import { faceFit } from '../parts/print.js';
 import { reader } from '../util/reader.js';
 import { shoot } from './shot.js';
 import { shotOf } from './printshot.js';
+import { lensOf } from './lens.js';
 import { panelCanvas, artAspect } from './printart.js';
-import { deskCanvas, deskMesh, contactMesh, UNIT } from './deskplane.js';
+import { deskCanvas, contactMesh, UNIT } from './deskplane.js';
 import { boardMaterial, fluteMap, boardKit, bakeBoard, bakedMaterial } from './board.js';
 
 export { lidPose };
 
 /** The kinds of box. */
-export const BOX_KINDS = /** @type {const} */ (['mailer', 'lid']);
+export const BOX_KINDS = /** @type {const} */ (['mailer', 'lid', 'pizza']);
 
 /** Each kind's size in mm (width, depth, height), its board's thickness, and a lid box's skirt. */
 export const BOXES = Object.freeze({
 	mailer: Object.freeze({ width: 250, depth: 180, height: 80, board: 3, skirt: 0 }),
 	lid: Object.freeze({ width: 320, depth: 200, height: 110, board: 2.5, skirt: 40 }),
+	// a 13" pizza box: a flat mailer in corrugated board
+	pizza: Object.freeze({ width: 340, depth: 340, height: 45, board: 3, skirt: 0 }),
 });
 
 /** A flute's pitch along a corrugated edge, in mm (B-flute: about 6.5 mm a flute; the tile has four). */
@@ -43,14 +46,14 @@ const FLUTE_TILE = 26;
 /**
  * The extent of the box and its lid, for framing.
  *
- * @param {'mailer' | 'lid'} kind The box.
+ * @param {import('./box.js').BoxKind} kind The box.
  * @param {number} open How open, 0–1.
  * @returns {{ width: number, height: number, centerY: number }} The width and height to frame, and the height of their middle, in mm.
  */
 export function boxExtent(kind, open) {
 	const b = BOXES[kind];
 	const p = lidPose(kind, open);
-	const top = kind === 'mailer' ? b.height + Math.sin((p.hinge * Math.PI) / 180) * b.depth : b.height + b.board + p.lift + Math.sin((p.tilt * Math.PI) / 180) * b.depth * 0.5;
+	const top = kind !== 'lid' ? b.height + Math.sin((p.hinge * Math.PI) / 180) * b.depth : b.height + b.board + p.lift + Math.sin((p.tilt * Math.PI) / 180) * b.depth * 0.5;
 	return { width: Math.hypot(b.width, b.depth) * 1.05, height: top + b.depth * 0.45, centerY: top / 2 };
 }
 
@@ -112,7 +115,7 @@ export async function boxScene(canvas, options) {
 	const open = o.num('open', 0, 0, 1);
 	const board = resolveBoard(/** @type {import('../materials/board.js').BoardOption} */ (o.raw('board')), 'boxScene');
 	const lining = o.color('lining', liningFor(board, kind));
-	const liningKraft = lining === liningFor(board, kind) && (board.name === 'kraft' || (board.name === 'white' && kind === 'mailer'));
+	const liningKraft = lining === liningFor(board, kind) && (board.name === 'kraft' || (board.name === 'white' && kind !== 'lid'));
 	const outKraft = board.name === 'kraft';
 	const print = o.oneOf('print', 'cover', /** @type {const} */ (['cover', 'logo']));
 	const light = o.num('light', 0.35, -1, 1);
@@ -122,11 +125,15 @@ export async function boxScene(canvas, options) {
 	const desk = surf.texture ? await deskCanvas(surf, { span: 1400, light, seed }) : null;
 	const ext = boxExtent(kind, open);
 	const shot = shotOf(o, { ground: desk?.color ?? surf.color, light, layout: 'upright', fit: 0.74, view: { tilt: 26, turn: -32 } });
+	// a lens (depth of field, smooth edges) when one's asked for
+	if (o.raw('blur') !== undefined || o.raw('samples') !== undefined) shot.lens = lensOf(o, { aperture: 0.012 });
+	// a textured surface runs up the sweep behind, so there's no horizon
+	if (desk) shot.backdrop = { canvas: desk.canvas, span: desk.span / UNIT };
 	const b = BOXES[kind];
 	const u = 1 / UNIT;
 	const [W, D, H, t] = [b.width * u, b.depth * u, b.height * u, b.board * u];
-	const lidSize = /** @type {[number, number]} */ (kind === 'mailer' ? [b.width, b.depth] : [b.width + 2 * b.board + 2, b.depth + 2 * b.board + 2]);
-	const frontSize = /** @type {[number, number]} */ (kind === 'mailer' ? [b.width, b.height - b.board] : [lidSize[0], b.skirt]);
+	const lidSize = /** @type {[number, number]} */ (kind !== 'lid' ? [b.width, b.depth] : [b.width + 2 * b.board + 2, b.depth + 2 * b.board + 2]);
+	const frontSize = /** @type {[number, number]} */ (kind !== 'lid' ? [b.width, b.height - b.board] : [lidSize[0], b.skirt]);
 	const aspect = print === 'logo' ? await artAspect(art) : 1;
 	const sideAspect = side ? await artAspect(side) : 1;
 	// a side print fills the front when it suits it, otherwise it sits whole in the middle
@@ -163,25 +170,25 @@ export async function boxScene(canvas, options) {
 		const AO_IN = { sides: 0.42, bottom: 0.5, top: 0.12, reach: 0.18 };
 		const AO_FLOOR = { sides: 0.42, bottom: 0.42, top: 0.42, reach: 0.18 };
 		const AO_OUT = { bottom: 0.16, sides: 0.05, reach: 0.12 };
-		const wallH = kind === 'mailer' ? b.height - b.board : b.height;
+		const wallH = kind !== 'lid' ? b.height - b.board : b.height;
 		// a mailer's side print is on its front wall; a lid box's is on its lid's skirt
-		const outFront = face('out', [b.width, wallH], { print: kind === 'mailer' ? frontPrint : null, ao: AO_OUT, folds: kind === 'mailer' ? { top: 0.14 } : {} });
+		const outFront = face('out', [b.width, wallH], { print: kind !== 'lid' ? frontPrint : null, ao: AO_OUT, folds: kind !== 'lid' ? { top: 0.14 } : {} });
 		const outBack = face('out', [b.width, wallH], { ao: AO_OUT });
 		const outSide = face('out', [b.depth, wallH], { ao: AO_OUT });
 		const inWall = face('in', [b.width, wallH], { ao: AO_IN });
 		const inSide = face('in', [b.depth, wallH], { ao: AO_IN });
 		const inFloor = face('in', [b.width, b.depth], { ao: AO_FLOOR });
 		const under = face('out', [b.width, b.depth]);
-		const lidTop = face('out', lidSize, { print: topPrint, folds: kind === 'mailer' ? { top: 0.12, bottom: 0.1 } : {} });
+		const lidTop = face('out', lidSize, { print: topPrint, folds: kind !== 'lid' ? { top: 0.12, bottom: 0.1 } : {} });
 		const lidIn = face('in', lidSize, { ao: { sides: 0.12, bottom: 0.12, top: 0.12, reach: 0.12 } });
 		// a mailer's cut edges show the flutes; a rigid box is wrapped, so its edges are its paper
-		const edge = kind === 'mailer' ? keep(boardMaterial(THREE, '#ffffff', keep(fluteMap(THREE, board.color, lining)))) : outBack;
+		const edge = kind !== 'lid' ? keep(boardMaterial(THREE, '#ffffff', keep(fluteMap(THREE, board.color, lining)))) : outBack;
 		const ft = FLUTE_TILE * u;
 		const E = edge;
 		const box = new THREE.Group();
 		const pose = lidPose(kind, open);
 
-		if (kind === 'mailer') {
+		if (kind !== 'lid') {
 			const h = H - t;
 			const fh = h - 2 * t - 0.08;
 			const flapOut = face('out', [b.width - 2 * b.board, fh / u]);
@@ -233,7 +240,6 @@ export async function boxScene(canvas, options) {
 			box.add(lid);
 		}
 		scene.add(box);
-		if (desk) scene.add(deskMesh(THREE, desk, surf.texture));
 		scene.add(await contactMesh(THREE, { feet: [{ x: 0, z: 0, w: b.width, d: b.depth, lift: 0.1 }], light, strength: strength * surf.shadow * 1.4 }));
 		return { width: ext.width * u, height: ext.height * u, center: [0, ext.centerY * u, 0] };
 	});

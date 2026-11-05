@@ -56,7 +56,7 @@ describe('3d print scenes', () => {
 	});
 
 	it('opens a mailer about its hinge and lifts a lid, as the 2D box does', () => {
-		assert.deepEqual([...BOX_KINDS], ['mailer', 'lid']);
+		assert.deepEqual([...BOX_KINDS], ['mailer', 'lid', 'pizza']);
 		assert.equal(lidPose('mailer', 0).hinge, 0);
 		assert.ok(lidPose('mailer', 1).hinge > 90);
 		assert.equal(lidPose('lid', 0).lift, 0);

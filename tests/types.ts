@@ -178,3 +178,37 @@ void (async () => {
 	tv.dispose();
 	s.dispose();
 })();
+
+// the scenes shot through a lens (0.5.0)
+import {
+	sunglassesScene, phoneScene, laptopScene, keynoteScene, lightboxScene, neonScene, windowScene, billboardScene,
+	binderScene, bookScene, stationeryScene, menuScene, receiptScene, cupScene, takeawayScene, pizzaScene, chopsticksScene, napkinScene,
+	STREET_TIMES, LENS_SAMPLES, type LensOptions, type BrandOptions, type Shot,
+} from '../src/three/index.js';
+
+void (async () => {
+	const lens: LensOptions = { blur: 0.4, samples: 32 };
+	const brand = { art: '<svg/>', ...({ name: 'Gecko', color: '#e2552c', ink: '#1a1714' } satisfies BrandOptions) };
+	const shots: Shot[] = await Promise.all([
+		sunglassesScene(canvas, { art: png, time: 'golden', lens: 'mirror', frame: 'havana', surface: 'oak', ...lens }),
+		phoneScene(canvas, { ...brand, layout: 'pair', background: '#f2b134' }),
+		laptopScene(canvas, { ...brand, view: { tilt: 4 } }),
+		keynoteScene(canvas, { ...brand, seed: 'hall' }),
+		lightboxScene(canvas, { ...brand, headline: 'Climb anything.', url: 'gecko.example' }),
+		neonScene(canvas, { art: '<svg/>', color: 'pink' }),
+		windowScene(canvas, { ...brand, vinyl: 'gold', time: 'dusk' }),
+		billboardScene(canvas, { art: png, hedge: 'yew' }),
+		binderScene(canvas, { ...brand, count: 3 }),
+		bookScene(canvas, { ...brand, tint: '#5fc9b2' }),
+		stationeryScene(canvas, { ...brand, card: png, back: png, bleed: 3 }),
+		menuScene(canvas, { ...brand, layout: 'folded', surface: 'linen' }),
+		receiptScene(canvas, { ...brand, items: [{ qty: 2, name: 'Flat white', price: 3.4 }] }),
+		cupScene(canvas, { ...brand, lid: 'black', sleeve: 'kraft' }),
+		takeawayScene(canvas, { art: '<svg/>', seal: '#e2552c' }),
+		pizzaScene(canvas, { art: '<svg/>', name: 'Gecko', ink: '#c83a22' }),
+		chopsticksScene(canvas, { art: '<svg/>', layout: 'pair' }),
+		napkinScene(canvas, { art: '<svg/>', color: 'kraft', print: 'corner' }),
+	]);
+	shots.forEach((s) => s.dispose());
+	console.log(STREET_TIMES.day.top, LENS_SAMPLES);
+})();

@@ -20,6 +20,6 @@ export function text(text: string, x: number, y: number, size: number, fill: str
 /** Placeholder text as soft rounded bars of seeded lengths. */
 export function bars(o: { x: number; y: number; width: number; lines: number; size: number; fill: string; seed: string; gap?: number }): string;
 /** A status bar (time; signal, wireless, battery) across a screen this wide. */
-export function statusBar(width: number, ink: string, top?: number): string;
+export function statusBar(width: number, ink: string, top?: number, time?: string): string;
 /** Art in a circle, with a hairline round it. */
 export function avatar(sc: Scene, art: Art, cx: number, cy: number, r: number): string;

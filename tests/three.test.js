@@ -5,7 +5,7 @@
 
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import * as THREE from 'three';
 import { place, placeUpright, FRONT, LEVEL } from '../src/three/view.js';
 import { cdScene } from '../src/three/cd.js';
@@ -19,9 +19,12 @@ const group = { width: 2, depth: 1, aspect: 1, fit: 0.89 };
 
 describe('3d', () => {
 	it('imports three.js only when a scene is made', async () => {
-		for (const f of ['index', 'textures', 'materials', 'record', 'sleeve', 'stage', 'view', 'shot', 'sweep', 'foot', 'vinyl', 'cd', 'tv', 'crt', 'screen', 'loop']) {
-			const src = await readFile(new URL(`../src/three/${f}.js`, import.meta.url), 'utf8');
-			assert.doesNotMatch(src, /^import .* from 'three/m, `${f}.js imports three statically`);
+		const dir = new URL('../src/three/', import.meta.url);
+		const files = (await readdir(dir)).filter((f) => f.endsWith('.js'));
+		assert.ok(files.length > 40);
+		for (const f of files) {
+			const src = await readFile(new URL(f, dir), 'utf8');
+			assert.doesNotMatch(src, /^import .* from 'three/m, `${f} imports three statically`);
 		}
 		await assert.rejects(vinylScene(/** @type {any} */ ({ width: 10, height: 10 }), /** @type {any} */ ({})), /art is required/);
 	});

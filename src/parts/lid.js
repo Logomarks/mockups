@@ -12,13 +12,13 @@ import { clamp } from '../util/num.js';
 /**
  * Where the lid is for an amount of opening.
  *
- * @param {'mailer' | 'lid'} kind The box.
+ * @param {'mailer' | 'lid' | 'pizza'} kind The box (a pizza box hinges as a mailer does).
  * @param {number} open How open, 0 (closed) to 1.
  * @returns {{ hinge: number, lift: number, tilt: number, slide: number }} A mailer's lid angle (degrees about its back edge); a lid box's lid raised (mm), tilted towards the camera (degrees) and slid back (mm).
  */
 export function lidPose(kind, open) {
 	const k = clamp(open, 0, 1);
-	if (kind === 'mailer') return { hinge: 112 * k, lift: 0, tilt: 0, slide: 0 };
+	if (kind !== 'lid') return { hinge: 112 * k, lift: 0, tilt: 0, slide: 0 };
 	return { hinge: 0, lift: 150 * k, tilt: 14 * k, slide: 30 * k };
 }
 

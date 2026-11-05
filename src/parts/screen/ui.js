@@ -63,9 +63,10 @@ export function bars({ x, y, width, lines, size, fill, seed, gap = size * 2.1 })
  * @param {number} width The screen's width.
  * @param {string} ink Their colour.
  * @param {number} [top=0] Where the bar starts.
+ * @param {string} [time='10:24'] The time it shows.
  * @returns {string} The markup.
  */
-export function statusBar(width, ink, top = 0) {
+export function statusBar(width, ink, top = 0, time = '10:24') {
 	const s = width / 1080;
 	const y = top + 74 * s;
 	const right = width - 70 * s;
@@ -86,7 +87,7 @@ export function statusBar(width, ink, top = 0) {
 		el('rect', { x: 5, y: 5, width: 56, height: 20, rx: 5, fill: ink }),
 		el('rect', { x: 83, y: 10, width: 5, height: 10, rx: 2, fill: ink, opacity: 0.45 }),
 	);
-	return text('10:24', 80 * s, y, 42 * s, ink, { weight: 600 }) + sig + wifi + bat;
+	return text(time, 80 * s, y, 42 * s, ink, { weight: 600 }) + sig + wifi + bat;
 }
 
 /**

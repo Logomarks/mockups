@@ -37,6 +37,8 @@ export interface ShotOptions {
 	drift?: number;
 	/** Frames a second while it moves (30). */
 	fps?: number;
+	/** A lens: frames averaged for depth of field and smooth edges. `aperture` is the lens's radius as a share of the distance to the point of focus (0: everything sharp); `samples` how many frames (24). */
+	lens?: { aperture?: number; samples?: number } | null;
 }
 
 /** What a scene's builder resolves to: the group's size (width and height standing, width and depth lying), the point to look at, and what changes each frame (`t` in seconds). */
@@ -44,6 +46,8 @@ export interface Group {
 	width: number;
 	height: number;
 	center: [number, number, number];
+	/** The point the lens focuses on (the centre by default). */
+	focus?: [number, number, number];
 	tick?: (t: number) => void;
 }
 

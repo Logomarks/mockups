@@ -22,22 +22,22 @@ const png = await renderImage(vinyl({ art, format: 'single', vinyl: 'black', gro
 
 ## What's in it
 
-- [Usage and API](https://github.com/arraypress/mockups/blob/main/docs/api.md): the 2D and 3D entry points, every export
-- [Vinyl](https://github.com/arraypress/mockups/blob/main/docs/vinyl.md): sleeves and records, in 2D and 3D
-- [Print and brand](https://github.com/arraypress/mockups/blob/main/docs/print-and-brand.md): cards, tickets, lanyards, stickers, apparel, mugs, boxes
-- [Music](https://github.com/arraypress/mockups/blob/main/docs/music.md): CDs, cassettes, posters
-- [Screens and signs](https://github.com/arraypress/mockups/blob/main/docs/screens-and-signs.md): phone, laptop, billboard, shopfront, bus shelter
-- [TV](https://github.com/arraypress/mockups/blob/main/docs/tv.md): a television with a live screen
-- [Photo plates](https://github.com/arraypress/mockups/blob/main/docs/photo-plates.md): art composited into real photos
+- [Usage and API](https://github.com/Logomarks/mockups/blob/main/docs/api.md): the 2D and 3D entry points, every export
+- [Vinyl](https://github.com/Logomarks/mockups/blob/main/docs/vinyl.md): sleeves and records, in 2D and 3D
+- [Print and brand](https://github.com/Logomarks/mockups/blob/main/docs/print-and-brand.md): cards, tickets, lanyards, stickers, apparel, mugs, boxes
+- [Music](https://github.com/Logomarks/mockups/blob/main/docs/music.md): CDs, cassettes, posters
+- [Screens and signs](https://github.com/Logomarks/mockups/blob/main/docs/screens-and-signs.md): phone, laptop, billboard, shopfront, bus shelter
+- [TV](https://github.com/Logomarks/mockups/blob/main/docs/tv.md): a television with a live screen
+- [Photo plates](https://github.com/Logomarks/mockups/blob/main/docs/photo-plates.md): art composited into real photos
 
 ## Links
 
-- [Docs](https://github.com/arraypress/mockups/tree/main/docs)
-- [Changelog](https://github.com/arraypress/mockups/blob/main/CHANGELOG.md)
-- [Licence](https://github.com/arraypress/mockups/blob/main/LICENSE)
+- [Docs](https://github.com/Logomarks/mockups/tree/main/docs)
+- [Changelog](https://github.com/Logomarks/mockups/blob/main/CHANGELOG.md)
+- [Licence](https://github.com/Logomarks/mockups/blob/main/LICENSE)
 - [`@arraypress/covers`](https://github.com/arraypress/covers), which makes the art
 - [`@arraypress/mockups-plates`](https://github.com/arraypress/mockups-plates), the photo plates
-- [Issues](https://github.com/arraypress/mockups/issues)
+- [Issues](https://github.com/Logomarks/mockups/issues)
 
 ## Licence
 

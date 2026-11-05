@@ -1,9 +1,12 @@
 export type { View } from './view.js';
 export type { Shot } from './shot.js';
-export type { VinylSceneOptions, VinylScene } from './vinyl.js';
-export { vinylScene } from './vinyl.js';
+export { vinylScene, VINYL_SCENE_LAYOUTS, type VinylSceneOptions, type VinylScene, type VinylSceneLayout, type VinylProp } from './vinyl.js';
 export { cardScene, type CardSceneOptions, type CardSceneLayout } from './card.js';
 export { boxScene, type BoxSceneOptions, type BoxKind } from './box.js';
 export { mugScene, type MugSceneOptions, type MugPrint } from './mug.js';
 export type { PrintShotOptions } from './printshot.js';
 export { cdScene, discCanvas, type CdSceneOptions } from './cd.js';
+export { tvScene, TV_KINDS, CABINETS, type TvSceneOptions, type TvScene, type TvKind } from './tv.js';
+export type { ScreenSource } from './screen.js';
+export type { CrtLook } from './crt.js';
+export type { Lighting } from './stage.js';

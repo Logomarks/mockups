@@ -17,9 +17,10 @@
  * @param {number} [o.front=8] How far the floor runs towards the camera.
  * @param {number} [o.rise=8] How high the wall goes above the cove.
  * @param {number} [o.width=24] Its width.
+ * @param {import('three').Texture | null} [o.map] A texture printed on it; its UVs are in world units (across, and along the paper from the front), so the texture's `repeat` sets its scale.
  * @returns {import('three').Mesh} The sweep, its floor at y = 0.
  */
-export function sweepMesh(THREE, { color, back = 1.6, cove = 1.2, front = 8, rise = 8, width = 24 }) {
+export function sweepMesh(THREE, { color, back = 1.6, cove = 1.2, front = 8, rise = 8, width = 24, map = null }) {
 	// the profile in (z, y), front to top: straight floor, a quarter circle, straight wall
 	/** @type {[number, number][]} */
 	const profile = [];
@@ -37,8 +38,13 @@ export function sweepMesh(THREE, { color, back = 1.6, cove = 1.2, front = 8, ris
 		p.setXYZ(i, p.getX(i), y, z);
 	}
 	geo.computeVertexNormals();
+	// UVs in world units: across, and along the profile from the front, so a texture bends up the cove with the paper
+	let along = 0;
+	const lengths = profile.map((q, i) => (along += i ? Math.hypot(q[0] - profile[i - 1][0], q[1] - profile[i - 1][1]) : 0));
+	const uv = geo.attributes.uv;
+	for (let i = 0; i < p.count; i++) uv.setXY(i, p.getX(i), lengths[Math.floor(i / 9)]);
 	// matte paper: no sheen at grazing angles, so it stays its colour across the frame
-	const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color, side: THREE.DoubleSide }));
+	const mesh = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ color: map ? '#ffffff' : color, map, side: THREE.DoubleSide }));
 	mesh.receiveShadow = true;
 	return mesh;
 }

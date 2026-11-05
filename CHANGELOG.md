@@ -5,9 +5,28 @@ All notable changes to `@arraypress/mockups` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.0] — 2026-11-05
+## [0.4.0] — 2026-11-05
+
+0.3.0 was tagged but never published, so this release carries its photo plates too.
 
 ### Added
+
+- **`tvScene`** (`./3d`): a television in a dark room, its screen a live texture. A canvas is read every frame (so a shader or effect drawn into it plays), a video as it plays, a picture once; `setScreen` swaps it. `kind: 'crt'` is an old set on splayed legs (wood veneer, cream or black), with a bezel, knobs, a speaker grille and rabbit ears, its bulging face drawn through a CRT shader: the tube's curve, scanlines and the shadow mask's stripes, phosphor bloom, a rolling bar, noise and flicker (`crt: { curve, scanlines, bloom, roll, noise }`). `kind: 'flat'` is a thin panel on a foot behind dark glass. The screen lights the floor and set in its own colour, sampled from what it shows. Generic: no maker's shapes or logos.
+- **`vinylScene`**: `size: '7in'` (a 7" single: its sleeve, its wider label, 45 RPM, fewer tracks); `layout: 'scatter'` (tipped out of the sleeve); `props` (printed cards: an insert, a signed card), lying, in front, or propped against the sleeve; `ground` takes any surface, drawn at true size under a lay or on the sweep; `light: 'flash'` (a phone's hard flash beside the lens, following the camera, crisp shadows, a low window light raking across); `drift` (the camera wanders slowly).
+- **Drift and live frames**: a scene that moves draws at 30 fps (`fps`) only while its canvas is on screen and the page shown, and not at all with reduced motion.
+- **One-ink prints** (`print: { ink, paper }`): art printed in one ink on coloured stock, its darks taking the ink, so a photo prints as a monotone. On the 2D and 3D sleeve and on props.
+- **`wristband`**: woven fabric loops (the name woven round them, a slider with the mark, the cut tail) and flat Tyvek strips (the mark, words, a number, the stock's fibres, the peel tab). `lanyard` takes `wristbands` and `mark` to lay them beside the pass.
+- **`ticket`**: `extra` (more tickets' prints, used in turn) and `layout: 'trio'` (two tickets and the stub of a third, torn off).
+- **`sticker`**: `sheet` (a whole printed sheet, its kiss-cuts in the print, with `art` stuck down beside it) and `paper` (`'A4'`, `'A5'`, `'A6'`).
+- **Surfaces**: `'slate'` (riven: shelves of layers lit from the light, grit, mica), `'cutting-mat'` (a green self-healing mat with a centimetre grid, bolder every five, numbered, 45° guides and healed scores) and `'knit'` (a chunky blanket: stitches, fuzz, loose folds). 2D `vinyl` takes surfaces as its `ground`.
+- Labels take `scale` (their own art's size on the label), and print the record's speed.
+- `VINYL_SIZES`, `SHEET_PAPERS`, `WRISTBAND`, `WRISTBAND_KINDS`, `VINYL_SCENE_LAYOUTS`, `TV_KINDS`, `CABINETS`.
+
+### Fixed
+
+- The bus `shelter` renders in resvg compiled to WebAssembly (2.6.2). The skyline drew blocks behind the camera, which projected billions of pixels off the frame, and resvg ran out of memory blurring them; only the blocks in view are drawn now, and they're the same blocks as before.
+
+### Photo plates (from 0.3.0)
 
 - **Photo plates.** `plate(loadedPlate, { art })` composites art into a real photo's blank signs, as a photo mockup does. It warps the art into the sign's corners, lifts its blacks to ink's density, and multiplies it by the blank sign's own shading. It matches the photo's grain and softness, feathers the edge, restores occluders from the photo, screens glass reflections and floodlight glare back over the art, and adds a glow round lightboxes. The kinds are `'print'`, `'paint'`, `'backlit'` and `'glass'`. `loadPlate` (`./node`, `./browser`) inlines a plate's files. `makePlate` and `savePlate` (`./node`) make one from a photo: they find the sign, recover its proportions from the perspective, and cut its shading, occluder mask, reflections and grain. A hand-painted occluder `mask` is added to what's found. SVG art is inlined rather than drawn as an `<image>`, so the warp's pieces don't misregister. The plates themselves ship separately in `@arraypress/mockups-plates`.
 

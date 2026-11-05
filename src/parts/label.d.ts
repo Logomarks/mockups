@@ -20,6 +20,8 @@ export interface LabelSpec {
 	ring?: string | false;
 	/** Where a crop is taken from the cover. */
 	crop?: Crop;
+	/** Its own art's size, as a share of the label's diameter, above 0 up to 1 (1: filling it, on `color`). */
+	scale?: number;
 }
 
 /** The labels: `'auto'` (crops of the cover, A dark and B light), one source for both, or each side's own. */
@@ -35,12 +37,14 @@ export interface Label {
 	text: string | false;
 	ring: string | false;
 	crop: Crop;
+	scale: number;
+	speed: string;
 }
 
-/** Side A's and side B's labels from the option; crops with no window of their own go where `art` is quietest, when `loadArt` measured it. Throws a TypeError for anything else. */
-export function resolveLabels(labels?: LabelsOption, title?: string, art?: Art): [Label, Label];
+/** Side A's and side B's labels from the option; crops with no window of their own go where `art` is quietest, when `loadArt` measured it; `speed` is printed on them (`'33⅓ RPM'`). Throws a TypeError for anything else. */
+export function resolveLabels(labels?: LabelsOption, title?: string, art?: Art, speed?: string): [Label, Label];
 /** One side's label (`i`: 0 for A); `quiet` is where the cover is quiet, quietest first. */
-export function resolveLabel(spec: LabelSpec | Art, i: number, title: string, quiet?: Crop[] | null): Label;
+export function resolveLabel(spec: LabelSpec | Art, i: number, title: string, quiet?: Crop[] | null, speed?: string): Label;
 /** A label's face centred on the origin; `shift` moves its type sideways. */
 export function label(sc: Scene, lb: Label, rl: number, shift?: number): string;
 /** A ring of small type round a circle, one glyph at a time. */

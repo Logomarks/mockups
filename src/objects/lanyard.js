@@ -4,7 +4,8 @@
  * A lanyard pass, lying on a surface: the pass (A6, 105 × 148 mm, 4 mm
  * corners) in a clear PVC pocket, clipped through the pocket's slot to a
  * woven strap printed with the name, whose two ends rise from the crimp and
- * curve away out of the frame. Drawn in millimetres round the pass.
+ * curve away out of the frame, with event wristbands beside it if asked.
+ * Drawn in millimetres round the pass.
  */
 
 import { scene } from '../render/scene.js';
@@ -17,15 +18,19 @@ import { sheet } from '../parts/sheet.js';
 import { pocket, pocketShape } from '../parts/pocket.js';
 import { strap } from '../parts/strap.js';
 import { clasp } from '../parts/clasp.js';
+import { resolveBands, bandPlacements, bandLayer } from '../parts/wristband.js';
 import { reader, artKey } from '../util/reader.js';
 import { resolveSize } from '../util/size.js';
-import { fitBox } from '../util/fit.js';
+import { fitBox, turnedBox, union } from '../util/fit.js';
 import { luma } from '../util/color.js';
 import { hash } from '../util/rng.js';
 import { clamp, n } from '../util/num.js';
 
 /** The pass (A6) and its pocket, in mm. */
 export const PASS = Object.freeze({ width: 105, height: 148, radius: 4, pocket: Object.freeze({ width: 114, height: 170 }), strap: 20 });
+
+/** Where wristbands lie beside the pass: their group's centre, in mm round the pocket's. */
+const BANDS_AT = Object.freeze([108, 62]);
 
 /**
  * The strap's two strands, from the crimp up and away, in mm round the pocket's centre.
@@ -67,10 +72,14 @@ export function lanyard(options) {
 	const { slot } = pocketShape(P.width, P.height);
 	const passY = P.height / 2 - 4.5 - PASS.height / 2;
 	const top = slot.y - 34;
-	// the frame: the pocket and the hardware, with the strap running out of it
-	const { mm, at } = fitBox({ x0: -P.width / 2 - 12, y0: top - 72, x1: P.width / 2 + 12, y1: P.height / 2 + 6 }, { width, height }, fit);
+	// wristbands beside it, down to its right
+	const bands = resolveBands(o.raw('wristbands') ?? [], name, 'lanyard');
+	const placed = bandPlacements(bands, seed).map((p) => ({ ...p, x: p.x + BANDS_AT[0], y: p.y + BANDS_AT[1] }));
+	// the frame: the pocket and the hardware, with the strap running out of it, and the bands
+	const box = union([{ x0: -P.width / 2 - 12, y0: top - 72, x1: P.width / 2 + 12, y1: P.height / 2 + 6 }, ...placed.map((p) => turnedBox(p.x, p.y, p.w, p.h, p.angle))]);
+	const { mm, at } = fitBox(box, { width, height }, fit);
 	const [cx, cy] = at(0, 0);
-	const sc = scene({ width, height, key: `lanyard:${artKey(art)}:${name}:${seed}` });
+	const sc = scene({ width, height, key: `lanyard:${artKey(art)}:${name}:${seed}:${JSON.stringify(bands)}` });
 	const away = -light;
 	const k = strength * surf.shadow;
 	const frame = (dx = 0, dy = 0) => `translate(${n(cx + dx * mm)} ${n(cy + dy * mm)}) rotate(${n(angle)}) scale(${n(mm)})`;
@@ -84,6 +93,7 @@ export function lanyard(options) {
 
 	sc.add(
 		surfaceLayer(sc, surf, { light, seed, mm }),
+		bands.length && bandLayer(sc, { bands, placed, at, mm, light, shadow: k, mark: o.raw('mark') === undefined ? null : sc.image(/** @type {import('../types.js').Art} */ (o.raw('mark')), 1), seed }),
 		...strapParts.map((s) => cast(s.shadow, 0.5, 0.5, 0.3) + cast(s.shadow, 1.6, 1.8, 0.16)),
 		cast(shell, 0.4, 0.5, 0.14),
 		cast(shell, 1.8, 2.4, 0.08),

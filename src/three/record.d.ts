@@ -12,5 +12,9 @@ export function recordMesh(
 		maps: { normal: CanvasTexture; roughness: CanvasTexture; anisotropy: CanvasTexture; shadow: CanvasTexture };
 		label: import('three').Texture;
 		body?: { color: import('three').Texture; mask: import('three').Texture | null } | null;
+		/** The label's radius as a fraction of the record's (a 12"'s). */
+		labelRadius?: number;
+		/** Its thickness (a 12"'s, in its sleeve's units). */
+		thickness?: number;
 	},
 ): import('three').Group;

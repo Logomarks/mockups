@@ -6,12 +6,15 @@
  * shows a record each side (or both fanned out on one side); a single shows
  * one. The sleeve's side is the unit everything is laid out in: a 12"
  * record is 0.965 of it, and `peek` is how much of a record's diameter
- * shows past the sleeve's edge.
+ * shows past the sleeve's edge. The ground can be any of the surfaces
+ * (oak, slate, linen…), and the sleeve can be printed in one ink.
  */
 
 import { scene } from '../render/scene.js';
 import { el } from '../render/svg.js';
-import { resolveGround, groundLayer } from '../materials/ground.js';
+import { groundLayer } from '../materials/ground.js';
+import { resolveSurface, surfaceLayer } from '../materials/desk.js';
+import { resolvePrint } from '../materials/ink.js';
 import { castShadow } from '../materials/shadow.js';
 import { grainLayer } from '../materials/grain.js';
 import { resolveVinyl } from '../materials/vinyl.js';
@@ -24,6 +27,12 @@ import { clamp } from '../util/num.js';
 
 /** A 12" record's diameter, as a fraction of its sleeve's side (302 of 314 mm). */
 export const RECORD = 0.965;
+
+/** The record sizes, in mm: the sleeve's side, the record's diameter, its label's, its thickness, and its speed. */
+export const VINYL_SIZES = Object.freeze({
+	'12in': Object.freeze({ sleeve: 314, record: 302, label: 100, thickness: 1.4, speed: '33⅓ RPM' }),
+	'7in': Object.freeze({ sleeve: 184, record: 175, label: 86, thickness: 1.3, speed: '45 RPM' }),
+});
 
 /** How far the sleeve stands off its records, for its shadow: it lies on them, so the shadow is tight and faint. */
 const SLEEVE_LIFT = 0.3;
@@ -66,7 +75,8 @@ export function vinyl(options) {
 	const strength = clamp(num(options.shadow, 1, 'shadow'), 0, 3);
 	const fit = clamp(num(options.fit, 0.89, 'fit'), 0.2, 1);
 	const { width, height } = resolveSize(options.size);
-	const g = resolveGround(ground);
+	const g = resolveSurface(ground, 'light', 'ground');
+	const print = resolvePrint(options.print, 'vinyl');
 	const specs = Array.isArray(spec) ? spec : [spec, spec];
 	const materials = [resolveVinyl(specs[0]), resolveVinyl(specs[1] ?? specs[0])];
 	const sides = resolveLabels(labels, title, art);
@@ -82,7 +92,7 @@ export function vinyl(options) {
 
 	const sc = scene({ width, height, art, key: JSON.stringify({ format, side, spec, peek, seed }) });
 	const shine = { x: light, strength: strength * g.shadow, unit: k };
-	sc.add(groundLayer(sc, g));
+	sc.add(g.texture ? surfaceLayer(sc, g, { light, seed, mm: k / VINYL_SIZES['12in'].sleeve }) : groundLayer(sc, g));
 	recs.forEach((p, i) => {
 		const x = cx + p.dir * (0.5 * k + p.peek * 2 * R - R);
 		const m = materials[p.label];
@@ -103,7 +113,7 @@ export function vinyl(options) {
 	});
 	sc.add(
 		castShadow(sc, shine, { shape: (fill) => el('rect', { x: cx - k / 2, y: cy - k / 2, width: k, height: k, fill }), foot: { x: cx, bottom: cy + k / 2, width: k }, lift: SLEEVE_LIFT }),
-		sleeve(sc, { x: cx - k / 2, y: cy - k / 2, size: k, light, sheen: num(options.sheen, 1, 'sheen') }),
+		sleeve(sc, { x: cx - k / 2, y: cy - k / 2, size: k, light, sheen: num(options.sheen, 1, 'sheen'), print }),
 		grainLayer(sc, clamp(num(options.grain, 0.2, 'grain'), 0, 1), seed),
 	);
 	return { svg: sc.svg(), width, height, object: 'vinyl' };

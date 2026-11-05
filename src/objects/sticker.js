@@ -5,6 +5,8 @@
  * lid (a generic aluminium or graphite lid, bead-blasted, with a polished
  * chamfer and no logo), wrapped round a powder-coated water bottle, or
  * kiss-cut on a sticker sheet lying on a desk, one of them part peeled.
+ * A sheet can also be a whole printed sheet of its own (its kiss-cuts in
+ * the print), with the sticker peeled off it and stuck down beside it.
  */
 
 import { scene } from '../render/scene.js';
@@ -19,7 +21,7 @@ import { bottle } from '../parts/bottle.js';
 import { tabletop } from '../parts/tabletop.js';
 import { reader, artKey } from '../util/reader.js';
 import { resolveSize } from '../util/size.js';
-import { fitBox } from '../util/fit.js';
+import { fitBox, turnedBox, union } from '../util/fit.js';
 import { mix, isHex } from '../util/color.js';
 import { hash } from '../util/rng.js';
 
@@ -32,6 +34,9 @@ export const LIDS = Object.freeze({ silver: '#c4c7cb', graphite: '#4a4d52' });
 /** A 13" laptop's lid in mm, and an A6 sticker sheet. */
 const LID = Object.freeze({ width: 304, height: 212, radius: 10 });
 const SHEET = Object.freeze({ width: 105, height: 148 });
+
+/** The sizes a printed sheet comes in, in mm. */
+export const SHEET_PAPERS = Object.freeze({ A4: Object.freeze([210, 297]), A5: Object.freeze([148, 210]), A6: Object.freeze([105, 148]) });
 
 /**
  * A sticker mockup.
@@ -47,7 +52,8 @@ export function sticker(options) {
 	if (!Array.isArray(extra)) throw new TypeError('sticker: extra is a list of artworks');
 	const layout = o.oneOf('layout', 'laptop', STICKER_LAYOUTS);
 	const shape = o.oneOf('shape', 'circle', STICKER_SHAPES);
-	const diameter = o.num('diameter', layout === 'sheet' ? 54 : layout === 'bottle' ? 56 : 64, 10, 200);
+	const printed = layout === 'sheet' ? printedSheet(o.raw('sheet')) : null;
+	const diameter = o.num('diameter', printed ? 44 : layout === 'sheet' ? 54 : layout === 'bottle' ? 56 : 64, 10, 200);
 	const border = o.num('border', 2.5, 0, 12);
 	const bleed = o.num('bleed', 0, 0, 10);
 	const light = o.num('light', 0.35, -1, 1);
@@ -59,7 +65,7 @@ export function sticker(options) {
 	const color = o.color('color', '#2e4a3f');
 	const surf = resolveSurface(/** @type {import('../materials/desk.js').SurfaceOption} */ (o.raw('surface')), layout === 'laptop' ? 'oak' : layout === 'bottle' ? 'concrete' : 'linen');
 	const { width, height } = resolveSize(/** @type {import('../types.js').Size} */ (o.raw('size')));
-	const sc = scene({ width, height, key: `sticker:${layout}:${shape}:${artKey(art)}:${extra.map(artKey).join(',')}:${seed}` });
+	const sc = scene({ width, height, key: `sticker:${layout}:${shape}:${artKey(art)}:${extra.map(artKey).join(',')}:${artKey(printed?.art)}:${seed}` });
 
 	/**
 	 * A sticker defined for this frame.
@@ -82,6 +88,36 @@ export function sticker(options) {
 		sc.def(el('g', { id: content }, drawSticker(sc, def, { x: 0, y: S / 2, mm, light, lift: 0, shadow: 0 })));
 		sc.add(tabletop(sc, surf, { light, seed, mm }));
 		sc.add(bottle(sc, { cx, base, mm, color, light, shadow: strength * surf.shadow, print: { content, center: 112, height: S / mm, turn: o.num('turn', 0, -180, 180) } }));
+	} else if (printed) {
+		// the printed sheet, a little turned, and the sticker peeled off it, stuck down by its corner
+		const [pw, ph] = SHEET_PAPERS[o.oneOf('paper', 'A5', /** @type {const} */ (['A4', 'A5', 'A6']))];
+		const angle = -3;
+		const at = { x: pw / 2 + diameter * 0.12, y: ph / 2 - diameter * 0.18, angle: 18 };
+		const reach = diameter / 2 + border;
+		const box = union([turnedBox(0, 0, pw, ph, angle), { x0: at.x - reach, y0: at.y - reach, x1: at.x + reach, y1: at.y + reach }]);
+		const { mm, at: px } = fitBox(box, { width, height }, o.num('fit', 0.86, 0.2, 1));
+		const [cx, cy] = px(0, 0);
+		const [sx, sy] = px(at.x, at.y);
+		sc.add(
+			surfaceLayer(sc, surf, { light, seed, mm }),
+			sheet(sc, {
+				cx,
+				cy,
+				w: pw * mm,
+				h: ph * mm,
+				angle,
+				radius: 3 * mm,
+				art: trimmed(sc, printed.art, { trim: [pw, ph], bleed: printed.bleed }),
+				stock: { ...resolveStock('gloss'), color: '#f6f5f1' },
+				mm,
+				light,
+				thickness: 0.3 * mm,
+				lift: 0.15,
+				shadow: strength * surf.shadow,
+				seed: hash(seed) % 997,
+			}),
+			drawSticker(sc, define(art, diameter, mm), { x: sx, y: sy, angle: at.angle, mm, light, lift: 0.05, shadow: strength * surf.shadow * 0.8 }),
+		);
 	} else if (layout === 'sheet') {
 		const box = { x0: -SHEET.width / 2 - 8, x1: SHEET.width / 2 + 8, y0: -SHEET.height / 2 - 6, y1: SHEET.height / 2 + 8 };
 		const { mm, at } = fitBox(box, { width, height }, o.num('fit', 0.86, 0.2, 1));
@@ -196,4 +232,20 @@ function lidFinish(sc, { color, mm, seed, light }) {
 			el('path', { d: inset, fill: 'none', stroke: '#000', 'stroke-width': 0.25 * mm, 'stroke-opacity': 0.18 })
 		);
 	};
+}
+
+/**
+ * A printed sheet from its option.
+ *
+ * @param {unknown} v The option: the sheet's print, or `{ art, bleed }`.
+ * @returns {{ art: import('../types.js').Art, bleed: number } | null} The print and its bleed in mm, or `null` for none.
+ * @throws {TypeError} For anything else.
+ */
+function printedSheet(v) {
+	if (v === undefined || v === null) return null;
+	const o = typeof v === 'object' && !(v instanceof Uint8Array) && !(v instanceof ArrayBuffer) ? /** @type {Record<string, unknown>} */ (v) : { art: v };
+	const bleed = o.bleed ?? 0;
+	if (o.art === undefined || o.art === null || o.art === '') throw new TypeError('sticker: sheet is a print, or { art, bleed }');
+	if (typeof bleed !== 'number' || !(bleed >= 0 && bleed <= 10)) throw new TypeError(`sticker: sheet.bleed is a number of mm, 0–10 (got ${JSON.stringify(bleed)})`);
+	return { art: /** @type {import('../types.js').Art} */ (o.art), bleed };
 }

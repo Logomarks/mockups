@@ -2,7 +2,7 @@ import type { Ground } from '../types.js';
 import type { Scene } from '../render/scene.js';
 
 /** A textured surface's name. */
-export type Texture = 'concrete' | 'oak' | 'linen' | 'paper';
+export type Texture = 'concrete' | 'oak' | 'linen' | 'paper' | 'slate' | 'cutting-mat' | 'knit';
 
 /** What a print lies on: a texture, a texture in a colour of its own, or a plain ground. */
 export type SurfaceOption = Texture | { texture: Texture; color?: string } | Ground;
@@ -23,16 +23,10 @@ export interface Surface {
 
 /** The textured surfaces' colours. */
 export const SURFACES: Readonly<Record<Texture, Readonly<{ color: string }>>>;
-/** A surface from its option (`fallback` when there's none, `'concrete'`). Throws a TypeError for anything else. */
-export function resolveSurface(s?: SurfaceOption, fallback?: SurfaceOption): Surface;
+/** A surface from its option (`fallback` when there's none, `'concrete'`). Throws a TypeError for anything else, naming the option `name` (`'surface'`). */
+export function resolveSurface(s?: SurfaceOption, fallback?: SurfaceOption, name?: string): Surface;
 /** The surface filling the frame; textures are scaled by `mm`, pixels per millimetre. */
 export function surfaceLayer(sc: Scene, s: Surface, o: { light: number; seed: string; mm: number }): string;
-/** Broad light-and-dark mottling over the frame, from noise drawn small (`cells` across its longer side). */
-export function mottle(sc: Scene, seed: string, cells: number, amount: number, octaves?: number): string;
-/** A seamless tile of fine light and dark specks from turbulence, as a fill (`url(#…)`). */
-export function speckTile(
-	sc: Scene,
-	o: { size: number; freq: [number, number]; octaves: number; dark: number; light: number; cut?: number; seed?: number; type?: 'fractalNoise' | 'turbulence' },
-): string;
+export { mottle, speckTile } from './noise.js';
 /** The fall of window light across the frame, from the light's side. */
 export function falloff(sc: Scene, light: number, amount: number): string;

@@ -14,6 +14,7 @@ import { card } from './card.js';
 import { letterhead } from './letterhead.js';
 import { ticket } from './ticket.js';
 import { lanyard } from './lanyard.js';
+import { wristband } from './wristband.js';
 import { sticker } from './sticker.js';
 import { tote } from './tote.js';
 import { tee } from './tee.js';
@@ -29,7 +30,7 @@ import { shopfront } from './shopfront.js';
 import { shelter } from './shelter.js';
 
 /** The objects, by name. */
-export const OBJECTS = Object.freeze({ vinyl, cd, cassette, poster, card, letterhead, ticket, lanyard, sticker, tote, tee, hoodie, cap, mug, bag, box, phone, laptop, billboard, shopfront, shelter });
+export const OBJECTS = Object.freeze({ vinyl, cd, cassette, poster, card, letterhead, ticket, lanyard, wristband, sticker, tote, tee, hoodie, cap, mug, bag, box, phone, laptop, billboard, shopfront, shelter });
 
 /**
  * A mockup by the object's name.

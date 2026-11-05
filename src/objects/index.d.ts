@@ -7,6 +7,7 @@ import type { CardOptions } from './card.js';
 import type { LetterheadOptions } from './letterhead.js';
 import type { TicketOptions } from './ticket.js';
 import type { LanyardOptions } from './lanyard.js';
+import type { WristbandOptions } from './wristband.js';
 import type { StickerOptions } from './sticker.js';
 import type { ToteOptions } from './tote.js';
 import type { TeeOptions } from './tee.js';
@@ -31,6 +32,7 @@ export interface ObjectOptions {
 	letterhead: LetterheadOptions;
 	ticket: TicketOptions;
 	lanyard: LanyardOptions;
+	wristband: WristbandOptions;
 	sticker: StickerOptions;
 	tote: ToteOptions;
 	tee: TeeOptions;

@@ -15,8 +15,8 @@ export function coverCanvas(art: Art, size?: number): Promise<HTMLCanvasElement>
 export function labelCanvas(art: Art, lb: Label, size?: number): Promise<HTMLCanvasElement>;
 /** A splatter or marble body drawn by the 2D material, filling the canvas; and, for a splatter on translucent vinyl, a transmission mask (white passes light). */
 export function bodyCanvas(art: Art, m: Material, seed: string, size?: number): Promise<{ color: HTMLCanvasElement; mask: HTMLCanvasElement | null }>;
-/** A record face's groove maps: normal, roughness, anisotropy (along the grooves) and a shadow mask (rim and label). */
-export function grooveMaps(THREE: Three, seed: string, size?: number): { normal: CanvasTexture; roughness: CanvasTexture; anisotropy: CanvasTexture; shadow: CanvasTexture };
+/** A record face's groove maps: normal, roughness, anisotropy (along the grooves) and a shadow mask (rim and label); `o` sizes the label and counts the tracks (a 12"'s by default). */
+export function grooveMaps(THREE: Three, seed: string, size?: number, o?: { label?: number; tracks?: [number, number] }): { normal: CanvasTexture; roughness: CanvasTexture; anisotropy: CanvasTexture; shadow: CanvasTexture };
 /** The soft shadows round everything on the ground, drawn by the 2D shadow code: black, the alpha the shadow. */
 export function shadowCanvas(
 	art: Art,

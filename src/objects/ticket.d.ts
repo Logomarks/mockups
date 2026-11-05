@@ -3,13 +3,15 @@ import type { SurfaceOption } from '../materials/desk.js';
 import type { StockName } from '../materials/paper.js';
 
 /** How the tickets are shown. */
-export type TicketLayout = 'pair';
+export type TicketLayout = 'pair' | 'trio';
 
 /** How to show an event ticket. */
 export interface TicketOptions {
 	/** The ticket, 5.5 × 2 in: image bytes, SVG markup, a `data:` URI or a URL. Required. */
 	art: Art;
-	/** `'pair'` (two on a table; the default and, for now, the only layout). */
+	/** More tickets' prints (a second night, another seat), used in turn after `art`. */
+	extra?: Art[];
+	/** `'pair'` (two on a table; the default) or `'trio'` (two, and a third's stub, already torn off, in front). */
 	layout?: TicketLayout;
 	/** Tear the second ticket's stub off along the perforation, for `'pair'` (false). */
 	torn?: boolean;
@@ -39,7 +41,7 @@ export interface TicketOptions {
 export const TICKET: Readonly<{ width: number; height: number; radius: number }>;
 /** The layouts. */
 export const TICKET_LAYOUTS: readonly TicketLayout[];
-/** Where each ticket goes, back to front: its centre in mm and its turn in degrees. */
-export function ticketPlacements(layout: TicketLayout): { x: number; y: number; angle: number }[];
+/** Where each ticket goes, back to front: its centre in mm, its turn in degrees, and whether only its stub lies there. */
+export function ticketPlacements(layout: TicketLayout): { x: number; y: number; angle: number; stub?: boolean }[];
 /** An event ticket mockup as layered SVG. Throws a TypeError for a bad option. */
 export function ticket(options: TicketOptions): Mockup;

@@ -4,10 +4,12 @@
  * A printed sleeve, front on: the artwork, a faint paper sheen (a broad
  * diagonal glow, slightly darker away from the light), and its edges: a
  * bright top where the board's edge catches the light, a hairline round it.
+ * The art is printed in full colour, or in one ink on coloured stock.
  */
 
 import { el } from '../render/svg.js';
 import { clamp } from '../util/num.js';
+import { inkFilter } from '../materials/ink.js';
 
 /**
  * A sleeve.
@@ -19,9 +21,10 @@ import { clamp } from '../util/num.js';
  * @param {number} o.size Its side.
  * @param {number} o.light Where the light is, left (-1) to right (1).
  * @param {number} [o.sheen=1] How strong the paper's sheen is.
+ * @param {import('../materials/ink.js').InkPrint | null} [o.print] One ink on coloured stock (full colour by default).
  * @returns {string} The markup.
  */
-export function sleeve(sc, { x, y, size, light, sheen = 1 }) {
+export function sleeve(sc, { x, y, size, light, sheen = 1, print = null }) {
 	const g = sc.id('paper');
 	const lx = clamp(light, -1, 1);
 	sc.def(
@@ -40,7 +43,7 @@ export function sleeve(sc, { x, y, size, light, sheen = 1 }) {
 	return el(
 		'g',
 		{},
-		sc.useArt(x, y, size, size),
+		print ? el('rect', { x, y, width: size, height: size, fill: print.paper }) + sc.useArt(x, y, size, size, { filter: inkFilter(sc, print) }) : sc.useArt(x, y, size, size),
 		el('rect', { x, y, width: size, height: size, fill: `url(#${g})` }),
 		line(x, y + h, x + size, y + h, '#fff', 0.5),
 		line(x + h, y, x + h, y + size, lx < 0 ? '#fff' : '#000', lx < 0 ? 0.3 : 0.1),

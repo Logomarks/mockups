@@ -1,8 +1,9 @@
 /**
  * @module @arraypress/mockups/materials/desk
  *
- * What printed things lie on: concrete, oak boards, linen and a paper
- * backdrop, or any of the plain grounds. Each texture is built in three
+ * What printed things lie on: concrete, oak boards, linen, a paper
+ * backdrop, riven slate, a cutting mat and a knit blanket, or any of the
+ * plain grounds. Each texture is built in three
  * scales so it never repeats visibly: broad mottling drawn in JS as a small
  * stretched image (so it costs nothing to rasterise), fine tooth from a
  * seamless turbulence tile, and for oak the grain itself, drawn row by row.
@@ -13,6 +14,10 @@
 
 import { el } from '../render/svg.js';
 import { resolveGround, groundLayer } from './ground.js';
+import { mottle, speckTile } from './noise.js';
+import { slate } from './slate.js';
+import { cuttingMat } from './cuttingmat.js';
+import { knit } from './knit.js';
 import { field, fbm, ridge, blur, shadePng, greyPng, noise2 } from '../util/field.js';
 import { rng, hash } from '../util/rng.js';
 import { isHex, luma, mix } from '../util/color.js';
@@ -24,20 +29,29 @@ export const SURFACES = Object.freeze({
 	oak: Object.freeze({ color: '#c49a6c' }),
 	linen: Object.freeze({ color: '#d8d0c2' }),
 	paper: Object.freeze({ color: '#ecebe7' }),
+	slate: Object.freeze({ color: '#3d3f43' }),
+	'cutting-mat': Object.freeze({ color: '#1f6a55' }),
+	knit: Object.freeze({ color: '#e6dccb' }),
 });
 
+export { mottle, speckTile };
+
 /** The textures, by name. */
-const TEXTURES = /** @type {const} */ (['concrete', 'oak', 'linen', 'paper']);
+const TEXTURES = /** @type {const} */ (['concrete', 'oak', 'linen', 'paper', 'slate', 'cutting-mat', 'knit']);
+
+/** The textures' names, as an error lists them. */
+const NAMES = TEXTURES.map((t) => `'${t}'`).join(', ');
 
 /**
  * A surface resolved from its option.
  *
  * @param {import('./desk.js').SurfaceOption | undefined} s A texture's name, `{ texture, color }`, or a plain ground (`'light'`, `'dark'`, a hex colour, `{ color, vignette }`).
  * @param {string} [fallback='concrete'] The surface when there's none.
+ * @param {string} [name='surface'] The option's name, for errors.
  * @returns {import('./desk.js').Surface} The surface.
  * @throws {TypeError} For anything else.
  */
-export function resolveSurface(s, fallback = 'concrete') {
+export function resolveSurface(s, fallback = 'concrete', name = 'surface') {
 	const v = s ?? fallback;
 	/** @type {import('./desk.js').Texture | null} */
 	let texture = null;
@@ -47,8 +61,8 @@ export function resolveSurface(s, fallback = 'concrete') {
 		texture = /** @type {import('./desk.js').Texture} */ (v);
 		color = SURFACES[texture].color;
 	} else if (v && typeof v === 'object' && 'texture' in v) {
-		if (!TEXTURES.includes(/** @type {never} */ (v.texture))) throw new TypeError(`surface.texture: 'concrete', 'oak', 'linen' or 'paper' (got ${JSON.stringify(v.texture)})`);
-		if (v.color !== undefined && !isHex(v.color)) throw new TypeError(`surface.color: a hex colour (got ${JSON.stringify(v.color)})`);
+		if (!TEXTURES.includes(/** @type {never} */ (v.texture))) throw new TypeError(`${name}.texture: ${NAMES} (got ${JSON.stringify(v.texture)})`);
+		if (v.color !== undefined && !isHex(v.color)) throw new TypeError(`${name}.color: a hex colour (got ${JSON.stringify(v.color)})`);
 		texture = v.texture;
 		color = v.color ?? SURFACES[texture].color;
 	} else {
@@ -56,7 +70,7 @@ export function resolveSurface(s, fallback = 'concrete') {
 		try {
 			g = resolveGround(/** @type {import('../types.js').Ground} */ (v));
 		} catch {
-			throw new TypeError(`surface: 'concrete', 'oak', 'linen', 'paper', { texture, color }, 'light', 'dark', a hex colour or { color, vignette } (got ${JSON.stringify(v)})`);
+			throw new TypeError(`${name}: ${NAMES}, { texture, color }, 'light', 'dark', a hex colour or { color, vignette } (got ${JSON.stringify(v)})`);
 		}
 		return { texture: null, color: g.color, vignette: g.vignette, dark: g.dark, shadow: g.shadow };
 	}
@@ -77,70 +91,17 @@ export function surfaceLayer(sc, s, { light, seed, mm }) {
 	if (!s.texture) return groundLayer(sc, { color: s.color, vignette: s.vignette, dark: s.dark, shadow: s.shadow }) + falloff(sc, light, 0.5);
 	const px = Math.max(0.2, mm);
 	const base = el('rect', { width: w, height: h, fill: s.color });
-	const body =
-		s.texture === 'oak' ? oak(sc, s.color, seed, px) : s.texture === 'linen' ? linen(sc, s.color, seed, px, light) : s.texture === 'concrete' ? concrete(sc, seed, px) : paper(sc, seed, px);
+	const draw = {
+		concrete: () => concrete(sc, seed, px),
+		oak: () => oak(sc, s.color, seed, px),
+		linen: () => linen(sc, s.color, seed, px, light),
+		paper: () => paper(sc, seed, px),
+		slate: () => slate(sc, seed, px, light),
+		'cutting-mat': () => cuttingMat(sc, s.color, seed, px),
+		knit: () => knit(sc, seed, px, light),
+	};
+	const body = draw[s.texture]();
 	return base + body + falloff(sc, light, 1) + vignette(sc, s.vignette);
-}
-
-/**
- * Broad mottling: low-frequency noise drawn small and stretched over the frame, light and dark.
- *
- * @param {import('../render/scene.js').Scene} sc The document.
- * @param {string} seed The seed.
- * @param {number} cells How many noise cells span the frame's longer side.
- * @param {number} amount How strong, 0–1.
- * @param {number} [octaves=3] Octaves of noise.
- * @returns {string} The layer.
- */
-export function mottle(sc, seed, cells, amount, octaves = 3) {
-	const { width: w, height: h } = sc;
-	const n = 96;
-	const fw = w >= h ? n : Math.round((n * w) / h);
-	const fh = w >= h ? Math.round((n * h) / w) : n;
-	const f = fbm(field(fw, fh), { seed: `${seed}:mottle`, scale: (cells * fw) / n, octaves, gain: 0.55 });
-	const href = greyPng(f.w, f.h, (x, y) => {
-		const v = f.v[y * f.w + x];
-		return [v > 0 ? 1 : 0, Math.abs(v) * amount];
-	});
-	return el('image', { width: w, height: h, href, preserveAspectRatio: 'none' });
-}
-
-/**
- * A seamless tile of fine texture: turbulence turned into light and dark specks.
- *
- * @param {import('../render/scene.js').Scene} sc The document.
- * @param {object} o The tile.
- * @param {number} o.size The tile's side, in pixels.
- * @param {[number, number]} o.freq The turbulence's base frequency across and down, per pixel.
- * @param {number} o.octaves Octaves.
- * @param {number} o.dark How dark the dark specks go, 0–1.
- * @param {number} o.light How light the light specks go, 0–1.
- * @param {number} [o.cut=0.5] Where the noise turns from light to dark specks (above it: dark).
- * @param {number} [o.seed=0] The turbulence's seed.
- * @param {'fractalNoise' | 'turbulence'} [o.type='fractalNoise'] The kind of turbulence.
- * @returns {string} A `url(#…)` for a fill.
- */
-export function speckTile(sc, { size, freq, octaves, dark, light, cut = 0.5, seed = 0, type = 'fractalNoise' }) {
-	const f = sc.id('speck');
-	const p = sc.id('tile');
-	const s = Math.max(8, Math.round(size));
-	// whole periods across the tile, so it repeats without a seam
-	const fq = freq.map((v) => Math.max(1, Math.round(v * s)) / s);
-	// the noise's red channel, R: dark specks get alpha (R - cut) × k, light ones (cut - R) × k
-	const kd = (dark * 2) / (1 - cut);
-	const kl = (light * 2) / cut;
-	sc.def(
-		el(
-			'filter',
-			{ id: f, filterUnits: 'userSpaceOnUse', x: 0, y: 0, width: s, height: s, 'color-interpolation-filters': 'sRGB' },
-			el('feTurbulence', { type, baseFrequency: `${fq[0]} ${fq[1]}`, numOctaves: octaves, seed: seed % 1000, stitchTiles: 'stitch', result: 'n' }),
-			el('feColorMatrix', { in: 'n', type: 'matrix', values: `0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  ${kd} 0 0 0 ${-cut * kd}`, result: 'd' }),
-			el('feColorMatrix', { in: 'n', type: 'matrix', values: `0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  ${-kl} 0 0 0 ${cut * kl}`, result: 'l' }),
-			el('feMerge', {}, el('feMergeNode', { in: 'd' }), el('feMergeNode', { in: 'l' })),
-		),
-	);
-	sc.def(el('pattern', { id: p, patternUnits: 'userSpaceOnUse', width: s, height: s }, el('rect', { width: s, height: s, filter: `url(#${f})` })));
-	return `url(#${p})`;
 }
 
 /**

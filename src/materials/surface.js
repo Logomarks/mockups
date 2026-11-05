@@ -29,21 +29,22 @@ export const RADII = Object.freeze({ label: 0.333, hole: 0.024, leadIn: 0.958, b
  * @param {boolean} dark Whether the record reads dark (grooves drawn in light, not shadow).
  * @param {number} [depth=1] How strongly the grooves show.
  * @param {number} [px=400] The record's radius in pixels: the gaps and rings are at least a pixel wide.
+ * @param {{ label?: number, tracks?: [number, number] }} [o] The label's radius as a fraction of the record's (a 12"'s), and how few and how many tracks a side has ([5, 8]).
  * @returns {[number, string, number][]} Offsets (0–1 of the radius), colours and opacities.
  */
-export function trackStops(seed, dark, depth = 1, px = 400) {
+export function trackStops(seed, dark, depth = 1, px = 400, { label = RADII.label, tracks = [5, 8] } = {}) {
 	const r = rng(`${seed}:tracks`);
 	const line = Math.min(0.004, Math.max(0.0022, 0.9 / px));
 	const ink = dark ? '#ffffff' : '#000000';
 	const shine = '#ffffff';
 	const groove = (dark ? 0.03 : 0.022) * depth;
 	const gloss = (dark ? 0.05 : 0.06) * depth;
-	const inner = r.range(0.37, 0.42);
-	const count = 5 + Math.floor(r.next() * 4);
+	const inner = label + r.range(0.037, 0.087);
+	const count = tracks[0] + Math.floor(r.next() * (tracks[1] - tracks[0] + 1));
 	/** @type {[number, string, number][]} */
 	const stops = [
-		[RADII.label + 0.004, shine, 0],
-		[RADII.label + 0.012, shine, gloss * 0.9],
+		[label + 0.004, shine, 0],
+		[label + 0.012, shine, gloss * 0.9],
 		[inner - 0.012, shine, gloss * 0.7],
 		[inner - 2 * line, shine, gloss * 1.4],
 	];

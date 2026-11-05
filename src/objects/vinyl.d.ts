@@ -1,4 +1,6 @@
-import type { Art, Ground, Mockup, Size } from '../types.js';
+import type { Art, Mockup, Size } from '../types.js';
+import type { SurfaceOption } from '../materials/desk.js';
+import type { PrintOption } from '../materials/ink.js';
 import type { VinylSpec } from '../materials/vinyl.js';
 import type { LabelsOption } from '../parts/label.js';
 
@@ -14,8 +16,10 @@ export interface VinylOptions {
 	vinyl?: VinylSpec | [VinylSpec, VinylSpec];
 	/** The centre labels (`'auto'`: crops of the cover, A dark and B light). */
 	labels?: LabelsOption;
-	/** What it stands on (`'light'`). */
-	ground?: Ground;
+	/** What it lies on (`'light'`): a plain ground (`'light'`, `'dark'`, hex, `{ color, vignette }`) or a surface (`'oak'`, `'slate'`, `'linen'`, `'knit'`… or `{ texture, color }`). */
+	ground?: SurfaceOption;
+	/** How the sleeve is printed: `'full'` (the art as it is; the default) or `{ ink, paper }` (in one ink on coloured stock: the art's darks take the ink, so a photo prints as a monotone). */
+	print?: PrintOption;
 	/** The output's size in pixels (a 1600 square). */
 	size?: Size;
 	/** How much of a record's diameter shows past the sleeve, 0.1–0.9 (0.53). */
@@ -42,3 +46,5 @@ export const RECORD: number;
 export function placements(format: 'single' | 'double', side: 'both' | 'left' | 'right', peek: number): { dir: -1 | 1; peek: number; label: 0 | 1 }[];
 /** A vinyl mockup as layered SVG. Throws a TypeError for a bad option. */
 export function vinyl(options: VinylOptions): Mockup;
+/** The record sizes in mm (the sleeve's side, the record's and label's diameters, its thickness) and their speed. */
+export const VINYL_SIZES: Readonly<Record<'12in' | '7in', Readonly<{ sleeve: number; record: number; label: number; thickness: number; speed: string }>>>;

@@ -1,7 +1,7 @@
 {
   "name": "@arraypress/mockups",
-  "version": "0.3.0",
-  "description": "Product mockups from finished artwork: vinyl, CD, cassette, poster, business cards, letterhead, tickets, stickers, apparel, mugs, bags, boxes, phone, laptop, billboard, shopfront and bus shelter. Dependency-free layered SVG, PNG via sharp in Node or a canvas in the browser, and three.js scenes for 3D shots.",
+  "version": "0.4.0",
+  "description": "Product mockups from finished artwork: vinyl, CD, cassette, poster, business cards, letterhead, tickets, wristbands, stickers, apparel, mugs, bags, boxes, phone, laptop, billboard, shopfront and bus shelter. Dependency-free layered SVG, PNG via sharp in Node or a canvas in the browser, and three.js scenes for 3D shots, including a TV with a live screen.",
   "type": "module",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -58,9 +58,11 @@
     "sharp",
     "sleeve",
     "svg",
+    "television",
     "three",
     "vinyl",
-    "webgl"
+    "webgl",
+    "wristband"
   ],
   "author": "David Sherlock",
   "license": "MIT",

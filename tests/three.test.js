@@ -9,13 +9,17 @@ import { readFile } from 'node:fs/promises';
 import * as THREE from 'three';
 import { place, placeUpright, FRONT, LEVEL } from '../src/three/view.js';
 import { cdScene } from '../src/three/cd.js';
-import { vinylScene } from '../src/three/index.js';
+import { vinylScene, tvScene, VINYL_SCENE_LAYOUTS, TV_KINDS } from '../src/three/index.js';
+import { resolveLight, resolveDrift, resolveProps, scatter } from '../src/three/vinyl.js';
+import { resolveCrt, CRT_LOOK } from '../src/three/crt.js';
+import { loop, drifted, reducedMotion } from '../src/three/loop.js';
+import { VINYL_SIZES } from '../src/objects/vinyl.js';
 
 const group = { width: 2, depth: 1, aspect: 1, fit: 0.89 };
 
 describe('3d', () => {
 	it('imports three.js only when a scene is made', async () => {
-		for (const f of ['index', 'textures', 'materials', 'record', 'sleeve', 'stage', 'view', 'shot', 'sweep', 'foot', 'vinyl', 'cd']) {
+		for (const f of ['index', 'textures', 'materials', 'record', 'sleeve', 'stage', 'view', 'shot', 'sweep', 'foot', 'vinyl', 'cd', 'tv', 'crt', 'screen', 'loop']) {
 			const src = await readFile(new URL(`../src/three/${f}.js`, import.meta.url), 'utf8');
 			assert.doesNotMatch(src, /^import .* from 'three/m, `${f}.js imports three statically`);
 		}
@@ -64,5 +68,54 @@ describe('3d', () => {
 		await assert.rejects(cdScene(/** @type {any} */ ({ width: 10, height: 10 }), /** @type {any} */ ({})), /art is required/);
 		await assert.rejects(cdScene(/** @type {any} */ ({ width: 10, height: 10 }), { art: '<svg/>', packaging: /** @type {any} */ ('slim') }), /packaging/);
 		await assert.rejects(cdScene(/** @type {any} */ ({ width: 10, height: 10 }), { art: '<svg/>', layout: /** @type {any} */ ('hung') }), /layout/);
+	});
+
+	it('lays vinyl out three ways, and takes a 7-inch', async () => {
+		assert.deepEqual([...VINYL_SCENE_LAYOUTS], ['upright', 'flat', 'scatter']);
+		const art = '<svg xmlns="http://www.w3.org/2000/svg"/>';
+		await assert.rejects(vinylScene(/** @type {any} */ ({}), { art, layout: /** @type {any} */ ('pile') }), /layout is 'upright', 'flat' or 'scatter'/);
+		await assert.rejects(vinylScene(/** @type {any} */ ({}), { art, size: /** @type {any} */ ('10in') }), /size is '12in' or '7in'/);
+	});
+
+	it('reads the light, the drift and the props', () => {
+		assert.deepEqual(resolveLight('flash'), { light: 0.35, lighting: 'flash' });
+		assert.deepEqual(resolveLight(-0.5), { light: -0.5, lighting: 'studio' });
+		assert.throws(() => resolveLight('sun'), /light is 'studio', 'flash' or a number/);
+		assert.deepEqual([resolveDrift(undefined), resolveDrift(true), resolveDrift(0.4), resolveDrift(3)], [0, 1, 0.4, 1]);
+		assert.throws(() => resolveDrift('slow'), /drift/);
+		const ink = { ink: '#3d051a', paper: '#ec3a95' };
+		const [a, b] = resolveProps(['<svg/>', { art: '<svg/>', width: 92, height: 92, print: 'full' }], VINYL_SIZES['7in'], ink);
+		assert.ok(Math.abs(a.w - 0.62) < 1e-9 && a.print === ink, 'a prop shares the sleeve\'s print');
+		assert.ok(Math.abs(b.w - 0.5) < 1e-9 && b.print === null);
+		assert.throws(() => resolveProps('<svg/>', VINYL_SIZES['12in'], null), /props is a list/);
+		assert.throws(() => resolveProps([{ width: 10 }], VINYL_SIZES['12in'], null), /props\[0\] has no art/);
+	});
+
+	it('tips a record out beside its sleeve, the props in front, all centred', () => {
+		const { at, width, depth } = scatter(1, 0.475, [{ w: 0.6, h: 0.5 }]);
+		assert.ok(at.records[0].x < at.sleeve.x, 'the record lies left of the sleeve');
+		assert.ok(at.props[0].z > at.sleeve.z, 'the prop lies in front');
+		assert.ok(width > 1 && depth > 1);
+		assert.equal(scatter(2, 0.475, []).at.records.length, 2);
+	});
+
+	it('shows a TV screen through a CRT, or not', async () => {
+		assert.deepEqual([...TV_KINDS], ['crt', 'flat']);
+		assert.deepEqual(resolveCrt(undefined), { ...CRT_LOOK });
+		assert.equal(resolveCrt(false).scanlines, 0);
+		assert.equal(resolveCrt({ roll: 0.5, noise: 4 }).noise, 1);
+		assert.throws(() => resolveCrt({ curve: 'lots' }), /crt\.curve/);
+		await assert.rejects(tvScene(/** @type {any} */ ({}), /** @type {any} */ ({ screen: '<svg/>', kind: 'plasma' })), /kind is 'crt' or 'flat'/);
+		await assert.rejects(tvScene(/** @type {any} */ ({}), /** @type {any} */ ({ screen: '<svg/>', cabinet: 'teak' })), /cabinet/);
+	});
+
+	it('drifts round the view, and draws no frames outside a page', () => {
+		const v = drifted({ tilt: 10, turn: 0 }, 3, 1);
+		assert.ok(Math.abs(/** @type {number} */ (v.turn)) < 6 && Math.abs(/** @type {number} */ (v.tilt) - 10) < 3);
+		assert.deepEqual(drifted({ tilt: 10, turn: 5 }, 3, 0), { tilt: 10, turn: 5, distance: 1 });
+		assert.equal(reducedMotion(), false);
+		let n = 0;
+		loop(/** @type {any} */ ({}), () => n++).stop();
+		assert.equal(n, 0);
 	});
 });

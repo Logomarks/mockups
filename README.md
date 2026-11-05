@@ -44,6 +44,7 @@ const blob = await scene.toBlob();
 | `./3d`: `vinylScene(canvas, options)` | `{ render, setView, toBlob, dispose }`. three.js is imported on first use. |
 | `cd(options)`, `cassette(options)`, `poster(options)` | Music objects, below. |
 | `./3d`: `cdScene(canvas, options)` | The CD in 3D: the `cd` options plus `layout`, `view` and the drawing size. |
+| `./3d`: `tvScene(canvas, options)` | A TV with a live screen (a canvas, video or picture). See [TV](#tv). |
 
 ### `vinyl` options
 
@@ -54,7 +55,8 @@ const blob = await scene.toBlob();
 | `side` | `'both'` / `'right'` | Where the records peek out. A double on `'left'` or `'right'` fans both out on that side. |
 | `vinyl` | `'clear'` | See below. Pass a pair to give each record its own. |
 | `labels` | `'auto'` | See below. |
-| `ground` | `'light'` | `'light'` (`#e6e6e6`), `'dark'` (`#161618`), a hex colour, or `{ color, vignette }`. |
+| `ground` | `'light'` | `'light'` (`#e6e6e6`), `'dark'` (`#161618`), a hex colour, `{ color, vignette }`, or a surface (`'oak'`, `'slate'`, `'knit'`…; see below). |
+| `print` | `'full'` | `{ ink, paper }` prints the sleeve in one ink on coloured stock: the art's darks take the ink, so a photo comes out a monotone. |
 | `size` | `1600` | Pixels: one number for a square, or `{ width, height }`. |
 | `peek` | `0.53` | How much of a record's diameter shows past the sleeve. |
 | `light` | `0.35` | Where the light is, from -1 (left) to 1 (right). Shadows fall the other way. |
@@ -66,10 +68,25 @@ const blob = await scene.toBlob();
 
 | Option | |
 |---|---|
-| `layout` | `'upright'` (default): standing on a paper sweep, the records behind the sleeve. `'flat'`: lying on the ground. |
+| `size` | `'12in'` (default) or `'7in'`: a 7" single, its label wider and its speed 45. |
+| `layout` | `'upright'` (default): standing on a paper sweep, the records behind the sleeve. `'flat'`: lying on the ground. `'scatter'`: tipped out of the sleeve, the record beside it and the props in front. |
+| `props` | Printed cards that go with it (an insert, a signed card): a list of art or `{ art, width, height, bleed, print }` in mm. They lie over the sleeve, in front of it, or propped against it standing. They take the sleeve's `print` unless they have their own. |
+| `ground` | A plain ground, or a surface drawn at true size: the desk under a lay, the sweep's paper standing. |
+| `light` | `'studio'` (default; or a number, the key's place) or `'flash'`: a phone's hard flash beside the lens, crisp shadows, a low window light raking across. |
+| `drift` | `true` or 0–1: the camera wanders slowly round its view, drawn only while the canvas is on screen and not at all with reduced motion. |
 | `view` | `{ tilt, turn, distance, fov }`. `tilt` 0 is the 2D view: level and front on standing, straight down lying. |
 | `width`, `height`, `pixelRatio` | The drawing size. |
-| `exposure` | Measured by default, so the ground comes out its own colour. |
+| `exposure` | Measured under the studio's light, so the ground comes out its own colour; 1 under the flash. |
+
+```js
+const scene = await vinylScene(canvas, {
+	art: sleeve, size: '7in', layout: 'scatter', vinyl: '#ff2f93',
+	print: { ink: '#3d051a', paper: '#ec3a95' },          // a photo screen-printed in one ink
+	labels: { a: { art: mark, color: '#d21c72', scale: 0.6 } },
+	props: [{ art: insert, width: 116, height: 98 }],
+	ground: 'knit', light: 'flash', drift: true, view: { tilt: 15 },
+});
+```
 
 ### Vinyl
 
@@ -107,9 +124,10 @@ const shirt = tee({ art: await loadArt('mark.svg'), color: 'heather', placement:
 |---|---|---|
 | `card` | `'flat'`, `'pair'` (with a `back`), `'stack'`, `'fan'` | `back`, `edge` (painted edge colour), `thickness`, `radius`, `count` |
 | `letterhead` | `'flat'`, `'envelope'` (DL), `'set'` (with a card) | `logo` (on the envelope), `card`, `back`, `envelope` (its colour) |
-| `ticket` | `'pair'` | `torn`, `stub` (the perforation, a fraction of the width) |
-| `lanyard` | an A6 pass in a clear sleeve | `name` (printed along the strap), `strap`, `ink`, `angle` |
-| `sticker` | `'laptop'`, `'bottle'`, `'sheet'` | `shape` (`'circle'`, `'rounded'`, `'contour'`), `extra` (more art for a sheet), `border`, `diameter`, `lid`, `color` |
+| `ticket` | `'pair'`, `'trio'` (two, and the stub of a third) | `extra` (more tickets' prints, used in turn), `torn`, `stub` (the perforation, a fraction of the width) |
+| `lanyard` | an A6 pass in a clear sleeve | `name` (printed along the strap), `strap`, `ink`, `angle`, `wristbands` (bands beside it, as `wristband` takes them), `mark` (on their sliders) |
+| `wristband` | woven `'fabric'` loops and flat `'tyvek'` strips | `bands` (each a kind or `{ kind, color, ink, text, number, clasp }`), `name` (their words); the art is the mark |
+| `sticker` | `'laptop'`, `'bottle'`, `'sheet'` | `shape` (`'circle'`, `'rounded'`, `'contour'`), `extra` (more art for a sheet), `sheet` (a whole printed sheet, or `{ art, bleed }`: it lies there and `art` is stuck down beside it), `paper` (its size), `border`, `diameter`, `lid`, `color` |
 | `tote` | a canvas tote, flat | `color`, `ink`, `scale` |
 | `tee` | a flat lay | `placement` (`'center'`, `'chest'`, `'left-chest'`, `'back'`), `color`, `ink`, `scale` |
 | `hoodie` | a flat lay | `placement` (`'chest'`, `'left-chest'`, `'back'`), `color`, `cord`, `ink`, `scale` |
@@ -122,7 +140,7 @@ They all take `art` (required), `surface`, `size`, `light`, `shadow`, `fit`, `gr
 
 | Option | |
 |---|---|
-| `surface` | `'concrete'`, `'oak'`, `'linen'`, `'paper'`, `{ texture, color }`, or a plain ground (`'light'`, `'dark'`, hex, `{ color, vignette }`). |
+| `surface` | `'concrete'`, `'oak'`, `'linen'`, `'paper'`, `'slate'` (riven), `'cutting-mat'` (a green grid mat, numbered in cm), `'knit'` (a chunky blanket), `{ texture, color }` (a walnut table is `{ texture: 'oak', color: '#8a5a3a' }`), or a plain ground (`'light'`, `'dark'`, hex, `{ color, vignette }`). |
 | `stock` | `'matte'`, `'uncoated'`, `'gloss'`, `'cotton'`, `'kraft'`: the paper's white, tooth and sheen. |
 | `color` (garments) | `'white'`, `'natural'`, `'heather'`, `'sand'`, `'sage'`, `'navy'`, `'black'` or hex. |
 | `board` (boxes) | `'kraft'` (the default), `'white'` (white-top; a mailer is kraft inside), `'black'` or hex. Ink sits in the board's fibres; cut edges show the flutes. |
@@ -131,6 +149,39 @@ They all take `art` (required), `surface`, `size`, `light`, `shadow`, `fit`, `gr
 Kraft board (boxes, and the `bag`'s kraft paper) is drawn with photographed textures in `assets/textures/` when they're loaded: `./node` loads them on import (through sharp), `./browser` with `await loadTextures()`, and `boxScene` fetches its own. Until then kraft is procedural fibre. A side print fills its face when its proportions suit it, and otherwise sits whole in the middle.
 
 `./3d` adds `cardScene` (`'flat'`, `'pair'`, `'stack'`, `'fan'`), `boxScene` (`kind`, `open` 0–1, `board`, `lining`, `print: 'cover' | 'logo'`) and `mugScene` (`print: 'auto' | 'front' | 'both' | 'wrap'`, `layout`, `spin`). They take the 2D options, plus `view`, `width`, `height`, `pixelRatio` and `exposure`, and return the same handle as `vinylScene`.
+
+The lab scenes a print studio shoots, each one call, with the prints from `@arraypress/covers`:
+
+```js
+mockup('ticket', { art: night1, extra: [night2], layout: 'trio', bleed: 3, surface: 'slate' });
+mockup('lanyard', { art: pass, bleed: 3, name: 'Ferro Fest', mark, surface: 'oak', wristbands: [
+	{ kind: 'fabric', color: '#151515', ink: '#d4ff3a' }, 'fabric', { kind: 'tyvek', text: 'CREW', number: 'No.113084' },
+] });
+mockup('sticker', { layout: 'sheet', sheet: { art: stickerSheet, bleed: 3 }, art: badge, surface: 'cutting-mat' });
+```
+
+## TV
+
+A television in a dark room, its screen live. Whatever the page draws on a canvas (a shader, an effect) plays on it: the canvas is read every frame, a video as it plays, a picture once. The screen lights the floor and the set in its own colour, sampled from what it shows.
+
+```js
+import { tvScene } from '@arraypress/mockups/3d';
+
+const tv = await tvScene(canvas, { screen: effectCanvas, kind: 'crt', cabinet: 'wood' });
+await tv.setScreen(video);
+tv.dispose();
+```
+
+| Option | |
+|---|---|
+| `screen` | Required: a canvas, video, image or bitmap, or art. |
+| `kind` | `'crt'` (default): an old set on splayed legs with a bezel, knobs, a grille and rabbit ears, its face bulging. `'flat'`: a thin panel on a foot. Generic: no maker's shapes or logos. |
+| `cabinet` | `'wood'` (veneer, a CRT's default), `'cream'`, `'black'` (a flat TV's default) or hex. |
+| `crt` | The tube's look: `true`, `false`, or `{ curve, scanlines, bloom, roll, noise }`, each 0–1. |
+| `glow` | The light the screen throws (sampled from it by default). |
+| `ground`, `view`, `drift`, `fps` | The room's dark; the camera (turned 35° left, raised 12°); its drift (on by default); frames a second (30). |
+
+Like every scene it returns `{ render, setView, toBlob, dispose }`, plus `setScreen`. It draws frames only while the canvas is on screen, and with reduced motion it keeps one still frame.
 
 ## Music
 

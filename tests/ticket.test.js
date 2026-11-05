@@ -24,8 +24,8 @@ describe('ticket', () => {
 	});
 
 	it('has no hand: the held layout is gone', () => {
-		assert.deepEqual([...TICKET_LAYOUTS], ['pair']);
-		assert.throws(() => ticket({ art: ART, layout: /** @type {any} */ ('held') }), /ticket: layout is 'pair'/);
+		assert.deepEqual([...TICKET_LAYOUTS], ['pair', 'trio']);
+		assert.throws(() => ticket({ art: ART, layout: /** @type {any} */ ('held') }), /ticket: layout is 'pair' or 'trio'/);
 	});
 
 	it('tears both pieces along the same edge', () => {

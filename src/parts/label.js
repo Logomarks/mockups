@@ -34,6 +34,8 @@ const SOURCES = /** @type {const} */ (['crop', 'blur', 'plain']);
  * @property {string | false} text The words above the spindle.
  * @property {string | false} ring The ring of small type.
  * @property {import('../types.js').Crop} crop The crop window, for `source: 'crop'`.
+ * @property {number} scale Its own art's size, as a share of the label's diameter.
+ * @property {string} speed The speed printed under the spindle.
  */
 
 /**
@@ -42,19 +44,20 @@ const SOURCES = /** @type {const} */ (['crop', 'blur', 'plain']);
  * @param {import('./label.js').LabelsOption | undefined} labels `'auto'` (a crop of the cover, the first dark and the second light), `'crop'`, `'blur'`, `'plain'`, or `{ a, b }`, each its own art or a `LabelSpec`.
  * @param {string} title Words for the ring of type.
  * @param {import('../types.js').Art} [art] The cover: when `loadArt` measured it, crops with no window of their own go where it's quietest.
+ * @param {string} [speed='33⅓ RPM'] The speed printed on it.
  * @returns {[Label, Label]} Side A's and side B's.
  * @throws {TypeError} For anything else.
  */
-export function resolveLabels(labels = 'auto', title = '', art) {
+export function resolveLabels(labels = 'auto', title = '', art, speed = '33⅓ RPM') {
 	const quiet = typeof art === 'string' ? recall(art.trim()) : null;
 	const word = labels === 'auto' ? 'crop' : labels;
 	if (typeof word === 'string') {
 		if (!SOURCES.includes(/** @type {'crop'} */ (word))) throw new TypeError(`labels: 'auto', 'crop', 'blur', 'plain' or { a, b } (got ${JSON.stringify(labels)})`);
-		return [resolveLabel({ art: /** @type {'crop'} */ (word) }, 0, title, quiet), resolveLabel({ art: /** @type {'crop'} */ (word) }, 1, title, quiet)];
+		return [resolveLabel({ art: /** @type {'crop'} */ (word) }, 0, title, quiet, speed), resolveLabel({ art: /** @type {'crop'} */ (word) }, 1, title, quiet, speed)];
 	}
 	if (!labels || typeof labels !== 'object') throw new TypeError('labels: an object of { a, b }');
 	const a = labels.a ?? 'crop';
-	return [resolveLabel(a, 0, title, quiet), resolveLabel(labels.b ?? a, 1, title, quiet)];
+	return [resolveLabel(a, 0, title, quiet, speed), resolveLabel(labels.b ?? a, 1, title, quiet, speed)];
 }
 
 /**
@@ -64,9 +67,10 @@ export function resolveLabels(labels = 'auto', title = '', art) {
  * @param {number} i The side (0 for A).
  * @param {string} title Words for the ring of type.
  * @param {import('../types.js').Crop[] | null} [quiet] Where the cover is quiet, quietest first (the default crops otherwise).
+ * @param {string} [speed='33⅓ RPM'] The speed printed on it.
  * @returns {Label} The label.
  */
-export function resolveLabel(spec, i, title, quiet = null) {
+export function resolveLabel(spec, i, title, quiet = null, speed = '33⅓ RPM') {
 	const o = typeof spec === 'object' && !(spec instanceof Uint8Array) && !(spec instanceof ArrayBuffer) ? spec : { art: spec };
 	const art = o.art ?? 'crop';
 	const keyword = typeof art === 'string' && SOURCES.includes(/** @type {'crop'} */ (art));
@@ -74,7 +78,9 @@ export function resolveLabel(spec, i, title, quiet = null) {
 	if (tone !== 'dark' && tone !== 'light') throw new TypeError(`label tone: 'dark' or 'light' (got ${JSON.stringify(tone)})`);
 	const side = i ? 'B' : 'A';
 	const crop = o.crop ?? quiet?.[i % quiet.length] ?? CROPS[i % 2];
-	const ring = `${title ? title.toUpperCase() + ' · ' : ''}SIDE ${side} · 33⅓ RPM · STEREO · ALL RIGHTS OF THE PRODUCER AND OWNER OF THE RECORDED WORK RESERVED · `;
+	const scale = o.scale ?? 1;
+	if (typeof scale !== 'number' || !(scale > 0 && scale <= 1)) throw new TypeError(`label scale: a share of the label, above 0 up to 1 (got ${JSON.stringify(o.scale)})`);
+	const ring = `${title ? title.toUpperCase() + ' · ' : ''}SIDE ${side} · ${speed} · STEREO · ALL RIGHTS OF THE PRODUCER AND OWNER OF THE RECORDED WORK RESERVED · `;
 	return {
 		source: keyword ? /** @type {'crop' | 'blur' | 'plain'} */ (art) : 'art',
 		href: keyword ? null : artHref(/** @type {import('../types.js').Art} */ (art)),
@@ -84,6 +90,8 @@ export function resolveLabel(spec, i, title, quiet = null) {
 		text: o.text === undefined ? `SIDE ${side}` : o.text,
 		ring: o.ring === undefined ? ring : o.ring,
 		crop: { x: clamp(crop.x), y: clamp(crop.y), size: clamp(crop.size, 0.05, 1) },
+		scale,
+		speed,
 	};
 }
 
@@ -108,7 +116,8 @@ export function label(sc, lb, rl, shift = 0) {
 	} else if (lb.source === 'art' && lb.href) {
 		const id = sc.id('labelart');
 		sc.def(el('image', { id, width: ART, height: ART, href: lb.href, preserveAspectRatio: 'xMidYMid slice' }));
-		art = el('use', { href: `#${id}`, transform: `translate(${n(-rl)} ${n(-rl)}) scale(${n((2 * rl) / ART)})` });
+		const k = rl * (lb.scale ?? 1);
+		art = el('use', { href: `#${id}`, transform: `translate(${n(-k)} ${n(-k)}) scale(${n((2 * k) / ART)})` });
 	}
 	const wash = lb.source === 'crop' || lb.source === 'blur' ? el('circle', { r: rl, fill: lb.color, opacity: lb.tone === 'dark' ? 0.42 : 0.5 }) : '';
 	const sheen = sc.id('lsheen');
@@ -131,7 +140,7 @@ export function label(sc, lb, rl, shift = 0) {
 		el('circle', { r: rl * 0.94, fill: 'none', stroke: lb.ink, 'stroke-opacity': 0.35, 'stroke-width': rl * 0.006 }),
 		lb.ring && ring(lb.ring, rl * 0.85, rl * 0.052, type),
 		lb.text && el('text', { ...type, x: shift, y: -rl * 0.36, 'font-size': rl * 0.125, 'font-weight': 700, 'letter-spacing': rl * 0.02 }, esc(lb.text)),
-		el('text', { ...type, x: shift, y: rl * 0.48, 'font-size': rl * 0.075, 'font-weight': 500, 'letter-spacing': rl * 0.01, opacity: 0.85 }, '33⅓ RPM'),
+		el('text', { ...type, x: shift, y: rl * 0.48, 'font-size': rl * 0.075, 'font-weight': 500, 'letter-spacing': rl * 0.01, opacity: 0.85 }, esc(lb.speed ?? '33⅓ RPM')),
 		el('circle', { r: rl * 0.1, fill: 'none', stroke: lb.ink, 'stroke-opacity': 0.18, 'stroke-width': rl * 0.008 }),
 		el('circle', { r: rl, fill: `url(#${sheen})` }),
 	);

@@ -150,3 +150,31 @@ void (async () => {
 	const at: [number, number] = quadMap(p.screens[0].corners, 3, 1)(1.5, 0.5);
 	console.log(m.svg, q.screens[0].shading, KIND_LOOKS.backlit.glow, at, made.files.size);
 })();
+
+// 0.4.0: wristbands, the ticket trio, the printed sticker sheet, more surfaces, one-ink prints, 7" vinyl, the flash, props, drift, the TV
+import { wristband, SHEET_PAPERS, VINYL_SIZES, WRISTBAND_KINDS, type WristbandOptions, type BandOption } from '../src/index.js';
+import { tvScene, VINYL_SCENE_LAYOUTS, TV_KINDS, CABINETS, type TvScene, type TvSceneOptions, type VinylSceneOptions, type VinylProp, type CrtLook } from '../src/three/index.js';
+
+declare const video: HTMLVideoElement;
+const bands: BandOption[] = ['fabric', { kind: 'tyvek', color: '#ff5fa8', ink: '#1a0a12', text: 'CREW', number: 'No.1' }, { clasp: '#222222' }];
+const w: WristbandOptions = { art: png, name: 'Ferro', bands, surface: 'oak', size: 1200, light: 0.2, shadow: 1, fit: 0.8, grain: 0.3, seed: 'w' };
+const scenes: Mockup[] = [
+	wristband(w),
+	ticket({ art: png, extra: ['<svg/>'], layout: 'trio', stub: 0.7, surface: 'slate', bleed: 3 }),
+	sticker({ art: png, layout: 'sheet', sheet: { art: '<svg/>', bleed: 3 }, paper: 'A5', surface: 'cutting-mat' }),
+	lanyard({ art: png, name: 'Ferro', mark: '<svg/>', wristbands: bands, surface: { texture: 'knit', color: '#e6dccb' } }),
+	vinyl({ art: png, ground: 'slate', print: { ink: '#3d051a', paper: '#ec3a95' } }),
+];
+console.log(scenes, SURFACES.slate.color, SHEET_PAPERS.A6[0], VINYL_SIZES['7in'].speed, WRISTBAND_KINDS, VINYL_SCENE_LAYOUTS, TV_KINDS, CABINETS.wood);
+
+void (async () => {
+	const props: VinylProp[] = [png, { art: '<svg/>', width: 116, height: 98, bleed: 0, print: 'full' }];
+	const v: VinylSceneOptions = { art: png, size: '7in', layout: 'scatter', props, ground: 'knit', light: 'flash', print: { ink: '#3d051a' }, drift: 0.5, fps: 24, labels: { a: { art: png, scale: 0.6 } } };
+	const s: VinylScene = await vinylScene(canvas, v);
+	const crt: CrtLook = { curve: 1, scanlines: 0.5, bloom: 1, roll: 0, noise: 0.2 };
+	const o: TvSceneOptions = { screen: canvas, kind: 'crt', cabinet: 'cream', crt, ground: '#050506', glow: '#5dffa0', view: { turn: -30 }, drift: true, fps: 30, fit: 0.8 };
+	const tv: TvScene = await tvScene(canvas, o);
+	await tv.setScreen(video);
+	tv.dispose();
+	s.dispose();
+})();

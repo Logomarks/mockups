@@ -1,6 +1,7 @@
 import type { Art, Mockup, Size } from '../types.js';
 import type { SurfaceOption } from '../materials/desk.js';
 import type { StockName } from '../materials/paper.js';
+import type { BandOption } from '../parts/wristband.js';
 
 /** How to show a lanyard pass. */
 export interface LanyardOptions {
@@ -12,6 +13,10 @@ export interface LanyardOptions {
 	strap?: string;
 	/** The name's colour (light on a dark strap, dark on a light one). */
 	ink?: string;
+	/** Event wristbands lying beside the pass, bottom first (none): see `wristband`. Their words are `name` unless they carry their own. */
+	wristbands?: BandOption[];
+	/** The mark on the wristbands' sliders and Tyvek (none). */
+	mark?: Art;
 	/** The whole lanyard's turn, in degrees, -45–45 (-6). */
 	angle?: number;
 	/** What it lies on (`'linen'`). */

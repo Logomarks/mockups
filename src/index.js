@@ -7,7 +7,7 @@
  * `./browser` (a canvas). The three.js scenes are in `./3d`.
  */
 
-export { vinyl, RECORD } from './objects/vinyl.js';
+export { vinyl, RECORD, VINYL_SIZES } from './objects/vinyl.js';
 export { OBJECTS, mockup } from './objects/index.js';
 export { GROUNDS } from './materials/ground.js';
 export { FINISHES } from './materials/vinyl.js';
@@ -23,7 +23,8 @@ export { card, CARD, CARD_LAYOUTS } from './objects/card.js';
 export { letterhead, A4, LETTERHEAD_LAYOUTS } from './objects/letterhead.js';
 export { ticket, TICKET, TICKET_LAYOUTS } from './objects/ticket.js';
 export { lanyard, PASS } from './objects/lanyard.js';
-export { sticker, STICKER_LAYOUTS, LIDS } from './objects/sticker.js';
+export { wristband, WRISTBAND, WRISTBAND_KINDS } from './objects/wristband.js';
+export { sticker, STICKER_LAYOUTS, LIDS, SHEET_PAPERS } from './objects/sticker.js';
 export { tote, TOTE } from './objects/tote.js';
 export { tee, TEE, TEE_PLACEMENTS } from './objects/tee.js';
 export { hoodie, HOODIE, HOODIE_PLACEMENTS } from './objects/hoodie.js';

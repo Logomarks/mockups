@@ -7,10 +7,15 @@
  * side, so shadows fall away from it as in the 2D mockup, and a dim fill.
  * Things standing get a paper sweep instead of a floor, lit from the front.
  * `expose` then sets the exposure so the ground comes out the colour it was
- * asked to be, whatever the lights add up to.
+ * asked to be, whatever the lights add up to. Two other lightings: a phone's
+ * flash (a hard light beside the lens, following the camera, crisp
+ * shadows, a low window light raking across from the side, the room for
+ * gloss to reflect) and a dark room (a floor fading into the dark, almost
+ * no light of its own: the objects light it).
  */
 
 import { sweepMesh } from './sweep.js';
+import { mix } from '../util/color.js';
 
 /**
  * A renderer on a canvas.
@@ -32,31 +37,97 @@ export function makeRenderer(THREE, canvas, { width, height, pixelRatio, exposur
 	return r;
 }
 
+/** How bright the flash is, for its distance squared (it falls off as a real one does). */
+const FLASH = 2.8;
+
 /**
  * The scene: its environment, ground and lights.
  *
  * @param {typeof import('three')} THREE three.js.
  * @param {import('three').WebGLRenderer} renderer The renderer (for the environment).
  * @param {typeof import('three/addons/environments/RoomEnvironment.js').RoomEnvironment} Room The room environment.
- * @param {{ ground: string, light: number, layout?: 'flat' | 'upright' }} o The ground's colour, where the light is, left (-1) to right (1), and how things stand: lying on the ground (`'flat'`, the default) or standing on a paper sweep (`'upright'`).
- * @returns {{ scene: import('three').Scene, dispose: () => void }} The scene, and how to free its environment.
+ * @param {import('./stage.js').StageOptions} o The ground's colour, where the light is, how things stand, the lighting, and a drawn surface for the sweep.
+ * @returns {import('./stage.js').Stage} The scene, how to keep the flash with the camera, and how to free its environment.
  */
-export function makeStage(THREE, renderer, Room, { ground, light, layout = 'flat' }) {
+export function makeStage(THREE, renderer, Room, { ground, light, layout = 'flat', lighting = 'studio', backdrop = null }) {
 	const scene = new THREE.Scene();
 	scene.background = new THREE.Color(ground);
 	const pmrem = new THREE.PMREMGenerator(renderer);
 	const env = pmrem.fromScene(new Room(), 0.04).texture;
 	scene.environment = env;
-	scene.environmentIntensity = 0.32;
+	scene.environmentIntensity = lighting === 'flash' ? 0.6 : lighting === 'dark' ? 0.06 : 0.32;
 	const upright = layout === 'upright';
+	/** @type {import('three').Texture[]} */
+	const owned = [];
+	const dispose = () => {
+		env.dispose();
+		pmrem.dispose();
+		owned.forEach((t) => t.dispose());
+	};
 
-	if (upright) scene.add(sweepMesh(THREE, { color: ground, back: 2.4, cove: 0.8 }));
+	if (lighting === 'dark') {
+		// a floor fading into the dark: what's on it lights it
+		scene.fog = new THREE.Fog(ground, 6, 14);
+		const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshStandardMaterial({ color: mix(ground, '#ffffff', 0.05), roughness: 0.85 }));
+		floor.rotation.x = -Math.PI / 2;
+		floor.receiveShadow = true;
+		scene.add(floor);
+		renderer.shadowMap.type = THREE.PCFShadowMap;
+		return { scene, follow() {}, dispose };
+	}
+	if (upright) {
+		// a drawn surface as the sweep's paper: mirrored round, so it never shows a seam, at its true scale
+		const map = backdrop ? new THREE.CanvasTexture(backdrop.canvas) : null;
+		if (map && backdrop) {
+			map.colorSpace = THREE.SRGBColorSpace;
+			map.wrapS = map.wrapT = THREE.MirroredRepeatWrapping;
+			map.repeat.set(1 / backdrop.span, 1 / backdrop.span);
+			map.anisotropy = 8;
+			owned.push(map);
+		}
+		scene.add(sweepMesh(THREE, { color: ground, back: 2.4, cove: 0.8, map }));
+	}
 	else {
 		// matte paper: no sheen at grazing angles, so a dark ground stays dark across the frame
 		const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshLambertMaterial({ color: ground }));
 		floor.rotation.x = -Math.PI / 2;
 		floor.receiveShadow = true;
 		scene.add(floor);
+	}
+
+	if (lighting === 'flash') {
+		// the flash beside the lens: hard, its shadows crisp and just behind what casts them
+		renderer.shadowMap.type = THREE.PCFShadowMap;
+		const flash = new THREE.SpotLight('#fff6ee', 1, 0, 0.75, 0.45, 2);
+		flash.castShadow = true;
+		flash.shadow.mapSize.set(2048, 2048);
+		flash.shadow.bias = -0.0004;
+		flash.shadow.normalBias = 0.002;
+		flash.shadow.radius = 2;
+		// a low window light from the side, raking across the ground and the grooves so their relief reads
+		const sun = new THREE.DirectionalLight('#fff0e0', 1.1);
+		sun.position.set(-Math.sign(light || 1) * 4, 1.7, 1.2);
+		sun.castShadow = true;
+		sun.shadow.mapSize.set(2048, 2048);
+		sun.shadow.camera.left = sun.shadow.camera.bottom = -2.4;
+		sun.shadow.camera.right = sun.shadow.camera.top = 2.4;
+		sun.shadow.bias = -0.0005;
+		sun.shadow.radius = 4;
+		scene.add(flash, flash.target, sun, new THREE.HemisphereLight('#fff4ec', '#6a5a50', 0.3));
+		const side = new THREE.Vector3();
+		return {
+			scene,
+			follow(camera, target) {
+				side.setFromMatrixColumn(camera.matrixWorld, 0);
+				const d = camera.position.distanceTo(new THREE.Vector3(...target));
+				flash.position.copy(camera.position).addScaledVector(side, d * 0.1);
+				flash.target.position.set(...target);
+				flash.intensity = FLASH * d * d;
+				flash.shadow.camera.near = d * 0.3;
+				flash.shadow.camera.far = d * 3;
+			},
+			dispose,
+		};
 	}
 
 	// the key: over a flat lay, high, to the light's side and beyond the top of the frame; for things standing, in front and
@@ -82,13 +153,7 @@ export function makeStage(THREE, renderer, Room, { ground, light, layout = 'flat
 	scene.add(key, key.target);
 	// the fill: from above over a flat lay; all round in the sweep (the paper bounces it), so shadows stay soft
 	scene.add(upright ? new THREE.HemisphereLight('#ffffff', '#f2f2f2', 0.9) : new THREE.HemisphereLight('#ffffff', '#d8d8d8', 0.22));
-	return {
-		scene,
-		dispose() {
-			env.dispose();
-			pmrem.dispose();
-		},
-	};
+	return { scene, follow() {}, dispose };
 }
 
 /**

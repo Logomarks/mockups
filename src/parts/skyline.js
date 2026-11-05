@@ -4,11 +4,15 @@
  * The far side of a street, out of focus: a row of seeded building blocks
  * along the horizon in pale, hazy tones, with rows of windows (lit at
  * night), blurred as a lens focused on something near would blur them.
+ * Only the blocks the camera sees are drawn: one behind the camera would
+ * project to a point far off the frame, and a blur over that much space
+ * makes some rasterisers (resvg in WebAssembly) run out of memory.
  */
 
 import { el } from '../render/svg.js';
 import { rng } from '../util/rng.js';
 import { mix } from '../util/color.js';
+import { seen } from '../util/camera.js';
 
 /**
  * A row of buildings across the street.
@@ -28,20 +32,25 @@ export function skyline(sc, view, { z, x, night = false, haze = '#dfe6ea', seed 
 	const tones = ['#b9b2a6', '#a49b8f', '#c9c2b5', '#8f8a84', '#b3a28f', '#9aa1a8'];
 	let blocks = '';
 	let lights = '';
+	// the stretch in view (the blocks are still all seeded, so the ones in view are the same whatever the view)
+	const [from, to] = seen(view, 0, z, x, 0.1);
 	for (let x0 = x[0]; x0 < x[1]; ) {
 		const w = r.range(5, 14);
 		const h = r.range(7, 22);
 		const tone = mix(tones[Math.floor(r.next() * tones.length)], haze, 0.45);
+		const shown = x0 + w >= from && x0 <= to;
 		const quad = [[x0, 0], [x0 + w, 0], [x0 + w, h], [x0, h]].map(([a, b]) => view.at([a, b, z]));
-		blocks += el('path', { d: 'M' + quad.map((p) => p.join(' ')).join('L') + 'Z', fill: tone });
+		if (shown) blocks += el('path', { d: 'M' + quad.map((p) => p.join(' ')).join('L') + 'Z', fill: tone });
 		// rows of windows
 		for (let fy = 1.2; fy < h - 1; fy += 3.2) {
 			for (let fx = x0 + 0.9; fx < x0 + w - 1.2; fx += 2.2) {
 				const on = night && r.next() < 0.35;
 				const win = [[fx, fy], [fx + 1.2, fy], [fx + 1.2, fy + 1.6], [fx, fy + 1.6]].map(([a, b]) => view.at([a, b, z]));
 				const d = 'M' + win.map((p) => p.join(' ')).join('L') + 'Z';
-				if (on) lights += el('path', { d, fill: r.next() < 0.5 ? '#ffd68a' : '#ffe9c4' });
-				else blocks += el('path', { d, fill: mix(tone, '#3a4048', 0.35) });
+				const fill = on ? (r.next() < 0.5 ? '#ffd68a' : '#ffe9c4') : mix(tone, '#3a4048', 0.35);
+				if (!shown) continue;
+				if (on) lights += el('path', { d, fill });
+				else blocks += el('path', { d, fill });
 			}
 		}
 		x0 += w + r.range(0, 1.5);

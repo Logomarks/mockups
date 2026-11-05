@@ -109,12 +109,13 @@ export async function bodyCanvas(art, m, seed, size = 1024) {
  * @param {typeof import('three')} THREE three.js.
  * @param {string} seed The seed (the same tracks as the 2D record).
  * @param {number} [size=1024] The maps' side.
+ * @param {{ label?: number, tracks?: [number, number] }} [o] The label's radius as a fraction of the record's, and how few and how many tracks a side has (a 12"'s).
  * @returns {{ normal: import('three').CanvasTexture, roughness: import('three').CanvasTexture, anisotropy: import('three').CanvasTexture, shadow: import('three').CanvasTexture }} The maps.
  */
-export function grooveMaps(THREE, seed, size = 1024) {
+export function grooveMaps(THREE, seed, size = 1024, { label = RADII.label, tracks } = {}) {
 	const R = size / 2;
 	// groove depth by radius, from the 2D tracks: 1 in a track, 0 in the gaps and the run-out
-	const stops = trackStops(seed, false);
+	const stops = trackStops(seed, false, 1, 400, { label, tracks });
 	const depth = new Float32Array(R + 1);
 	for (let i = 0; i <= R; i++) {
 		const t = i / R;
@@ -151,7 +152,7 @@ export function grooveMaps(THREE, seed, size = 1024) {
 			// along the groove: the tangent (-y, x), in the face's UV space (v runs up)
 			set(2, -uy * 127.5 + 127.5, -ux * 127.5 + 127.5, 60 + 195 * d);
 			const t = r / R;
-			const solid = t < RADII.label || t > 0.955 ? 255 : 0;
+			const solid = t < label || t > 0.955 ? 255 : 0;
 			set(3, solid, solid, solid);
 		}
 	maps.forEach(([, g], i) => g.putImageData(data[i], 0, 0));

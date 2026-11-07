@@ -15,6 +15,7 @@ import { checkPlate, KIND_LOOKS } from './format.js';
 import { findSigns, quadAspect } from './detect.js';
 import { signMaps, photoNoise } from './maps.js';
 import { quadBox } from './quad.js';
+import { cylinderCorners, cylinderAspect, outline } from './surface.js';
 
 /** @type {Promise<typeof import('sharp').default> | null} */
 let sharpModule = null;
@@ -116,7 +117,7 @@ export async function makePlate(photo, options) {
 	const made = [];
 	for (const [k, o] of screens.entries()) {
 		const kind = o.kind ?? 'print';
-		let corners = o.corners;
+		let corners = o.cylinder ? cylinderCorners(o.cylinder) : o.corners;
 		if (!corners) {
 			const found = findSigns(plain, { near: o.near }).filter((f) => !taken.some((t) => Math.hypot(t[0][0] - f.corners[0][0], t[0][1] - f.corners[0][1]) < 4));
 			if (!found.length) throw new Error(`makePlate '${name}': no blank sign found for screen ${k + 1}; give its corners, or a point on it (near)`);
@@ -125,9 +126,10 @@ export async function makePlate(photo, options) {
 		taken.push(corners);
 		const round = (v) => Math.round(v * 100) / 100;
 		corners = corners.map((p) => [round(p[0]), round(p[1])]);
-		const box = quadBox(corners, shown.width, shown.height, 3);
+		const shape = outline({ corners, shape: o.shape, cylinder: o.cylinder });
+		const box = quadBox(shape, shown.width, shown.height, 3);
 		const given = o.mask ? await handMask(o.mask, shown, box) : null;
-		const maps = signMaps(plain, corners, box, kind, { occluders: o.occluders ?? true, dark: o.dark, given });
+		const maps = signMaps(plain, corners, box, kind, { occluders: o.occluders ?? true, dark: o.dark, given, outline: o.shape || o.cylinder ? shape : null, stock: o.stock });
 		if (maps.noise < 0.5) {
 			if (grain < 0) grain = photoNoise(plain);
 			maps.noise = Math.max(maps.noise, grain);
@@ -136,7 +138,11 @@ export async function makePlate(photo, options) {
 		const raw = (data, channels) => s(Buffer.from(data), { raw: { width: box[2], height: box[3], channels } });
 		files.set(`${prefix}shading.${enc.ext}`, await enc.map(raw(maps.shading, 3), 90).toBuffer());
 		/** @type {import('./format.js').PlateScreen} */
-		const screen = { kind, corners, aspect: round(o.aspect ?? quadAspect(corners, shown.width, shown.height)), box, shading: `${prefix}shading.${enc.ext}`, noise: maps.noise };
+		const screen = { kind, corners, aspect: round(o.aspect ?? (o.cylinder ? cylinderAspect(o.cylinder) : quadAspect(corners, shown.width, shown.height))), box, shading: `${prefix}shading.${enc.ext}`, noise: maps.noise };
+		// the surface's shape, the light's direction, cloth and a finish, as given
+		if (o.shape && o.shape !== 'quad') screen.shape = o.shape;
+		if (o.cylinder) screen.cylinder = o.cylinder;
+		for (const f of /** @type {const} */ (['light', 'displace', 'finish', 'background'])) if (o[f] !== undefined) screen[f] = o[f];
 		if (maps.mask) {
 			files.set(`${prefix}mask.${enc.mask.ext}`, await enc.mask.encode(raw(maps.mask, 1)).toBuffer());
 			screen.mask = `${prefix}mask.${enc.mask.ext}`;

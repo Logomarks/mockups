@@ -1,4 +1,4 @@
-import type { Plate, PlateKind, PlateSource, Point } from './format.js';
+import type { Plate, PlateKind, PlateSource, Point, ScreenShape, Cylinder, Finish } from './format.js';
 
 /** How to find and treat one screen when making a plate. */
 export interface MakeScreenOptions {
@@ -24,6 +24,20 @@ export interface MakeScreenOptions {
 	glow?: number;
 	/** Glass's veil, 0–1 (the kind's). */
 	sheen?: number;
+	/** The sign is the ellipse inside its corners (a round label, a pin, a patch): `'ellipse'`; `'quad'` by default. */
+	shape?: ScreenShape;
+	/** The sign wraps round a cylinder or cone (a cup's sleeve): its corners come from it. */
+	cylinder?: Cylinder;
+	/** Where the photo's light comes from, in degrees clockwise from the +x axis (y down): 225 is the top left. For finishes. */
+	light?: number;
+	/** How far the art follows the cloth's folds, in pixels (`fabric`: 1.2% of the sign's short side). */
+	displace?: number;
+	/** The sign's default ground round the art (`'#ffffff'`, or `'none'` for the sign itself). */
+	background?: string;
+	/** The sign's default finish (`'ink'`). */
+	finish?: Finish;
+	/** The sign's own colour is the stock (kraft, canvas, wood, metal): its unprinted parts stay as the photo has them, rather than its brightest being taken for white (false). */
+	stock?: boolean;
 }
 
 /** How to make a plate. */

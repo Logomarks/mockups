@@ -5,6 +5,18 @@ All notable changes to `@logomarks/mockups` are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] — 2026-11-08
+
+### Added
+
+- **Plate surfaces beyond a flat sign.** A screen's `shape: 'ellipse'` is the ellipse inside its corners (a round label, a pin, a patch): the art is cut to it and the maps are measured inside it. `cylinder: { top, bottom, span }` wraps the art round a cylinder or cone (a cup's sleeve), bunching towards the sides; its corners, box and true aspect come from the two edge ellipses. See `docs/photo-plates.md`.
+- **Cloth.** A new kind, `'fabric'` (a tote, an apron, a tee). It is shaded like print, ink stops a little short of black, and the art follows the cloth's folds: the screen's `displace` (pixels, by default 1.2% of the sign's short side) pushes it about by the photo's own light, through `feDisplacementMap`.
+- **Finishes.** `plate(p, { finish })`, or a screen's own `finish`: `'deboss'`, `'emboss'`, `'engrave'` (cut in and filled, in the art's colours or one `color`) and `'foil'` (stamped metal: `'gold'`, `'silver'`, `'copper'`, `'rose'` or a hex). Each is drawn from the art's alpha after it is warped into the photo, blurred into a height, lit from the screen's `light` (degrees; 225, the top left, by default) and laid over with `hard-light`. Settings are `{ type, depth, edge, tone, ink, color, metal }`. Also `PLATE_FINISHES`, `PLATE_METALS`.
+- **`halftonePrint(art, options)`**: art printed in one ink, solid in the middle and fading out through a dot screen towards its edges, as on a screen-printed tee. It uses `@logomarks/image-effects`' `halftoneFade`, now an optional peer dependency loaded only when this is called. It returns an SVG for `plate()`.
+- **`makePlate`'s `stock`**: the sign's own colour is the stock (kraft, canvas, wood, leather, metal). The shading keeps the photo's light as it is, so the unprinted stock stays as photographed instead of its brightest being taken for white.
+- **No ground: `background: 'none'`** (a `plate()` option, or a screen's default). The art prints only where it is and the photo shows round it, so light ink works on dark stock, paint on a brick wall, or a decal.
+- `SCREEN_SHAPES`, `cylinderMap`; `inkMatrix` (the one-ink tone curve, shared by the sleeves' prints and the halftone print).
+
 ## [0.5.0] — 2026-11-06
 
 ### Added

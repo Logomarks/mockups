@@ -10,3 +10,6 @@
 export { plate } from './compose.js';
 export { PLATE_KINDS, KIND_LOOKS, checkPlate } from './format.js';
 export { quadMap } from './quad.js';
+export { SCREEN_SHAPES, cylinderMap, outline } from './surface.js';
+export { PLATE_FINISHES, PLATE_METALS, resolveFinish } from './finish.js';
+export { halftonePrint } from './print.js';

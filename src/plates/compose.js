@@ -16,6 +16,7 @@ import { isHex } from '../util/color.js';
 import { num, oneOf } from '../util/options.js';
 import { checkPlate } from './format.js';
 import { screenLayers } from './layers.js';
+import { resolveFinish } from './finish.js';
 
 /**
  * A plate mockup.
@@ -32,17 +33,20 @@ export function plate(plate, options) {
 	const arts = Array.isArray(art) ? art : [art];
 	if (!arts.length || arts.some((a) => a === undefined || a === null)) throw new TypeError('plate: art is required');
 	const fit = oneOf('plate', 'fit', options.fit, ['cover', 'contain', 'top'], 'cover');
-	const background = options.background ?? '#ffffff';
-	if (!isHex(background)) throw new TypeError(`plate: background is a hex colour (got ${JSON.stringify(background)})`);
+	if (options.background !== undefined && options.background !== 'none' && !isHex(options.background)) throw new TypeError(`plate: background is a hex colour or 'none' (got ${JSON.stringify(options.background)})`);
 	const grain = clamp(num('plate', options.grain, 1, 'grain'), 0, 3);
 
 	const sc = scene({ width: p.width, height: p.height, key: JSON.stringify({ o: 'plate', name: p.name, seed }) });
 	const photo = sc.id('photo');
 	sc.def(el('image', { id: photo, href: p.photo, width: p.width, height: p.height, preserveAspectRatio: 'none' }));
 	sc.add(el('use', { href: `#${photo}` }));
+	const finishes = Array.isArray(options.finish) ? options.finish : [options.finish];
 	p.screens.forEach((s, i) => {
 		const glow = options.glow === undefined ? s.glow : clamp(num('plate', options.glow, s.glow, 'glow'), 0, 1);
-		sc.add(screenLayers(sc, s, { art: arts[i % arts.length], fit, background, grain, glow, photo, seed: `${seed}:${i}` }));
+		const finish = resolveFinish(finishes[i % finishes.length] ?? s.finish, 'plate');
+		// the ground round the art: the option's, the screen's own, or white paper
+		const background = options.background ?? s.background ?? '#ffffff';
+		sc.add(screenLayers(sc, s, { art: arts[i % arts.length], fit, background, grain, glow, photo, seed: `${seed}:${i}`, finish }));
 	});
 	return { svg: sc.svg(), width: p.width, height: p.height, object: 'plate' };
 }

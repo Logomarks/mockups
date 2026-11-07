@@ -15,3 +15,6 @@ export function resolvePrint(v: unknown, object: string): InkPrint | null;
 export function inkFilter(sc: Scene, p: InkPrint): string;
 /** A one-ink print on a canvas's pixels, in place: the stock, with the ink as deep as the art is dark. */
 export function inkCanvas(canvas: HTMLCanvasElement, p: InkPrint): HTMLCanvasElement;
+
+/** The one-ink tone curve as an `feColorMatrix`'s values: every pixel the ink, as opaque as the art is dark. */
+export function inkMatrix(ink: string): string;

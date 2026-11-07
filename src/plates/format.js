@@ -10,6 +10,9 @@
  * relative to where the plate lives; a loaded plate has them inlined.
  */
 
+import { SCREEN_SHAPES } from './surface.js';
+import { resolveFinish } from './finish.js';
+
 /**
  * How each kind of surface takes the art.
  *
@@ -17,8 +20,10 @@
  * - `paint`: a painted board: the same, from a shading map with the paint's colour taken out.
  * - `backlit`: a lightbox or a display: the art glows, bleeding a little light round it.
  * - `glass`: a print behind glass: shaded, with the glass's reflections laid back over it.
+ * - `fabric`: cloth (a tote, an apron, a tee): shaded like print, ink a little short of black, and the art pushed
+ *   about by the cloth's folds (`displace`).
  */
-export const PLATE_KINDS = Object.freeze(['print', 'paint', 'backlit', 'glass']);
+export const PLATE_KINDS = Object.freeze(['print', 'paint', 'backlit', 'glass', 'fabric']);
 
 /**
  * Each kind's defaults: the softness (a blur in pixels, to match the photo's
@@ -32,7 +37,11 @@ export const KIND_LOOKS = Object.freeze({
 	paint: Object.freeze({ soften: 0.8, black: 0.05, glow: 0, sheen: 0 }),
 	backlit: Object.freeze({ soften: 0.5, black: 0.02, glow: 0.45, sheen: 0 }),
 	glass: Object.freeze({ soften: 0.6, black: 0.04, glow: 0, sheen: 0.05 }),
+	fabric: Object.freeze({ soften: 0.9, black: 0.09, glow: 0, sheen: 0 }),
 });
+
+/** How far a `fabric` screen's art follows its folds when it doesn't say, as a fraction of the sign's short side. */
+export const FABRIC_DISPLACE = 0.012;
 
 /**
  * Whether a value is a finite number.
@@ -74,7 +83,16 @@ export function checkPlate(plate) {
 		if (!finite(s.aspect) || s.aspect <= 0) fail(`${at}.aspect is a positive number (the sign's width over its height)`);
 		if (!Array.isArray(s.box) || s.box.length !== 4 || !s.box.every(finite)) fail(`${at}.box is [x, y, width, height]`);
 		for (const f of /** @type {const} */ (['shading', 'mask', 'reflection'])) if (s[f] !== undefined && !named(s[f])) fail(`${at}.${f} is a file name or an href`);
-		for (const f of /** @type {const} */ (['noise', 'soften', 'black', 'glow', 'sheen'])) if (s[f] !== undefined && (!finite(s[f]) || s[f] < 0)) fail(`${at}.${f} is a number, 0 or more`);
+		for (const f of /** @type {const} */ (['noise', 'soften', 'black', 'glow', 'sheen', 'displace'])) if (s[f] !== undefined && (!finite(s[f]) || s[f] < 0)) fail(`${at}.${f} is a number, 0 or more`);
+		if (s.shape !== undefined && !SCREEN_SHAPES.includes(s.shape)) fail(`${at}.shape is one of ${SCREEN_SHAPES.join(', ')} (got ${JSON.stringify(s.shape)})`);
+		if (s.light !== undefined && !finite(s.light)) fail(`${at}.light is a number of degrees`);
+		if (s.background !== undefined && s.background !== 'none' && !(typeof s.background === 'string' && /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(s.background))) fail(`${at}.background is a hex colour or 'none'`);
+		if (s.cylinder !== undefined) {
+			const c = s.cylinder;
+			const ellipse = (e) => Array.isArray(e) && e.length === 4 && e.every(finite) && e[2] > 0;
+			if (!c || typeof c !== 'object' || !ellipse(c.top) || !ellipse(c.bottom) || (c.span !== undefined && !(finite(c.span) && c.span > 0 && c.span < 360))) fail(`${at}.cylinder is { top, bottom: [cx, cy, rx, ry], span? }`);
+		}
+		if (s.finish !== undefined) resolveFinish(s.finish, `plate${named(plate.name) ? ` '${plate.name}'` : ''}: ${at}`);
 		return { ...KIND_LOOKS[s.kind], noise: 0, ...s };
 	});
 	return { ...plate, screens };

@@ -1,7 +1,7 @@
 {
   "name": "@logomarks/mockups",
-  "version": "0.5.0",
-  "description": "Product mockups from finished artwork: vinyl, CD, cassette, poster, business cards, letterhead, tickets, wristbands, stickers, apparel, mugs, bags, boxes, phone, laptop, billboard, shopfront and bus shelter. Dependency-free layered SVG, PNG via sharp in Node or a canvas in the browser, and three.js scenes shot through a lens: sunglasses reflecting the art, a phone macro, a keynote stage, neon, a station lightbox, a window decal, binders, a book in a slipcase, stationery, and restaurant menus, receipts, cups, bags, pizza boxes, chopsticks and napkins.",
+  "version": "0.6.0",
+  "description": "Product mockups from finished artwork: vinyl, CD, cassette, poster, business cards, letterhead, tickets, wristbands, stickers, apparel, mugs, bags, boxes, phone, laptop, billboard, shopfront and bus shelter. Dependency-free layered SVG, PNG via sharp in Node or a canvas in the browser, and three.js scenes shot through a lens: sunglasses reflecting the art, a phone macro, a keynote stage, neon, a station lightbox, a window decal, binders, a book in a slipcase, stationery, and restaurant menus, receipts, cups, bags, pizza boxes, chopsticks and napkins. Photo plates composite art into real photos: flat signs, round labels, cup sleeves and cloth, printed, debossed, embossed, engraved or foiled.",
   "type": "module",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -50,7 +50,12 @@
     "cd",
     "coffee-cup",
     "cover-art",
+    "deboss",
     "depth-of-field",
+    "emboss",
+    "engraving",
+    "foil",
+    "halftone",
     "keynote",
     "lightbox",
     "lp",
@@ -60,6 +65,7 @@
     "mockups",
     "napkin",
     "neon",
+    "photo-plates",
     "pizza-box",
     "poster",
     "product-mockup",
@@ -92,7 +98,8 @@
   },
   "peerDependencies": {
     "sharp": ">=0.33.0",
-    "three": ">=0.160.0"
+    "three": ">=0.160.0",
+    "@logomarks/image-effects": ">=0.4.2"
   },
   "peerDependenciesMeta": {
     "sharp": {
@@ -100,9 +107,13 @@
     },
     "three": {
       "optional": true
+    },
+    "@logomarks/image-effects": {
+      "optional": true
     }
   },
   "devDependencies": {
+    "@logomarks/image-effects": "^0.4.2",
     "@types/node": "^26.6.6",
     "@types/three": "^0.187.0",
     "sharp": "^0.35.5",

@@ -46,4 +46,4 @@ export { BODIES } from './materials/body.js';
 export { SKIES } from './materials/sky.js';
 
 // photo plates
-export { plate, PLATE_KINDS, KIND_LOOKS, checkPlate, quadMap } from './plates/index.js';
+export { plate, PLATE_KINDS, KIND_LOOKS, checkPlate, quadMap, SCREEN_SHAPES, cylinderMap, PLATE_FINISHES, PLATE_METALS, halftonePrint } from './plates/index.js';

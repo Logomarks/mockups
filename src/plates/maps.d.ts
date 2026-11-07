@@ -19,5 +19,5 @@ export function smooth(v: Float32Array, weight: Float32Array | null, w: number, 
 export function close(m: Uint8Array, w: number, h: number, r: number): Uint8Array;
 /** The photo's grain (a standard deviation, 0–255), from its flattest 16 × 16 blocks: for a sign clipped to white, whose own grain is lost. */
 export function photoNoise(px: Pixels): number;
-/** The shading, reflections, occluders and grain of a blank sign, over its box. `dark` (0.55) is how much darker than the sign round it a pixel is to count as in front; `given` is an occluder mask already known (the box's size), left out of the measuring and added to what's found. */
-export function signMaps(px: Pixels, corners: readonly Point[], box: readonly [number, number, number, number], kind: PlateKind, o?: { occluders?: boolean; dark?: number; given?: Uint8Array | null }): SignMaps;
+/** The shading, reflections, occluders and grain of a blank sign, over its box. `dark` (0.55) is how much darker than the sign round it a pixel is to count as in front; `given` is an occluder mask already known (the box's size), left out of the measuring and added to what's found; `outline` the sign's shape when it isn't its corners; `stock` keeps the photo's light as it is (a coloured stock), not lifted to white. */
+export function signMaps(px: Pixels, corners: readonly Point[], box: readonly [number, number, number, number], kind: PlateKind, o?: { occluders?: boolean; dark?: number; given?: Uint8Array | null; outline?: Point[] | null; stock?: boolean }): SignMaps;

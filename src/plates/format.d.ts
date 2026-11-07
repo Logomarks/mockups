@@ -2,7 +2,40 @@
 export type Point = [number, number];
 
 /** How a screen takes the art: printed and lit by the scene, painted, a lightbox or display, or a print behind glass. */
-export type PlateKind = 'print' | 'paint' | 'backlit' | 'glass';
+export type PlateKind = 'print' | 'paint' | 'backlit' | 'glass' | 'fabric';
+
+/** A sign's shape inside its corners: the quadrilateral itself, or the ellipse inscribed in it (a round label, a pin, a patch). */
+export type ScreenShape = 'quad' | 'ellipse';
+
+/** A band round a cylinder or cone (a cup's sleeve): its top and bottom edges, each an ellipse `[cx, cy, rx, ry]` (`ry` positive when its front is lower, seen from above), and how much of the way round the art goes. */
+export interface Cylinder {
+	top: [cx: number, cy: number, rx: number, ry: number];
+	bottom: [cx: number, cy: number, rx: number, ry: number];
+	/** Degrees round the front (140). */
+	span?: number;
+}
+
+/** How the art sits in the surface. */
+export type FinishType = 'ink' | 'deboss' | 'emboss' | 'engrave' | 'foil';
+
+/** A finish: its name, or its name with settings. */
+export type Finish =
+	| FinishType
+	| {
+			type: FinishType;
+			/** How deep it looks, 0–1. */
+			depth?: number;
+			/** How wide its edge is, as a fraction of the sign's short side, 0–1. */
+			edge?: number;
+			/** How much darker the pressed art is, 0–1 (burnished leather). */
+			tone?: number;
+			/** Whether the art's ink shows (an engraving's fill, an inked deboss). */
+			ink?: boolean;
+			/** One colour for the art where it shows (a burn, a paint fill). */
+			color?: string;
+			/** Foil's metal: `'gold'`, `'silver'`, `'copper'`, `'rose'`, or a hex colour. */
+			metal?: string;
+	 };
 
 /** One sign or display in a plate's photo. */
 export interface PlateScreen {
@@ -30,6 +63,18 @@ export interface PlateScreen {
 	glow?: number;
 	/** Glass's even veil of reflected light, 0–1 (0.05 for `glass`, else 0). */
 	sheen?: number;
+	/** The sign's shape inside its corners (`'quad'`). */
+	shape?: ScreenShape;
+	/** The band round a cylinder the sign wraps (its corners are where the band ends). */
+	cylinder?: Cylinder;
+	/** Where the photo's light comes from, degrees clockwise from the +x axis, y down (225: the top left). For finishes. */
+	light?: number;
+	/** How far the art follows the cloth's folds, in pixels (`fabric`: 1.2% of the sign's short side, else 0). */
+	displace?: number;
+	/** The ground round the art by default (`'#ffffff'`): a colour, or `'none'` for the sign itself (paint on brick, white ink on dark stock); `plate()`'s `background` overrides it. */
+	background?: string;
+	/** How the art sits in the surface by default (`'ink'`); `plate()`'s `finish` overrides it. */
+	finish?: Finish;
 }
 
 /** Where a plate's photo came from, and on what terms. */
@@ -72,6 +117,8 @@ export interface Plate {
 
 /** The kinds of screen. */
 export const PLATE_KINDS: readonly PlateKind[];
+/** How far a `fabric` sign's art follows its folds by default, as a fraction of its short side. */
+export const FABRIC_DISPLACE: number;
 /** Each kind's default softness, black, glow and sheen. */
 export const KIND_LOOKS: Readonly<Record<PlateKind, Readonly<{ soften: number; black: number; glow: number; sheen: number }>>>;
 /** Checks a plate and fills in each screen's defaults. Throws a TypeError when it's malformed. */

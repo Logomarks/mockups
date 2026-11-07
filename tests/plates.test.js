@@ -133,7 +133,7 @@ describe('plates: the maps', () => {
 
 describe('plates: the format', () => {
 	it('fills in each kind\'s looks, and refuses a malformed plate', () => {
-		assert.deepEqual(PLATE_KINDS, ['print', 'paint', 'backlit', 'glass']);
+		assert.deepEqual(PLATE_KINDS, ['print', 'paint', 'backlit', 'glass', 'fabric']);
 		assert.equal(checkPlate(handmade('backlit')).screens[0].glow, 0.45);
 		assert.throws(() => checkPlate({ ...handmade('print'), screens: [{ ...handmade('print').screens[0], kind: /** @type {any} */ ('neon') }] }), /kind is one of/);
 		assert.throws(() => checkPlate({ ...handmade('print'), screens: [{ ...handmade('print').screens[0], corners: /** @type {any} */ ([[0, 0]]) }] }), /four/);

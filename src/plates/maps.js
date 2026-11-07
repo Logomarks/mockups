@@ -18,6 +18,7 @@
  */
 
 import { inQuad } from './quad.js';
+import { inPolygon } from './surface.js';
 import { quantile } from './detect.js';
 
 /** How far above the sign's smooth light a pixel is to count as glare (a floodlight's flare, a hot spot), as a factor. */
@@ -166,9 +167,12 @@ export function photoNoise(px) {
  * @param {boolean} [o.occluders=true] Whether to look for things in front of the sign.
  * @param {number} [o.dark=0.55] How much darker than the sign round it a pixel is to count as in front of it.
  * @param {Uint8Array | null} [o.given] A grey occluder mask already known (hand-painted, or cut by a matting model), the box's size: left out when the sign is measured, and added to what's found.
+ * @param {[number, number][] | null} [o.outline] The sign's outline when it isn't its corners (a round label, a cup's band).
+ * @param {boolean} [o.stock=false] The sign's own colour is the stock the art is printed on (kraft, canvas, wood, metal): the shading is the photo's light as it is, so the unprinted stock stays as the photo has it, rather than its brightest being taken for white.
  * @returns {{ shading: Uint8Array, reflection: Uint8Array | null, mask: Uint8Array | null, noise: number }} RGB shading and reflections and a grey occluder mask (each the box's size, row by row), and the grain.
  */
-export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55, given = null } = {}) {
+export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55, given = null, outline = null, stock = false } = {}) {
+	const inside = outline ? (x, y) => inPolygon(outline, x, y) : (x, y) => inQuad(corners, x, y);
 	const [bx, by, w, h] = box;
 	const n = w * h;
 	const rgb = new Float32Array(n * 3);
@@ -181,7 +185,7 @@ export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55
 			for (let c = 0; c < 3; c++) rgb[i * 3 + c] = px.data[j + c];
 			L[i] = 0.2126 * rgb[i * 3] + 0.7152 * rgb[i * 3 + 1] + 0.0722 * rgb[i * 3 + 2];
 			// a pixel's centre inside the sign, away from its anti-aliased edge
-			sign[i] = inQuad(corners, bx + x + 0.5, by + y + 0.5) ? 1 : 0;
+			sign[i] = inside(bx + x + 0.5, by + y + 0.5) ? 1 : 0;
 		}
 	}
 	const diag = Math.hypot(w, h);
@@ -211,7 +215,7 @@ export function signMaps(px, corners, box, kind, { occluders = true, dark = 0.55
 
 	// the reference white: the sign's brightest (a high quantile, so a stray hot pixel doesn't set it), per channel for paint
 	const ref = [0, 1, 2].map((c) => quantile(Float32Array.from({ length: n }, (_, i) => (clear(i) ? rgb[i * 3 + c] : NaN)).filter((v) => !Number.isNaN(v)), 0.99));
-	const white = kind === 'paint' ? ref : Array(3).fill(Math.max(...ref));
+	const white = stock ? [255, 255, 255] : kind === 'paint' ? ref : Array(3).fill(Math.max(...ref));
 
 	// light laid over the surface, kept apart and screened back over the art: behind glass, everything brighter than the
 	// sign's smooth light (its reflections); on any sign, glare well above the light round it (a floodlight, a hot spot)

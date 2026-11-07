@@ -43,17 +43,20 @@ export function resolvePrint(v, object) {
  */
 export function inkFilter(sc, p) {
 	const id = sc.id('ink');
-	const [r, g, b] = rgb(p.ink).map((v) => v / 255);
-	const a = LUMA.map((k) => n(-SLOPE * k)).join(' ');
-	sc.def(
-		el(
-			'filter',
-			{ id, 'color-interpolation-filters': 'sRGB' },
-			el('feColorMatrix', { type: 'matrix', values: `0 0 0 0 ${n(r)}  0 0 0 0 ${n(g)}  0 0 0 0 ${n(b)}  ${a} 0 ${OFFSET}` }),
-			el('feComposite', { in2: 'SourceAlpha', operator: 'in' }),
-		),
-	);
+	sc.def(el('filter', { id, 'color-interpolation-filters': 'sRGB' }, el('feColorMatrix', { type: 'matrix', values: inkMatrix(p.ink) }), el('feComposite', { in2: 'SourceAlpha', operator: 'in' })));
 	return `url(#${id})`;
+}
+
+/**
+ * The one-ink tone curve as an `feColorMatrix`'s values: every pixel the ink, as opaque as the art is dark.
+ *
+ * @param {string} ink The ink, a hex colour.
+ * @returns {string} The matrix's values.
+ */
+export function inkMatrix(ink) {
+	const [r, g, b] = rgb(ink).map((v) => v / 255);
+	const a = LUMA.map((k) => n(-SLOPE * k)).join(' ');
+	return `0 0 0 0 ${n(r)}  0 0 0 0 ${n(g)}  0 0 0 0 ${n(b)}  ${a} 0 ${OFFSET}`;
 }
 
 /**

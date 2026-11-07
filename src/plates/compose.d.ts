@@ -1,5 +1,5 @@
 import type { Art, Mockup } from '../types.js';
-import type { Plate } from './format.js';
+import type { Plate, Finish } from './format.js';
 
 /** How to show art in a plate. */
 export interface PlateOptions {
@@ -7,7 +7,7 @@ export interface PlateOptions {
 	art: Art | Art[];
 	/** How the art fills each sign: `'cover'` (the default, cropped evenly), `'contain'` (whole), or `'top'` (filling the width, cropped from the bottom: a web page on a display). */
 	fit?: 'cover' | 'contain' | 'top';
-	/** What shows round contained art (`'#ffffff'`). */
+	/** What shows round contained art: a hex colour, or `'none'` for the sign itself, so the art is printed only where it is (paint on a wall, white ink on dark stock, a decal). The screen's own, else `'#ffffff'`. */
 	background?: string;
 	/** The grain over the art, as a multiple of the photo's own, 0–3 (1). */
 	grain?: number;
@@ -15,6 +15,8 @@ export interface PlateOptions {
 	glow?: number;
 	/** Seeds the grain (the plate's name). */
 	seed?: string;
+	/** How the art sits in each sign: one for all, or one per screen (each screen's own, else `'ink'`). */
+	finish?: Finish | Finish[];
 }
 
 /** Art composited into a loaded plate's screens, at the photo's size. Throws a TypeError for a bad plate or option. */
